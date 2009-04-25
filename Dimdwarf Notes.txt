@@ -1,0 +1,1098 @@
+
+>> 18.5.2008
+
+	DIMDWARF
+
+Ongelma: Darkstar on GPLv2:n alainen ilman classpath-poikkeusta, joten ei ole sallittua julkaista kaupallista peliä, jonka palvelinpuolta levitetään muun kuin GPL:n alaisuudessa. Esim. JA2 Online -konseptin käyttämää pelimoottoria ei ole mahdollista julkaista kaupallisella lisenssillä.
+
+Vai koskeeko GPL-pakko vain sitä tilannetta, että ohjelmaa levitetään samalla kertaa GPL-koodin kanssa? Jos ohjelmaa levitetään irrallaan, vaikka se linkittääkin GPL-koodiin dynaamisesti, niin ilmeisesti ohjelmaa ei tarvitse julkaista GPL:n alaisuudessa?
+
+http://www.sun.com/software/opensource/java/faq.jsp#g
+http://www.sun.com/software/opensource/java/faq.jsp#g6
+	Q: Why do you need the Classpath exception?
+	A: If an application is distributed with an implementation of Java such as the JDK under GPL v2, that application could be subject to the requirements of the GPL that all code that is shipped as part of a "work based on the [GPL] program" also be GPL licensed. Accordingly, a GPL license exception is needed that specifically excludes from this licensing requirement any application that links to the GPL implementation. The Classpath exception accomplishes this. Without the Classpath exception, a Java SE implementation licensed under GPL v2 could not practically be distributed with non-GPL licensed Java applications. This could present a serious barrier to adoption, for example by OpenSolaris or GNU/Linux distributions if left unaddressed. 
+
+
+Idea: Tehdään API-yhteensopiva kevytversio Darkstarista jollain sallivalla lisenssillä. Tuetaan vain yhtä konetta, yhtä säiettä, ilman transaktioita, ilman tallennusta (paitsi kaikki kerralla palvelinta suljettaessa). Tavoitteena että kaikki Dimdwarf-sovellukset toimivat myös Darkstar-sovelluksina (toisin päin jotkin servicet eivät välttämättä toimi), jolloin sovelluksen voi julkaista haluamallaan lisenssillä ja levittää yhdessä Dimdwarfin kanssa. Halutessaan kukin voi käynnistää ohjelman myös Darkstarissa.
+
+Nimen Dimdwarf tausta, väännös Darkstarista:
+dim - not very smart compared to Darkstar (single thread, no transactions)
+dwarf - not very scalable compared to Darkstar (single host, everything in memory)
+
+
+>> 16.7.2008
+
+- Merkitse ManagedObjectit annotaatioilla ja laita ne toteuttamaan tarvittavat rajapinnat kun ClassLoader lataa luokan. Toinen vaihtoehto on käyttää rajapintaa, josta on useita eri versioita - yhdessä jar-paketissa se perii ManagedObjectin ja toisessa Entity tms. rajapinnan.
+
+- Jos luokan lähdekoodit eivät ole saatavilla (esim. ulkoinen luokkakirjasto), niin määritä konfigurontitiedostossa ne luokat, joista pitää tehdä ManagedObjecteja. Samalla tavoin ei-serialisoituvista luokista voi myös tehdä serialisoituvia.
+
+
+http://www.projectdarkstar.com/component/option,com_smf/Itemid,99999999/topic,529.msg3433#msg3433
+""
+I've been experimenting with using ASM to convert standard Java references into managed references.  It would be easy enough to use ASM to modify classes to implement ManagedObject. That seems like another basic approach.
+""
+
+
+>> 11.8.2008
+
+Tutustu ja päätä tarvittava taso transaktioille:
+http://en.wikipedia.org/wiki/Isolation_(database_systems)
+
+
+>> 15.8.2008
+
+	GARBAGE COLLECTION
+
+
+>> http://www.projectdarkstar.com/component/option,com_smf/Itemid,99999999/topic,288.msg2396#msg2396
+>> floersh on 2008-04-03, 19:16:54
+""
+Quote from: Jeff on 2008-04-03, 18:44:31
+
+	Reference counting fails in the case of circular references.
+
+Ahh your right.. Hummm.. Back to the drawing board..
+
+After doing some research I found an interesting approach to handling the cycle problem.
+
+http://www.research.ibm.com/people/d/dfb/papers/Bacon01Concurrent.pdf
+""
+
+
+>> http://www.projectdarkstar.com/component/option,com_smf/Itemid,99999999/topic,288.msg2403#msg2403
+>> floersh on 2008-04-04, 14:43:23
+""
+Here is another one that improves on the concurrent cycle collection alorithm.
+
+http://www.research.ibm.com/people/d/dfb/papers/Paz05Efficient.pdf
+
+Also it would seem to me that a tool like ASM or BCEL could scan the classes prior to deployment (call it a build step) to identify all ManagedObjects which did not maintian any ManagedReferences and some how mark them as green greatly improving performance.
+
+Find some way to access the child ManagedReference id's without loading the entire object and you could improve it even more. This could be difficult with the Serialization storage mechanism currently in use.
+
+Anyway, this could be a real workable solution. One that would only add a slight overhead to the standard runtime. 
+""
+
+
+>> http://www.projectdarkstar.com/component/option,com_smf/Itemid,99999999/topic,288.msg2406#msg2406
+>> floersh on 2008-04-04, 17:20:09
+""
+Quote from: Jackal von ÖRF on 2008-04-04, 15:46:16
+
+	I don't think that it would possible to find out that information during compile time. For example, if there is a ManagedObject with a field of type Object or Collection, it may or may not contain a ManagedReference during runtime.
+
+I was not aware of the serialization runtime trick. Although, I am not sure that would be the best time to do it. Think one time vs potentially thousands of times. I guess it depends on the overhead.
+
+As for ASM/BECL. It could do it. I am not saying it would be easy but it could be done. I guess it still comes down to do we gain an appreciable amount of performance improvement from spending all that time during the build to make it worth it? I don't know the answer to that as I am not familiar with the serialization trick you mentioned.
+
+But ASM/BECL don't have to simply scan the fields. They could very easily look at the stack itself and identify the call to createReference().. If the developer is passing MaagedReferences between ManageedObjects, well the entire concept of reference counting goes out the window if they do that. And if they are storing the ManagedObject with a real java reference well that object is no longer a managed object. So ultimately you would have to scan through all the Java objects any ManagedObject had reference to but something has got to call createReference() otherwise its green.
+
+Either way deserializing every scanned object to fetch the child ManagedReferences might not be doable in a performant way. So ultimately it might not be doable for no other reason then all the objects are stored in serialized form on disk rather than memory.. Add the fact that I am sure the multi-node system will have some sort of replication and segmentation which only adds more overhead.. I have thought about the idea of data/object migration but from what I can tell DarkStar doesn't fit that model very well.
+
+This algorithm would have to be tweaked quite a bit to work in a distributed environment. The following article talks a little about migration in a distributed environment.
+
+http://www.pmg.lcs.mit.edu/papers/distance.pdf
+""
+
+
+>> 15.8.2008
+
+	SOURCEFORGE REGISTRATION
+
+A lightweight application container for Java with the same programming model as Project Darkstar. Will provide a transactional execution model, automatic persistence and data garbage collection. All Dimdwarf applications can also be deployed on Darkstar.
+
+--
+
+Dimdwarf will be a lightweight clone of Project Darkstar Server (see http://www.projectdarkstar.com/). (dim = not smart / synonym for dark, dwarf = small / one kind of a star)
+
+The motivation for designing Dimdwarf is:
+
+- Darkstar can not be embedded in a game client, because its GPL license is too restrictive for commercial applications, and because Darkstar requires a heavyweight database (currently Berkeley DB) and is designed for massive scalability in a server cluster.
+
+Dimdwarf will be released under BSD license. It will have a transactional in-memory database (with optional sync to disk) and no clustering support. In case better scalability is needed, all Dimdwarf applications can be run on Darkstar with minimal modifications (you only need to include an additional JAR library and maybe write a couple of wrapper classes).
+
+- Darkstar does not make it easy to test applications, for example because its internals use lots of static variables, which cause side-effects in running unit tests and practically require each test to be run in its own JVM. This has made it necessary to create projects such as MockSGS (https://mocksgs.dev.java.net/).
+
+Dimdwarf will have more decoupled architecture, so that unit testing will be easier (similar to how Spring Framework is decoupled from applications which use it).
+
+Dimdwarf will also attempt to provide garbage collection of objects stored in the database. Darkstar does not yet have garbage collection. When implemented, Dimdwarf's garbage collection may be ported over to Darkstar.
+
+
+>> 15.8.2008
+
+	GUICE
+
+>> http://video.google.com/videoplay?docid=2948853912335655747&ei=idmlSIP3MJXiiQKgqfjIDw&q=guice
+
+@Inject
+void injectAtm(Provider<Money> atm) {
+  Money one = atm.get();
+  Money two = atm.get();
+  ...
+}
+
+Providerin injektointi voisi sopia Managereiden injektointiin sovellusluokkiin. Silloin voisi olla pienempi olio (proxyn sijaan) serialisoitavana. Vai onko tämä ennenaikaista optimointia?
+
+
+>> 19.8.2008
+
+Oracle Berkeley DB Java Edition 3.1.0: Direct Persistence Layer
+http://www.theserverside.com/news/thread.tss?thread_id=42529
+- supports indexing
+- supports refactoring serialized data
+
+http://www.oracle.com/database/docs/BDB-JE-DPL-Basics-Whitepaper.pdf
+
+
+>> 20.8.2008
+
+! http://aopalliance.sourceforge.net/motivations.html
+""
+# ASM: a lightweight bytecode translator.
+# AspectJ: an AO source-level weaver. New Language.
+# AspectWerkz: an AO framework (bytecode-level dynamic weaver+configuration).
+# BCEL: a bytecode translator.
+# CGLIB: high-level API for class artifact manipulation and method interception.
+# JAC: an AO middleware (bytecode-level dynamic weaver+configuration+aspects). Framework.
+# Javassist: a bytecode translator with a high-level API.
+# JBoss-AOP: interception and metadata-based AO framework.
+# JMangler: a bytecode translator with a composition framework for translations.
+# Nanning: an AO weaver (framework).
+# Prose: an AO bytecode-level dynamic weaver (framework). 
+""
+
+
+! http://asm.objectweb.org/
+""
+ASM is an all purpose Java bytecode manipulation and analysis framework. It can be used to modify existing classes or dynamically generate classes, directly in binary form. Provided common transformations and analysis algorithms allow to easily assemble custom complex transformations and code analysis tools.
+
+ASM offer similar functionality as other bytecode frameworks, but it is focused on simplicity of use and performance. Because it was designed and implemented to be as small and as fast as possible, it makes it very attractive for using in dynamic systems*.
+
+(*) ASM can of course be used in a static way too.
+""
+
+""
+The best way to learn to use ASM is to write a Java source file that is equivalent to what you want to generate and then use the ASMifier mode of the Bytecode Outline plugin for Eclipse <http://asm.objectweb.org/eclipse/index.html> (or the ASMifier tool <http://asm.objectweb.org/doc/faq.html#Q10>) to see the equivalent ASM code. If you want to implement a class transformer, write two Java source files (before and after transformation) and use the compare view of the plugin in ASMifier mode to compare the equivalent ASM code.
+""
+
+! http://asm.objectweb.org/doc/faq.html#Q10
+""
+10. How do I get the bytecode of an existing class?
+
+If you want the bytecode instructions themselves, use TraceClassVisitor. If you want the ASM code to generate these bytecode instructions, use ASMifierClassVisitor. Both classes provide a "main" method to allow them to be called from the command line, passing your fully qualified class name as a parameter. Example:
+
+java -classpath "asm.jar;asm-util.jar;yourjar.jar" org.objectweb.asm.util.ASMifierClassVisitor org.domain.package.YourClass
+
+or
+
+java -classpath "asm.jar;asm-util.jar" org.objectweb.asm.util.ASMifierClassVisitor org/domain/package/YourClass.class
+
+Another, much easier method, if you are using Eclipse, is to use the Bytecode Outline plugin.
+""
+
+
+http://cglib.sourceforge.net/
+""
+cglib is a powerful, high performance and quality Code Generation Library, It is used to extend JAVA classes and implements interfaces at runtime.
+""
+
+
+http://www.csg.is.titech.ac.jp/~chiba/javassist/
+""
+Javassist (Java Programming Assistant) makes Java bytecode manipulation simple. It is a class library for editing bytecodes in Java; it enables Java programs to define a new class at runtime and to modify a class file when the JVM loads it. Unlike other similar bytecode editors, Javassist provides two levels of API: source level and bytecode level. If the users use the source-level API, they can edit a class file without knowledge of the specifications of the Java bytecode. The whole API is designed with only the vocabulary of the Java language. You can even specify inserted bytecode in the form of source text; Javassist compiles it on the fly. On the other hand, the bytecode-level API allows the users to directly edit a class file as other editors. 
+""
+
+
+http://aspectwerkz.codehaus.org/
+""
+AspectWerkz is a dynamic, lightweight and high-performant AOP framework for Java.
+
+AspectWerkz offers both power and simplicity and will help you to easily integrate AOP in both new and existing projects.
+
+AspectWerkz utilizes bytecode modification to weave your classes at project build-time, class load time or runtime. It hooks in using standardized JVM level APIs. It has a rich and highly orthogonal join point model. Aspects, advices and introductions are written in plain Java and your target classes can be regular POJOs. You have the possibility to add, remove and re-structure advice as well as swapping the implementation of your introductions at runtime. Your aspects can be defined using either Java 5 annotations, Java 1.3/1.4 custom doclets or a simple XML definition file.
+
+AspectWerkz provides an API to use the very same aspects for proxies, hence providing a transparent experience, allowing a smooth transition for users familiar with proxies.
+""
+
+http://aspectwerkz.codehaus.org/features.html
+""
+Weaving (bytecode modification) at compile time, load time and runtime. Hooks in and transforms classes loaded by any class loader except the bootstrap class loader. Which basically means that you can easily transform any (legacy) application or external library apart from rt.jar both at runtime and compile time.
+""
+
+
+http://prose.ethz.ch/
+http://prose.ethz.ch/Wiki.jsp?page=AboutProse
+""
+PROSE (PROgrammable extenSions of sErvices) allows Java programs modification at run-time.
+""
+
+
+>> 2.9.2008
+
+	SERIALIZATION
+
+http://java.sun.com/javase/6/docs/platform/serialization/spec/serialTOC.html
+
+class descriptor overhead:
+http://java.sun.com/javase/6/docs/platform/serialization/spec/class.html
+http://java.sun.com/javase/6/docs/platform/serialization/spec/protocol.html
+
+Advanced Serialization
+http://java.sun.com/developer/technicalArticles/ALT/serialization/
+
+Enable detailed serialization exceptions:
+java.io.ObjectOutputStream#extendedDebugInfo
+
+Use a custom header when modifying the serialization format:
+java.io.ObjectInputStream#readStreamHeader
+
+> http://www.projectdarkstar.com/component/option,com_smf/Itemid,120/topic,600.0
+> Jackal von ÖRF
+""
+Isn't it so that Externalizable classes are much faster to (de)serialize? I've been thinking that it might be possible to use some bytecode magic to convert Serializable classes to Externalizable at runtime. The generated externalization code does not need to support changes to the class structure, if it is used only to keep an in-memory cache, or if there exists a way to convert the data back to standard serialization format (for example, by saving the class descriptor which the class had when the externalization code was generated).
+""
+
+
+>> 4.9.2008
+
+	BYTECODE MODIFICATION
+
+
+Should We Use Bytecode Modification?
+http://www.javalobby.org/java/forums/t101600.html
+
+
+> http://www.javalobby.org/java/forums/t101600.html?start=15
+> on Sep 21, 2007, Niklas Mehner wrote:
+""
+> Debugging isn't the normal mode of the JVM. When a 
+> class loader generates a Class object this class is 
+> frozen by the JVM, no bytecode modification can be 
+> performed (because there is no way to modify a 
+> Class), 
+
+This is not true since jdk 1.6 anymore (or was it already in 1.5?): 
+
+http://java.sun.com/javase/6/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses(java.lang.instrument.ClassDefinition...)
+http://java.sun.com/javase/6/docs/api/java/lang/instrument/package-summary.html
+
+While the retransformation will fail if the class is modified structurally (adding/removing a field), the code can be changed without problems.
+""
+
+
+	GUICE PERFORMANCE
+
+http://www.javalobby.org/java/forums/t103070.html
+
+> on Nov 6, 2007, Bob Lee wrote:
+""
+Performance actually is significant, especially when it comes to development turnaround time. It's just not the biggest reason to use Guice over Spring (or even in the top 10). Spring users may mostly use DI for complex singletons, but we enjoy using DI everywhere (even tight loops) without worrying about how it will affect performance. 
+""
+
+
+>> 11.9.2008
+
+	XA TRANSACTIONS, BERKELEY DB JE
+
+\je-3.3.69\src\com\sleepycat\je\XAEnvironment.java
+\je-3.3.69\src\com\sleepycat\je\Transaction.java
+\je-3.3.69\src\com\sleepycat\je\txn\Txn.java
+
+javax.transaction.xa.XAResource
+http://java.sun.com/javase/6/docs/api/javax/transaction/xa/package-summary.html
+http://en.wikipedia.org/wiki/Java_Transaction_API
+
+
+>> 13.10.2008
+
+	AOP-BASED CUSTOM SERIALIZATION
+
+Generoidaan Serializable-olioille konstruktori, joka ottaa parametrinään ObjectInputStream:n. Konstruktoria käytetään olioiden deserialisoimiseen ilman reflektiota. Myös generoidaan metodi, jolla olion saa serialisoitua ilman reflektiota. Ei ole varmaa, voidaanko Javan serialisointia käyttä osana tätä, vai pitää luoda aivan uusi serialisointikirjasto.
+
+
+>> 8.11.2008
+
+	CUSTOM SERIALIZATION & OBJECT INSTANTIATION
+
+Objenesis osaa luoda olioita kutsumatta luokan konstruktoria:
+http://objenesis.googlecode.com/svn/docs/details.html
+
+
+>> 12.11.2008
+
+	FASTER JAVA SERIALIZATION
+
+Idea serialisointikirjaston (nopea serialisointi ja refaktorointi) nimeksi:
+	Serialious (serious + serialization)
+
+
+Faster Java Serialization
+! http://jserial.sourceforge.net/faq.html
+	+ sama mitä itsellä on ollut mielessä, jo toteutettuna!
+	+ ei koske itse serialisoitavaan luokkaan, vaan generoi samassa pakkauksessa olevia luokkia
+	- käyttää reflektiota private-kenttien lukemiseen
+	(-) ei tue "class evolution"
+	+ käyttää NIO:ta
+
+
+More efficient object serialization (1999)
+http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.37.4780
+	+ mainittu joitakin eri tapoja, miten serialisointia voi nopeuttaa
+
+
+Accelerating Java Serialization/Deserialization
+http://www.javalobby.org/forums/thread.jspa?threadID=15926
+	
+	! http://javolution.org/
+	+ "High performance and time-deterministic (real-time) util / lang / text / io / xml base classes."
+	+ BSD License
+
+
+	VASTAAVAA CLUSTEROINTIA KUIN DARKSTAR
+
+Terracotta
+http://www.terracotta.org/
+""
+Terracotta is an open source clustering product for Java. With Terracotta, JEE Applications scale simply and reliably without databases, EJBs or other complex infrastructure.
+""
+
+
+>> 13.11.2008
+
+	DIMDWARF-SOVELLUSTEN KONFIGUROINTI
+
+Idea: sovelluskoodissa kutsutaan Guicen Injectoria, jolle välitetään Dimdwarf-moduulit ja sovelluksen omat moduulit. Dimdwarf-moduleja mahdollisesti pitää konfiguroida (esim. tietokantayhteys). Sitten Injectorista noudetaan luokka, joka käynnistää Dimdwarf-serverin, ja kutsutaan sen käynnistysmetodia.
+
+Mallia konfiguroinnin toteuttamiseen?
+! http://code.google.com/p/warp-core/wiki/GettingStarted
+! http://www.wideplay.com/webextensions::jpaintegration22
+http://herebebeasties.com/2007-06-20/wicket-gets-guicy/
+
+Muita malleja?
+http://code.google.com/p/google-guice/wiki/3rdPartyModules
+http://code.google.com/p/google-guice/wiki/AppsThatUseGuice
+
+
+	PERSISTED CONSTRUCTOR INJECTION
+
+Salve muokkaa bytecodea siten, että injektoitu kenttä poistetaan ja kentän lukemiset korvataan service lookup -kutsulla. Kentän kirjoittamisista logitetaan varoitus. Olisiko sama menetelmä hyvä Dimdwarfissa, vai käytetäänkö mieluumin proxyjä?
+http://code.google.com/p/salve/wiki/WhySalve
+
+
+>> 17.11.2008
+
+	WEBBISIVUJEN TIIVISTELMÄ SIITÄ, MITÄ OHJELMA TEKEE, TUTORIAALEJA
+
+http://www.projectdarkstar.com/component/option,com_smf/Itemid,120/topic,712.msg4800#msg4800
+""
+1) I Would like clear information about what JNAG does, how it does it, and what advantages it gives me.  All of this should be on the front page or somewhere else that is easily found.  When I am looking at new technologies these are the first things I look for.  The most information I could find about JNAG was from this post here: http://www.projectdarkstar.com/component/option,com_smf/Itemid,120/topic,697.0
+It looks interesting, but I would like more information.
+
+2) Multiple small tutorials like Darkstar's tutorials.  They incrementally teach concepts and they are all small and easy to understand.  When tutorials get too large they tend to overwhelm those trying to learn them.
+
+3) Tutorials which display the advantages JNAG has so that I can clearly see why I want to use JNAG in a more concrete way.
+
+4) A setup tutorial.  It may be simple to reference your library, but more people will give it a try if there is a step by step tutorial on how set it up.  Multiple IDEs and pictures are always good.
+
+5) Good javadocs.  It can be frustrating where unclear method names and constants come with no explanation as to what they are for.  I have not looked at JNAG's javadoc so I don't know what it is like, but I have seen this in other projects.
+""
+
+
+	ADMIN-TERMINAALI
+
+Esimerkki graafien visualisoinnista:
+Google Chrome > about:histograms
+
+Histogram: Autocomplete.HistoryAsyncQueryTime recorded 27 samples, average = 8.3, standard deviation = 3.3
+  0 ... 
+  6 -------------------O                                                      (4 = 14.8%) {0.0%}
+  7 ------------------------------------------------------------------------O (15 = 55.6%) {14.8%}
+  8 ----------O                                                               (4 = 14.8%) {70.4%}
+ 10 --O                                                                       (1 = 3.7%) {85.2%}
+ 12 ... 
+ 17 -----O                                                                    (3 = 11.1%) {88.9%}
+ 20 ... 
+
+
+>> 20.11.2008
+
+	NONNULL-TARKISTUKSET
+
+Käsittele sorsien annotaatiot Annotation Processing Tool:lla (apt)
+http://java.sun.com/j2se/1.5.0/docs/guide/apt/GettingStarted.html
+http://java.sun.com/j2se/1.5.0/docs/guide/apt/
+http://mojo.codehaus.org/apt-maven-plugin/
+http://myfaces.apache.org/tobago/tobago-tool/maven-apt-plugin/index.html
+
+
+	REFLECTION WITHOUT CLASSLOADING FOR ASM
+
+Pitäisi onnistua perus ASM:llä, koska ClassFileTransformer saa parametrinään ClassLoaderin, joten ASM:n adapterit voivat tarvittaessa lukea muita luokkia classpathista.
+file:///C:/Program%20Files/Java/jdk1.6.0_10/docs/api/java/lang/instrument/ClassFileTransformer.html
+
+package-info.java:sta kääntyy package-info.class, joka sisältää tiedon pakkauksen annotaatioista. Samassa pakkauksessa olevien luokkien class-tiedostoissa ei ole tietoa pakkauksen annotaatioista.
+file:///C:/Program%20Files/Java/jdk1.6.0_10/docs/api/java/lang/Class.html#getPackage()
+file:///C:/Program%20Files/Java/jdk1.6.0_10/docs/api/java/lang/Package.html
+
+Kääntäjä pakottaa, että "package annotations should be in file package-info.java", joten on ennalta määrättyä, mistä pakkausannotaatiot löytyvät. ASM:llä on siis helppo päästä käsiksi niihin lataamatta mitään luokkaa. Package-luokan staattiset metodit vaikuttavat palauttavan pakkauksen sen nimen perusteella vain, jos pakkauksesta on jo ladattu jokin luokka.
+
+
+ASM classworking
+http://www.ibm.com/developerworks/java/library/j-cwt05125/index.html
+
+ASM 3.0 Developer Guide
+http://asm.objectweb.org/doc/developer-guide.html
+
+
+	SERIALIZATION DATA VERSIONING
+
+java.lang.Package:n API:n mukaan pakkaus voi sisältää versioinformaatiota, joka on tyypillisesti lähtöisin manifestista. Voisiko tätä käyttää serialisointidatan versiointiin?
+
+"The set of classes that make up the package may implement a particular specification and if so the specification title, version number, and vendor strings identify that specification. An application can ask if the package is compatible with a particular version, see the isCompatibleWith method for details."
+
+
+>> 30.11.2008
+
+	GARBAGE COLLECTION
+
+Parallel and concurrent garbage collectors
+http://chaoticjava.com/posts/parallel-and-concurrent-garbage-collectors/
+
+17. What are the phases of the concurrent low pause collector?
+http://java.sun.com/docs/hotspot/gc1.4.2/faq.html
+
+Java theory and practice: Garbage collection in the HotSpot JVM
+Generational and concurrent garbage collection
+http://www.ibm.com/developerworks/java/library/j-jtp11253/
+
+
+>> 2.12.2008
+
+	UPGRADING
+
+Mahdollista ajastettujen tehtävien muuttaminen lennossa tai päivityksen ohessa.
+
+http://www.projectdarkstar.com/component/option,com_smf/Itemid,120/topic,729.0
+"Like in the HelloTimer example, what if you decide you wanted to run the task every 1000ms instead of 500ms?"
+
+
+>> 7.1.2009
+
+	UUID GENERATORS
+
+v1-tyypin UUID sisältää ajan ja MAC-osoitteen. Sen pitäisi olla sopiva Dimdwarf HA -clusterille (nopea generoida, taatusti uniikki sovellustasolla kun yksi JVM per serveri, MAC:n sisältyminen ei ole turvallisuusriski).
+
+! http://johannburkard.de/blog/programming/java/Java-UUID-generators-compared.html
+! http://johannburkard.de/software/uuid/
+! http://jug.safehaus.org/
+http://java.sun.com/j2se/1.5.0/docs/api/java/util/UUID.html
+
+http://jug.safehaus.org/FAQ
+	""
+	Q: Which one should I use, assuming performance is not important?
+	
+	A: If you can access the ethernet card address it might be good idea to use time-based algorithm, if you will only be generating UUIDs from single JVM (and won't be using other UUID-tools at the same time). If so, uniqueness is pretty much guaranteed and algorithm is fast as well.
+	""
+
+>> 8.1.2009
+
+	HIGH AVAILABILITY
+
+http://en.wikipedia.org/wiki/High-availability_cluster
+""
+One subtle, but serious condition every clustering software must be able to handle is split-brain. Split-brain occurs when all of the private links go down simultaneously, but the cluster nodes are still running. If that happens, each node in the cluster may mistakenly decide that every other node has gone down and attempt to start services that other nodes are still running. Having duplicate instances of services may cause data corruption on the shared storage.
+""
+
+- Suunnittele Dimdwarf-HA niin, että jos useampi kuin yksi serveri menee pimeäksi, tai yksi serveri jää eristyksiin, niin serverit pysäyttävät toimintansa ja jäävät odottamaan verkkoyhteyden palautumista. Klusteri voi esimerkiksi reitittimen rikkoutumisen vuoksi jakautua kahteen tai useampaan verkkoon. Virheen tapahtuessa nodet kirjoittavat varmuuden vuoksi muistissa olevansa tietokantansa levylle.
+
+
+	PERFORMANCE BENCHMARKS
+
+http://www.projectdarkstar.com/component/option,com_smf/Itemid,120/topic,773.msg5289#msg5289
+tjb: "I've mostly used the Project Darkstar Request Example <https://darkstar-request.dev.java.net/> for performance testing at the application level.  For lower level testing, I use the TestDataStorePerformance, TestDataServicePerformance, and TestDataServiceConcurrency tests that are included in the unit tests for the sgs-server."
+
+
+>> 10.1.2009
+
+Oracle Coherence - vastaavanlainen tietokanta kuin Dimdwarf-HA:lle on suunniteltu
+http://www.oracle.com/technology/products/coherence/index.html
+http://coherence.oracle.com/display/COH34UG/Coherence+3.4+Home
+http://coherence.oracle.com/display/COH34UG/Coherence+Caching+Terminology
+http://coherence.oracle.com/display/COH34UG/Network+Protocols
+	- yksityiskohtia käytetystä kommunikointiprotokollasta
+
+
+http://www.terracotta.org/web/display/orgsite/TCWP+Terracotta+10x+Faster+Than+Oracle
+http://209.85.229.132/search?q=cache:5qH5SSwZzCwJ:www.infoq.com/infoq/url.action%3Fi%3D490%26t%3Df+Terracotta+10x+Faster+Than+Oracle+Coherence&hl=en&ct=clnk&cd=1
+""
+	Terracotta 10x Faster Than Oracle Coherence
+
+This case study presents the results of an independent comparison testing performed by a Fortune 500 company of the relative performance, scalability, and operational cost of Terracotta and Oracle Coherence. Terracotta was found to be as much as 10X faster than Oracle.
+
+The white paper presents the key findings and then walks through the evaluation process that measures Terracotta and Oracle Coherence on dimensions of performance, scale, development simplicity and operational management.
+
+	Key Findings
+
+The key findings in this evaluation were:
+
+- Terracotta performance was 10X that of Oracle Coherence
+- Terracotta exhibited higher total throughput, higher throughput per JVM
+- Terracotta scales better, more evenly and predictably
+- The Terracotta implementation took 3 days – Oracle’s took 6 weeks
+- Terracotta exhibited superior visibility, simplicity and management tools
+""
+
+Any Independent Benchmark of IMDG (In Memory Data Grid) Solutions? (Coherence, Terracotta, WXS, Gigaspaces)
+! http://aminsblog.wordpress.com/2008/11/24/any-independent-benchmark-of-imdg-solutions-coherence-terracotta-wxs-gigaspaces/
+
+Evaluating Terracotta
+http://www.woloszyn.org/2008/12/04/evaluating-terracotta/
+
+Terracotta as an IMDG
+http://forums.terracotta.org/forums/posts/list/1246.page
+
+Scaling Out MySQL (with In Memory Data Grid)
+http://natishalom.typepad.com/nati_shaloms_blog/2008/03/scaling-out-mys.html
+
+
+>> 8.2.2009
+
+! http://stackoverflow.com/questions/524198/how-to-design-and-verify-distributed-systems
+
+Real Life Architectures
+! http://highscalability.com/links/weblink/24
+markus @ SO: "A great start for finding much more resources on this topic is the Real Life Architectures section on the "High Scalability" web site. For example they a good summary on Amazons architecture."
+
+Amazon Architecture
+! http://highscalability.com/amazon-architecture
+! http://www.webperformancematters.com/journal/2007/8/21/asynchronous-architectures-4.html
+
+eBay Architecture
+markus @ SO: "Nice history of their architecture and the issues they had. Obviously they can't use a lot of caching for the auctions and bids, so their story is different in that point from many others. As of 2006, they deployed 100,000 new lines of code every two weeks - and are able to roll back an ongoing deployment if issues arise."
+http://www.addsimplicity.com/downloads/eBaySDForum2006-11-29.pdf
+http://highscalability.com/ebay-architecture
+
+Paper on Google File System
+markus @ SO: "Nice analysis of what they needed, how they implemented it and how it performs in production use. After reading this, I found it less scary to build parts of the infrastructure myself to meet exactly my needs, if necessary, and that such a solution can and probably should be quite simple and straight-forward. There is also a lot of interesting stuff on the net (including YouTube videos) on BigTable and MapReduce, other important parts of Google's architecture."
+http://labs.google.com/papers/gfs.html
+
+Inside MySpace
+http://www.baselinemag.com/c/a/Projects-Networks-and-Storage/Inside-MySpacecom/
+markus @ SO: "One of the few really huge sites build on the Microsoft stack. You can learn a lot of what not to do with your data layer."
+
+Five Scalability Principles
+http://www.webperformancematters.com/journal/2007/8/10/five-scalability-principles.html
+
+! Asynchronous Architectures
+http://www.webperformancematters.com/journal/2007/8/13/asynchronous-architectures-1.html
+http://www.webperformancematters.com/journal/2007/8/14/asynchronous-architectures-2.html
+http://www.webperformancematters.com/journal/2007/8/15/asynchronous-architectures-3.html
+http://www.webperformancematters.com/journal/2007/8/21/asynchronous-architectures-4.html
+
+Getting Rid of the Relational Database
+http://www.productionscale.com/home/2007/8/11/getting-rid-of-the-relational-database.html
+
+ProductionScale - Information Technology, Scalability, Technology Operations, and Cloud Computing
+! http://www.productionscale.com/
+
+Web Performance Matters - Slowness Considered Harmful
+! http://www.webperformancematters.com/journal/
+
+High Scalability - Building bigger, faster, more reliable websites
+! http://highscalability.com/
+
+Getting Rid of the Relational Database
+(ks. myös linkit)
+http://www.productionscale.com/home/2007/8/11/getting-rid-of-the-relational-database.html
+
+Putting the Database Where It Belongs
+(viittaa Stonebrakerin ja muiden artikkeleihin)
+! http://natishalom.typepad.com/nati_shaloms_blog/2007/09/putting-the-dat.html
+
+Lessons from Pat Helland: Life Beyond Distributed Transactions
+http://natishalom.typepad.com/nati_shaloms_blog/2007/08/lessons-from-am.html
+
+Availability & Consistency
+!! http://www.infoq.com/presentations/availability-consistency
+Muistiinpanot: http://www.webperformancematters.com/journal/2007/8/21/asynchronous-architectures-4.html
+	* Pitää mahdollistaa heterogeenisyys, samassa klusterissa vanhojen koneiden kanssa uusia ja tehokkaampia. Kuormantasauksen otettava huomioon tehoerot (esim. lasketaan tasks per second, latenssia, idle-aikaa).
+	* Symmetry = client voi lähettää pyynnön mille koneelle tahansa. Kone saattaa joutua lähettämään pyynnön eteenpäin, mutta clientin ei tarvitse tietää sitä. Voi olla directory nodeja, mutta clientin ei tarvitse tietää sitä. Ylläpitäjien ei tarvitse tietää, mikä node tekee mitäkin.
+	* Agreement = mikä tahansa algoritmi, joka vaatii yhteisymmärrystä, aiheuttaa pullonkaulan.
+	* Asynchronous = vaikka palvelut ympärillä hajoavat, niin jatka etenemistä parhaasi mukaan.
+	* Techniques:
+		Partition-tolerance & Availability => Expiration-based caching
+		Partition-tolerance & Consistency (Dimdwarf?) => Quorum/majority algorithms
+		Availability & Consistency => Two-phase commit
+	* Soft-state ja recovery: Jos kone kaatuu, niin vain muistissa oleva soft-state katoaa (esim. cache). Saattaa kannattaa kirjoittaa soft-state välillä levylle, niin että jos kone pystyy käynnistymään nopeasti uudelleen, niin se palauttaa levyltä soft-staten ja lämmittää sen (esim. cachen) ajan tasalle - nopeampaa kuin rakentaa tieto tyhjältä pohjalta.
+
+
+>> 18.2.2009
+
+	OSGi
+
+What OSGi Container Do You Recommend ?
+! http://stackoverflow.com/questions/560794/what-osgi-container-do-you-recommend
+
+OSGi, JSR 291, JSR 277
+http://www.osgi.org/jsr291
+! http://www.jsig.com/confluence/display/JSIG/OSGi+and+JSR+291
+http://www.infoq.com/news/2007/08/osgi-jsr277-debate
+! http://underlap.blogspot.com/2007/06/comparison-of-jsr-277-and-jsr-291.html
+
+OSGi in Practice (free PDF)
+! http://neilbartlett.name/blog/osgibook/
+
+	OSGi FRAMEWORKS
+
+Apache Felix
+http://felix.apache.org/
+http://felix.apache.org/site/apache-felix-osgi-tutorial.html
+
+Eclipse Equinox
+! http://www.eclipse.org/equinox/
+http://www.eclipse.org/equinox/documents/quickstart.php
+
+Knoplerfish
+http://www.knopflerfish.org/
+http://www.knopflerfish.org/documentation.html
+
+Spring Dynamic Modules for OSGi
+http://www.springsource.org/osgi
+
+	OSGi & AOP
+
+Equinox Aspects
+! http://www.eclipse.org/equinox/incubator/aspects/
+
+	http://underlap.blogspot.com/2006/10/aop-meets-osgi.html
+	"Now you can write AspectJ aspects, package them as OSGi bundles, and apply them to bundles which explicitly "opt in" to these aspects. The "co-opt" model is coming soon and will enable aspects to be applied to unmodified bundles (without them having to opt in)."
+
+	http://underlap.blogspot.com/2006/12/aop-meets-osgi-phase-ii.html
+	"Now you can apply aspects to unmodified bundles -- the so-called "co-opt" model. This feels more natural since AOP is usually non-invasive."
+	
+	custom class adaptors:
+	http://dev.eclipse.org/newslists/news.eclipse.technology.equinox/msg00555.html
+	https://bugs.eclipse.org/bugs/show_bug.cgi?id=48695
+
+Jadabs/OSGi - Aspect Oriented Programming (AOP)
+http://jadabs.berlios.de/start/userguide.html#Aspect_Oriented_Programming__AOP_
+
+http://www.knopflerfish.org/releases/current/docs/release_notes.html
+"Bundle Class Patching: New feature in KF. Bundles that contain legacy code may be cumbersome to run due to class loading problems in an OSGi environment. This new feature is based on bundle class patching using byte-code manipulation. This can solve many problems related to third-party libraries using non-OSGi compatible method calls."
+
+
+>> 5.4.2009
+
+Prevayler is an open source persistence library for Java. It is an implementation of the Prevalent System architecture pattern, in which data is kept hot in memory with changes journaled for system recovery.
+! http://www.prevayler.org/wiki/
+- samanlainen idea ja arkkitehtuuri kuin Darkstar ja Dimdwarf 
+- Prevalyerin tuotekuvauksista ja käyttäjien kommenteista voi saada ideoita
+
+JOAFIP is a java library to manage java data object persistence in file system transparently without using database, do not need to manage the field-by-field storage and retrieval to and from the file. 
+http://joafip.sourceforge.net/
+http://joafip.sourceforge.net/howitworks/howitworks.html
+http://joafip.sourceforge.net/presentation/ppojo.html
+
+
+>> 18.4.2009
+
+	CLUSTER MANAGER SOFTWARE
+
+Tehdään hallintasovellus, jolla voi ottaa yhteyden klusteriin sen seuraamiseksi, hallitsemiseksi ja profiloimiseksi. Vaikka Dimdwarf on open sourcea, niin tämä hallintasofta/profiloija on kaupallinen ohjelmisto. Dimdwarfin mukana tulee vain yksinkertainen komentorivi- tai webbipohjainen hallintakäli, jossa on pelkät perustoiminnot.
+
+Hallintasovellus pyörii clienttina työpöytäkoneella, jotta se ei häiritsisi klusterin suorituskykymittauksia. Palvelimelle asennetaan plugin, joka generoi palvelimilla mittausdataa. Mittausdatan keräyksellä on useita tarkkuuksia: Off, Monitor, Profile.
+	* Off = Ei kerää mitään mittausdataa. Sama kuin pluginia ei olisi asennettukaan.
+	* Monitor = Mittaa taskien vasteaikoja, suoritusaikaa, suorituskertoja ja konflikteja. Ei merkittävää vaikutusta palvelimen suorituskykyyn. Tarkoitettu pidettäväksi jatkuvasti päällä tuotantoympäristössä.
+	* Profile = Kirjoittaa tiedostoon kaikki pääsäikeen vastaanotetut ja lähetetyt viestit tarkkoine ajanhetkineen (palvelimen kello, cluster timestamp ja nanosekunteja softan käynnistyksestä). Tarkoitettu käynnistettäväksi muutaman minuutin hetkiksi, samanaikaisesti kaikilla klusterin palvelimilla. Profilointidatan keräyksen jälkeen hallintasovellus imuroi profilointidatan kaikilta palvelimilta ja mahdollistaa sen analysoinnin. On mahdollista seurata askel askeleelta, mitä koko klusterissa tapahtui, jotta skaalautuvuusongelmien syyt voisi löytää.
+
+Myydään useina versioina. Lisenssi sisältää 12 kk päivitykset, sinä aikana julkaistaviin Dimdwarf-versioihin.
+
+	Developer Edition
+	  - 100~200 EUR/user
+	  - max 2 servers in cluster
+	Enterprise Edition
+	  - ~1000 EUR/user
+	  - unlimited cluster size
+	Open Source Edition
+	  - free
+	  - unlimited cluster size
+	  - for open source projects only
+
+Päätettävä, onko lisenssi käyttäjäkohtainen vai klusterikohtainen. Yllä olevien hintojen kokoluokka on käyttäjäkohtaisen lisenssin mukainen. Yksi vaihtoehto on, että Developer-lisenssi on käyttäjäkohtainen ja Enterprise-lisenssi klusterikohtainen. Klusterikohtaisella lisenssillä firma joutuisi ostamaan noin 2 lisenssiä, yhden tuotantoympäristölle ja yhden hyväksymistestiympäristölle. Kun palvelinkulut otetaan huomioon, niin noin 5000 EUR/cluster ei pitäisi olla firmalle liian iso menoerä. Halpa Developer-versio max 2 palvelin klusterille voisi olla 500 EUR/cluster hintaluokassa, niin firma voi hankkia oman lisenssin kullekin kehittäjälle, tai jos firma säästää, niin sitä voidaan käyttää myös yhteisenä testiympäristönä. Klusterikohtaisessa hinnottelussa voidaan rajoittaa myös palvelimen tallentaman historiadatan kestoa.
+
+	Developer Edition
+	  - ~500 EUR/cluster
+	  - max 2 servers in cluster
+	  - max 1 day performance history
+	Enterprise Edition
+	  - ~5000 EUR/cluster
+	  - unlimited cluster size
+	  - unlimited performance history
+	Open Source Edition
+	  - free
+	  - unlimited cluster size
+	  - unlimited performance history
+	  - for open source projects only
+
+Hintavertailuja:
+	http://www.infoq.com/news/2007/08/cohrence33
+		"Coherence is awesome, but simply too expensive" - http://stnor.wordpress.com/2008/05/25/cache-aside-write-behind-magic/#comment-5
+	http://www.theregister.co.uk/2007/06/25/terracotta_oracle_high-availability/
+
+Nimiehdotuksia:
+
+	Dimdwarf Monitor+
+	Dimdwarf Overlord
+	Dimdwarf Systemlord
+
+Käyttötilanteita:
+
+- Käyttäjämäärät ovat kasvaneet tasaista tahtia ja palvelinklusterin tehot uhkaavat käydä vähiin. Ruuhkahuippuina palvelimet käyvät lähes täysillä tehoilla, joten pelivaraa ei pian enää ole ja tarvitaan lisää palvelimia. Mutta palvelimien ylläpitäjä ei tiedä klusterin työllistysastetta, paljonko pelivaraa tarvitaan, mitä vauhtia tehonkulutus on kasvanut ja milloin hidastuminen alkaa näkyä käyttäjille häiritsevästi.
+	-> tehonkulutushistoria, ruuhkahuiput, pelivaran mittaus, kasvun ennustus
+
+- Yhdestä palvelimesta on hajonnut virtalähde. Klusteri on ottanut palvelimen automaattisesti pois käytöstä ja siirtänyt sillä olleet työt toisille palvelimille. Mutta ylläpitäjä ei tiedä, että palvelin on hajonnut ja mikä palvelin se on.
+	-> vikailmoitus, uuden palvelimen rekisteröinti
+
+- Palvelinrautaa uudistetaan uusiin tehokkaampiin palvelimiin. Nyt peli pyörii 10 vanhalla palvelimella, jotka on määrä korvata 5 uudella palvelimella. Palvelimien vaihdos ei saa näkyä käyttäjille palvelukatkoksena. Pelin pitää pyöriä jatkuvasti ja vanhalle palvelimelle yhdistäneiden pelaajien siirtäminen uusille palvelimille pitää tapahtua huomaamattomasti (ohjaus uusille palvelimille load balancerilla, tai pitää odottaa nykyisten käyttäjien kirjautumista ulos). Ylläpitäjä on asentanut uudet palvelimet paikalleen, mutta hän ei ole täysin varma, että nämä 5 palvelinta riittävät korvaamaan vanhat palvelimet, joten hän haluaa tarkkailla uusien palvelimien tehoa ennen vanhojen palvelimien poistamista.
+	-> uuden palvelimen rekisteröinti, palvelimen evakuointi, evakuoidun palvelimen palautus, palvelimen poistaminen, yksittäisen palvelimen suorituskyvyn seuraus, koko klusterin suorituskyvyn seuraus, muistiinpanojen kirjoittaminen suorituskykyhistoriaan (esim. uusi palvelin lisätty tällöin, vanha evakuoitu tuolloin)
+
+- Pelin beta-version suorituskykymittaus. Ennen pelin uuden version julkaisemista sille halutaan tehdä suorituskykymittaus, jotta osattaisin hankkia riittävä määrä palvelimia. Kehittäjät ovat tehneet testiohjelman, joka jäljittelee oikean pelaajan toimenpiteitä. Peliä ajetaan aluksi 1 palvelimella ja testiclientteja lisätään kunnes vasteajat kasvavat liian suuriksi. Sitten palvelimien määrää nostetaan aina yhdellä ja mitataan testiclienttien maksimimäärä, kunnes lopulta mittaus tehdään 10 palvelimella.
+
+- Peli ei skaalaudu odotetulla tavalla, kun palvelimia lisätään. Kun kehittäjät profiloivat ohjelmaa tavallisella Java-profiloijalla yhdellä koneella, niin he eivät löydä ongelmia. Kehittäjät haluavat profiloida pelin käyttäytymistä klusteriympäristössä, jotta he löytäisivät skaalautumisen pullonkaulat. Variaatioita:
+	* Pelissä on taskeja, jotka muuttavat samoja olioita, mutta järjestelmä suorittaa niitä eri palvelimilla. Olioiden master-kopiota pallotellaan turhaan useiden palvelimien kesken.
+	* Pelissä on pitkäkestoisia taskeja, jotka muuttavat joitakin olioita, joita myös rinnakkaiset lyhytkestoiset taskit muuttavat, mistä seuraa näiden pitkäkestoisten taskien nälkiintyminen, kun niitä joudutaan yrittämään moneen kertaan.
+	* Pelissä on rekisteröitymis-task, jonka ilmentymät pitää suorittaa peräkkäin, koska ne kaikki muuttavat samaa dataa. Järjestelmä ajaa taskit samalla palvelimella, mutta rinnakkaisissa työsäikeissä, joten rinnakkain suoritetuista taskeista aina vain yksi pääsee läpi ja muut nälkiintyvät.
+
+
+Joitakin saman aihepiirin ohjelmia:
+
+http://stackoverflow.com/questions/763413/architecture-for-a-machine-database
+
+http://www.nagios.org/
+"Enterprise-Class Open Source Monitoring. Nagios is the leader in system, network, and application monitoring.	It's the industry standard for good reason."
+
+http://www.cacti.net/
+"Cacti is a complete network graphing solution designed to harness the power of RRDTool's data storage and graphing functionality. Cacti provides a fast poller, advanced graph templating, multiple data acquisition methods, and user management features out of the box. All of this is wrapped in an intuitive, easy to use interface that makes sense for LAN-sized installations up to complex networks with hundreds of devices."
+
+https://fedorahosted.org/cobbler/
+"Cobbler is a Linux installation server that allows for rapid setup of network installation environments."
+
+http://reductivelabs.com/products/puppet/
+"Puppet, the configuration management solution. The Puppet framework provides a means to describe IT infrastructure as policy, execute that policy to build services then audit and enforce ongoing changes to the policy."
+
+
+	CRASH-ONLY SOFTWARE
+
+Tee Dimdwarfista sellainen, että se kaatuu ja toipuu varmasti ja nopeasti. Käytä erillistä bootstrap/watchdog-prosessia, joka käynnistää Dimdwarfin ProcessBuilder:lla ja sammuttaa sen Process.destroy():lla. Mahdollisesti ota heap dump, thread dump yms. (http://java.sun.com/javase/6/docs/technotes/tools/#troubleshoot) mikäli palvelin sammutetaan sekoamisen vuoksi.
+
+http://lwn.net/Articles/191059/
+	"Crash-only software is software that crashes safely and recovers quickly. The only way to stop it is to crash it, and the only way to start it is to recover. A crash-only system is composed of crash-only components which communicate with retryable requests; faults are handled by crashing and restarting the faulty component and retrying any requests which have timed out. The resulting system is often more robust and reliable because crash recovery is a first-class citizen in the development process, rather than an afterthought, and you no longer need the extra code (and associated interfaces and bugs) for explicit shutdown. All software ought to be able to crash safely and recover quickly, but crash-only software must have these qualities, or their lack becomes quickly evident."
+	"Crash-only design helps you produce more robust, reliable software, it doesn't exempt you from writing robust, reliable software in the first place."
+	"One of the ideas in crash-only software is that if a component is behaving strangely or suffering some bug, you can just crash it and restart it, and more than likely it will start functioning again. This will often be faster than diagnosing and fixing the problem by hand, and so a good technique for high-availability services. Some programmers overuse the technique by deliberately writing code to crash the program whenever something goes wrong, when the correct solution is to handle all the errors you can think of correctly, and then rely on crash/restart for unforeseen error conditions. Another overuse of crash/restart is that when things go wrong, you should crash and restart the whole system. One tenet of crash-only system design is the idea that crash/restart is cheap - because you are only crashing and recovering small, self-contained parts of the system (see the paper on microreboots)."
+	"There is a subtle implementation point that is easy to miss, though: the crash mechanism has to be entirely outside and independent of the crash-only system - hardware power switch, kill -9, shutting down the virtual machine. If it is implemented through internal code, it takes away a valuable part of crash-only software: that you have an all-powerful, reliable method to take any misbehaving component of the system and crash/restart it into a known state."
+
+
+>> 21.4.2009
+
+Relaatiotietokannat ovat kuolemassa, oliotietokannat ovat korvaamassa.
+
+http://kfalck.net/2009/02/07/sun-tappaa-mysqln-ja-on-aikakin
+http://kfalck.net/2008/04/08/internet-skaalautuu-ja-relaatiotietokanta-kuolee
+http://mashable.com/2008/04/08/google-app-engine/
+http://highscalability.com/scalr-open-source-auto-scaling-hosting-amazon-ec2
+
+Joitakin järjestelmiä:
+
+http://couchdb.apache.org/
+""
+Apache CouchDB is a distributed, fault-tolerant and schema-free document-oriented database accessible via a RESTful HTTP/JSON API. Among other features, it provides robust, incremental replication with bi-directional conflict detection and resolution, and is queryable and indexable using a table-oriented view engine with JavaScript acting as the default view definition language.
+
+CouchDB is written in Erlang, but can be easily accessed from any environment that provides means to make HTTP requests. There are a multitude of third-party client libraries that make this even easier for a variety of programming languages and environments.
+""
+
+http://code.google.com/appengine/docs/python/datastore/
+""
+The Python Datastore API - The App Engine datastore is a schemaless object datastore, with a query engine and atomic transactions. The Python interface includes a rich data modeling API and a SQL-like query language called GQL.
+""
+
+http://stnor.wordpress.com/2008/05/25/cache-aside-write-behind-magic/
+Esitelty joitakin gata grid -vaihtoehtoja:
+- Oracle Coherence
+- Gigaspaces XAP
+- Terracotta DSO
+
+
+>> 21.4.2009
+
+	CLUSTER MANAGER WEB INTERFACE / ADMIN PANEL
+
+Jokaisella nodella pyörii integroitu webbipalvelin, josta pääsee hallitsemaan klusteria. Dimdwarfin ilmaisversioon sisältyy adminpaneelin käyttötunnuksien hallinta, klusterin palvelimien hallinta ja perustiedot klusterin toiminnasta. Edistyneet tiedot klusterin toiminnasta ja klusterin profilointi vaatii kaupallisen laajennuksen (vrt. Terracotta, http://www.terracotta.org/web/display/enterprise/Product+Matrix http://www.terracotta.org/web/display/docs/Terracotta+Operations+Center).
+
+Olisi myös toivottavaa, että järjestelmä pystyy käynnistämään nodeja uusilla palvelimilla, kun klusterin suoritusaste nousee. Siihen voidaan tarvita vielä yhtä ulkoista hallintaohjelmaa, joka pyörii pienenä taustaprosessina jokaisella palvelimella. Voi myös olla mahdollista, että tämä hoituu jo komentorivityökaluilla ja jollain kolmannen osapuolen palvelinhallintasoftalla.
+
+Profilointi ym. laajennusten asentaminen tapahtuu kopioimalla laajennuspaketti palvelimen extensions-kansioon, mistä palvelin tunnistaa sen automaattisesti käynnistyksen yhteydessä. Laajennuksia voi asentaa myös adminpaneelin kautta, jolloin järjestelmä huolehtii sen kopioinnista kaikille nodeille. Tämä jälkimmäinen tapa olisi käyttäjän kannalta paras, koska silloin klusterin hallinta keskitetysti on helpompaa. Samaa julkaisujärjestelmää voitaneen käyttää sovelluksen ja palvelimen päivittämiseen.
+
+Laajennuksilla voi olla riippuvuuksia toisiin laajennuksiin, jolloin laajennusta ei pysty käynnistämään ellei sen riippuvuuksia ole saatavilla. Jos ne ovat saatavilla, niin ensin kaikki riippuvuudet käynnistetään automaattisesti. Tällöin systeemiin jää merkintä, että kyseessä on implisiittinen laajennus, ja jos eksplisiittisesti käynnistetty laajennus sammutetaan, niin sen implisiittisesti käynnistetyt riippuvuudet sammutetaan myös.
+
+Laajennuksilla on suora pääsy pääsäikeen event-jonoon ja sen tapahtumankäsittelijöihin, niin että laajennukset voivat suorittaa omia komentojaan nodella. Laajennukset ovat tietoisia klusterin rakenteesta ja pystyvät lähettämään omia komentojaan toisille klusterin palvelimille.
+
+On mahdollista, että laajennuksella on yksi master-node, joka ohjaa laajennuksen toimintoja, ja muilla nodeilla laajennus toimii slave-moodissa. Järjestelmä huolehtii tällöin siitä, että laajennukselle valitaan aina tasan yksi node toimimaan masterina. Jos laajennuksen master kaatuu, niin yhdellä slave-nodella laajennus sammutetaan ja käynnistetään uudestaan master-tilassa.
+
+Webbikäli voisi myös toimia master-moodissa, niin se kuluttaisi resursseja vain yhdeltä nodelta (slave-nodet olisivat kevyitä web-proxyjä). Olisi parasta, että webbikäli on toteutettu laajennuksena, niin palvelimen ytimellä ei olisi siihen mitään riippuvuuksia ja sen voisi halutessaan kytkeä päälle tai pois päältä.
+
+
+	CLUSTER MANAGER CONSOLE
+
+Klusterin hallinta, laajennusten asentaminen ja kontigurointi on oltava hoidettavissa komentorivin kautta, siltä varalta että adminpaneeli-laajennusta ei ole asennettuna tai se on rikki. Näin saadaan myös yhtenäinen rajapinta klusterin ja laajennusten hallitsemiseksi adminpaneelin kautta. (vrt. Terracotta, http://www.terracotta.org/web/display/docs/Tools+Overview)
+
+Esimerkkejä komennoista:
+
+	<cluster-name>
+		allowed names: [a-z][a-z0-9_\-]?
+		unallowed names will raise an error
+		names must be unique
+	<application>, <extension>
+		allowed names: [a-zA-Z][a-zA-Z0-9_\-\.]?
+		unallowed characters will be replaced with "_"
+		names do not need to be unique; files are identified by SHA-1 and will be renamed if needed (use SHA-1 as name, provide original name as extra info)
+	
+	All commands are blocking and wait for the command to be fully completed. If it takes a long time, will print status information (for example when waiting for a node to sleep, show how many tasks are still running).
+
+
+	dimdwarf apps --local
+			(prints a list of all known applications; from local apps directory)
+	dimdwarf install <cluster-name> <application>
+	dimdwarf install <cluster-name> --file <dapp-file>
+			(starts a new cluster, with one node, using the application; fails if cluster name exists on tracker (the tracker will ping the nodes before failing))
+	dimdwarf upgrade <cluster-name> <application>
+	dimdwarf upgrade <cluster-name> --file <dapp-file>
+			(upgrades a cluster to use a new version of the application)
+	dimdwarf uninstall <cluster-name>
+			(kills all nodes of a cluster)
+
+	dimdwarf start <cluster-name>
+			(starts a new node in the cluster, prints its id)
+	dimdwarf sleep <cluster-name>@<node-id>
+			(stops a node from executing new tasks, moves work and data ownership to other nodes, but does not kill it)
+	dimdwarf awake <cluster-name>@<node-id>
+			(resumes the normal operation of a node)
+	dimdwarf kill <cluster-name>@<node-id>
+			(removes a node from a cluster, kills the process forcefully, "crash-only software")
+	dimdwarf resurrect <cluster-name>@<node-id>
+			(restarts a previously killed node, with a new id, trying to recover the dead node's data)
+
+	dimdwarf status
+			(prints the status of all clusters found from the tracker)
+	dimdwarf status --local
+			(prints the status of nodes on current machine)
+	dimdwarf status <cluster-name>
+			(prints the status of a cluster)
+	dimdwarf status <cluster-name>@<node-id>
+			(prints the status of a node)
+
+	dimdwarf config --local
+			(prints a list of available local options; only built-in)
+	dimdwarf config --local <name>=[<value>]
+			(sets or clears a local option)
+	dimdwarf config --local tracker=<ip>:<port>[,<ip>:<port>]...
+			(sets the location of cluster trackers which know about all clusters and nodes)
+
+	dimdwarf config <cluster-name>
+			(prints a list of available cluster options; both built-in and extensions)
+	dimdwarf config <cluster-name> <name>=[<value>]
+			(sets or clears a cluster option)
+
+	dimdwarf extensions --local
+			(prints a list of all known extensions; from local extensions directory)
+	dimdwarf extensions <cluster-name>
+			(prints a list enabled extensions on a cluster)
+	dimdwarf extensions <cluster-name> enable <extension>
+	dimdwarf extensions <cluster-name> enable --file <dext-file>
+			(enables an extension on a cluster)
+	dimdwarf extensions <cluster-name> disable <extension>
+			(disables an extension on a cluster)
+
+	dimdwarf purge --local [<number> days | <number> h | <number> min]
+			(removes data and logs from local nodes which have been dead longer than the specified number of time; defaults to 0 seconds)
+
+
+	PALVELIMEN HAKEMISTORAKENNE
+
+Ehdotus palvelimen hakemistorakenteeksi:
+
+/dimdwarf-1.0
+	/README.txt
+	/LICENSE.txt
+	/bin		- käynnistysskriptit, bootstrap/watchdog
+	/lib		- ytimen pakolliset kirjastot
+	/config		- konfigurointitiedostot, mieluiten vain yksi "dimdwarf.properties"
+	/extensions
+		/dimdwarf-webui-1.1.0.dext		- vakiolaajennus
+		/dimdwarf-monitorplus-1.3.1.dext	- kaupallinen laajennus
+	/apps
+		/foobar-1.0.0.dapp
+		/foobar-1.0.2.dapp
+		/humbug-1.5.dapp
+	/data
+		/foobar-prod@00000000-00000001
+			/cluster	= foobar-prod
+			/node		= 00000000-00000001
+			/ip		= 10.0.0.123
+			/killport	= 2501	(kill request)
+			/clusterport	= 2502
+			/clientport	= 2503
+			/pid		= 6131	(jos mahdollista, ainakin Unixeissa)
+			/started	= 2009-04-21T14:09:30.161Z
+			/lastseen	= 2009-04-21T14:24:21.981Z
+			/db/*
+		/foobar-prod@00000000-00000002
+		/humbug-prod@00000000-000002fe
+		/humbug-qa1@00000000-0000a413
+	/logs
+		/foobar-prod@00000000-00000001
+			/all-error.log
+			/all-warn.log
+			/all-info.log
+			/all-debug.log
+			/all-trace.log
+			/master.log
+			/worker-1.log
+			/worker-2.log
+			/worker-3.log
+			/worker-4.log
+		/foobar-prod@00000000-00000002
+		/humbug-prod@00000000-000002fe
+		/humbug-qa1@00000000-0000a413
+
+Extensions-kansioon asennetut laajennukset tunnistetaan automaattisesti, mutta ne eivät ole oletuksena päällä. Kytkentä päälle tapahtuu sovelluskohtaisesti hallintapaneelin tai komentorivin kautta. Laajennusten on oltava käynnistettävissä ja sammutettavissa ajonaikaisesti, ja niiden hallinta pitää onnistua keskitetysti miltä tahansa klusterin nodelta. Tässä voitaneen hyödyntää OSGIa.
+
+Apps-kansiossa ovat palvelimella ajettavien sovellusten tiedostot. Useat eri sovellukset voivat käyttää samoja binäärejä, jolloin kullakin sovelluksella on oma nimetty klusterinsa. Myös saman klusterin eri versiot voivat olla samanaikaisesti apps-kansiossa, kunnes klusteri on päivitetty uuteen versioon.
+
+Extensions ja Apps -kansioissa olevien tiedostojen levitys klusterin kaikille nodeille tapahtuu automaattisesti, jos jollain nodella ei ole kyseistä pakettia. Järjestelmä tarkistaa paketin SHA-1:n perusteella, että kaikilla nodeilla on sama versio paketista. Tietokannassa on tallessa tieto siitä, että mikä kirjasto on asennettuna: SHA-1, nimi, versio, asennusaika ja jakelupaketin tiedostonimi.
+
+Data-kansiossa on kullekin nodelle oma kansionsa, johon on tallennettu noden konfiguraatio ja tietokanta. Vastaavasti Logs-kansiossa on nodekohtaiset logitiedostot. Kansiot on nimetty muotoon "<cluster-name>@<node-id>".
+
+DEXT-tiedostot ovat ZIP-tiedostoja, joiden rakenne on:
+	/dimdwarf-extension.xml
+	/lib/*.jar
+
+DAPP-tiedostot ovat ZIP-tiedostoja, joiden rakenne on:
+	/dimdwarf-app.xml
+	/lib/*.jar
+
+
+>> 23.4.2009
+
+	HIGH AVAILABILITY, FAST RECOVERY
+
+Google File Systemissä master-node toipuu hyvin nopeasti, koska tiedostosta luettavaa metadataa on vain n. 60 MB. Dimdwarfin tapauksessa metadataa voi olla enemmän, koska oliot ovat pienempiä kuin GFS:n isot tiedostot. Pyrittävä siihen, että jos noden käynnistää uudestaan, niin ei kulu montaakaan sekuntia kunnes klusteri on taas toimintakykyinen.
+
+Yksi vaihtoehto voisi olla, että directory-nodeja on niin monta kappaletta, että kullakin niistä on indeksoituna vain pieni osa oliosta. Silloin palautettavaa dataa olisi vähemmän. Oliot voidaan vaikka osittaa 256 osaan niiden ID:n jakojäännöksen perusteella, ja sitten nämä ositukset on jaettu tasaisesti kaikille klusterin koneille. Jos jokin node menee alas, niin sen backup-node ottaa vallan, ja jos sekin menee alas, niin tiedot voidaan palauttaa ottamalla yhteyttä kaikkiin nodeihin.
+
+
+>> 23.4.2009
+
+	DIMDWARF TRACKER
+
+Palvelimet ottavat yhteyttä trackeriin ja tracker pitää listaa aktiivisista palvelimista. Trackereita voi olla yksi tai useampi vikasietoisuuden takaamiseksi.
+
+	- Palvelimet saavat trackerilta tiedon, että mihin osoitteisiin (cluster-port) niiden pitää yhdistää, jotta ne voisivat liittyä klusteriin.
+	
+	- Kuormantasaajat saavat trackerilta tiedon, että mihin osoitteisiin clienttien pyynnöt pitää ohjata (cluster-port), jotta ne menisivät tietyn klusterin koneille.
+	
+	- Hallintaohjelmat saavat trackerilta tiedon klusterien palvelimista (cluster-port), joihin yhdistämällä se voi seurata klusterin tilaa. Lisäksi hallintaohjelmat käyttävät kullakin fyysellä koneella pyörivän hallintaprosessia (manager-port), jonka kautta voi käynnistää uusia palvelimia.
+
+Palvelimien käyttämät portit voivat olla satunnaisesti valittuja. Ainoastaan kuormantasaajien ulkoinen portti pitää olla kiinteä, jotta clientit voivat yhdistää siihen.
+
+Formaatti:
+
+<network>
+<manager ip="10.0.0.11" manager-port="1650" />
+<node cluster="foobar-qa" nodeid="000000a6" ip="10.0.0.11" cluster-port="1651" client-port="1652" />
+<manager ip="10.0.0.12" manager-port="1979" />
+<node cluster="foobar-qa" nodeid="000000a7" ip="10.0.0.12" cluster-port="1980" client-port="1981" />
+<node cluster="foobar-dev" nodeid="00000004" ip="10.0.0.12" cluster-port="1996" client-port="1997" />
+</network>
+
+
+	DIMDWARF LOAD BALANCER
+
+Tarvitaanko kuormantasaaja, joka on yhteistoiminnassa Dimdwarfin kanssa? Pitäisikö myös kuormantasaajien näkyä trackerissa, niin että klusteri voisi hallita niitä? Vai voidaanko muulla tavoin neuvoa kuormantasaajia ohjaamaan pyynnöt toiselle koneelle, jos yksi palvelin menee alas?
+
+esim.
+<balancer cluster="foobar-qa" ip="10.0.0.200" client-port="80" />
+<balancer cluster="foobar-dev" ip="10.0.0.200" client-port="81" />
+
+Jos kuormantasaaja on erillinen ohjelma (layer 7 load balancing), niin se pyörii yhdellä tai useammalla koneella ja on yhteydessä trackeriin. Palomuuri on auki kiinteään kuormantasaajan porttiin. Kuormantasaaja tietää porttiin tulleista pyynnöistä, että mihin klusteriin ne pitää ohjata. Trackerin antamien tietojen perusteella se tietää missä IP-osoitteessa ja portissa on klusterimen palvelin-nodeja. Jos node menee alas, niin kuormantasaaja ohjaa pyynnöt toiselle koneelle, ilman että TCP-yhteys clienttiin katkeaa.
+
+Mutta onko tällöin kuormantasaajalla ja tavallisella palvelin-nodella mitään eroa, mikä tekee kuormantasaajan käytöstä tarpeellista? Pitäisikö sittenkin tehdä niin, että kuormantasaajat ovat muuten samanlaisia kuin muut klusterin nodet, mutta ne eivät sisällä muuta dataa kuin mitä vaaditaan session pitämiseksi yllä ja pyyntöjen ohjaamiseksi aina samalle nodelle? Jos backend-node kaatuu, niin kuormantasaaja voi toistaa viimeksi tekemänsä pyynnöt, jotka eivät vielä olleet saaneet committed-vahvistusta.
+
+Joitakin etuja:
+	- Kuormantasaaja voi olla ainoa suoraan nettiin yhteydessä oleva kone, joten klusteri on paremmin turvassa palomuurin takana.
+	- Riittää varmistaa, että kuormantasaajilla on vakioportti käytettävissä. Normaalit nodet voivat käyttää satunnaisia portteja.
+	- Kuormantasaaja voi muuntaa pyynnöt klusterin ymmärtämiksi viesteiksi, jolloin kuormantasaaja voi käyttää clientiin päin jotain muuta protokollaa (esim. HTTP).
+
+Idea klusterin rakenteeksi:
+
+  [ CLIENT (0..*) ]
+       |
+       | fixed IP/port
+       |
+  [ HARDWARE LOAD BALANCER (2) ]
+       |
+       | semi-persisted TCP connection, round robin
+       |
+  [ DIMDWARF GATEWAY (2..*) ]
+       |
+       | dynamic message target based on data locality
+       |
+  [ DIMDWARF BACKEND (2..*) ]
+
+
+Client yhdistää kiinteään IP-osoitteeseen ja porttiin, jonka tavallinen load balancer switch ohjaa yhdelle gateway-koneista. Load balancer pyrkii ohjaamaan kaikki clientin pyynnöt samalle gatewaylle, mutta se ei ole pakollista gatewayn toiminnan kannalta. Gateway muuntaa clientin lähettämän viestin klusterin käyttämän sisäisen protokollan viestiksi ja ohjaa sen yhdelle backend-koneista. Backend antaa paluuviestinä vihjeen, että mille backend-koneelle gatewayn kannattaa jatkossa lähettää tämän clientin viestit, jos suositeltu backend on eri kuin mille gateway lähetti tämän viestin.
+
+Huom! SimpleSgsProtocol sisältää RECONNECT-komennon, joka sisältää ReconnectKey:n (toteutettu SessionID:nä), jonka avulla katkennut yhteys voidaan assosioida aiemmin luotuun sessioon.
+
+Tämän tavoitteena on, että gateway on stateless ja siten helposti korvattavissa toisella gatewayllä. Ainoastaan latenssi voi kärsiä, kun juuri työnsä aloittava gateway ohjaa pyynnöt aluksi ei-optimaaliselle backendille. Backendit ohjaavat pyynnöt joka tapauksessa oikealle backendille (max 1 hyppy).
+
+Lisäksi koska clientit eivät ole suorassa yhteydessä backendiin, niin (1) backendit pysyvät paremmin palomuurin takana turvassa, (2) latenssien optimoimiseksi viestit vastaanottavaa gatewaytä voidaan vaihtaa clientin huomaamatta, ja (3) backendin kaatuminen jää clientilta huomaamatta.
+
+Uusi versio trackerin antaman datan formaatista:
+
+<network>
+<manager ip="10.0.0.11" manager-port="1650" />
+<backend cluster="foobar-qa"  nodeid="000000a6" ip="10.0.0.11" backend-port="1651" />
+
+<manager ip="10.0.0.12" manager-port="1979" />
+<backend cluster="foobar-qa"  nodeid="000000a7" ip="10.0.0.12" backend-port="1980" />
+<backend cluster="foobar-dev" nodeid="00000004" ip="10.0.0.12" backend-port="1996" />
+
+<manager ip="10.0.1.20" manager-port="2605" />
+<gateway cluster="foobar-qa"  nodeid="000000a8" ip="10.0.1.20" backend-port="6193" public-port="80" />
+<gateway cluster="foobar-dev" nodeid="00000005" ip="10.0.1.20" backend-port="3219" public-port="81" />
+</network>
+
+
+Apache MINA sopii luultavasti gatewayn toteuttamiseksi.
+! http://www.nabble.com/Load-Balancing-Socket-connections-ts19470828.html
+
+Pen voisi sopia hardware load balancerin korvikkeeksi
+! http://siag.nu/pen/
+"This is pen, a load balancer for "simple" tcp based protocols such as http or smtp. It allows several servers to appear as one to the outside and automatically detects servers that are down and distributes clients among the available servers. This gives high availability and scalable performance."
+
+http://en.wikipedia.org/wiki/Load_balancing_(computing)
+"The balancing service is usually provided by a dedicated program or hardware device (such as a multilayer switch). It is commonly used to mediate internal communications in computer clusters, especially high-availability clusters."
+"For Internet services, the load balancer is usually a software program which is listening on the port where external clients connect to access services. The load balancer forwards requests to one of the "backend" servers, which usually replies to the load balancer. This allows the load balancer to reply to the client without the client ever knowing about the internal separation of functions. It also prevents clients from contacting backend servers directly, which may have security benefits by hiding the structure of the internal network and preventing attacks on the kernel's network stack or unrelated services running on other ports."
+
+... http://en.wikipedia.org/wiki/Application_Delivery_Controller
+"An application delivery controller (ADC) is a network device in the datacenter that helps perform common tasks done by web sites in an effort to remove load from the web servers themselves. Many also provide load balancing. They usually sit between the firewall/router and the web farm. The ADC is in many cases described as the next generation load balancer. They tend to offer more advanced features such as content manipulation, advanced routing strategies as well as highly configurable server health monitoring."
+
+IP Routing - How Does Load Balancing Work?
+... http://www.cisco.com/en/US/tech/tk365/technologies_tech_note09186a0080094820.shtml
+
+It's Always the Load Balancer
+... http://www.oreillynet.com/pub/a/oreilly/networking/news/slb_0301.html
+
+Barracuda Load Balancer (jokin tyypillinen laite)
+... http://www.barracudanetworks.com/ns/products/balancer_overview.php
+

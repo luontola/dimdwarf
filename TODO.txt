@@ -1,0 +1,53 @@
+
+14.2.2009
+TODO: Älä käytä transparent referencejä Dimdwarfin coressa. Toteuta ydintoiminnot turvautumatta tref:iin, koska tref puolestaan vaatii AOP:tä, mikä vaikeuttaa ydintoimintojen testausta.
+
+TODO: Muuta dimdwarf-core:n kaikki paukkaukset net.orfjackal.dimdwarf.core -alkuisiksi.
+
+
+>> http://stackoverflow.com/questions/533102/what-strategy-do-you-use-for-package-naming-in-java-projects-and-why/533397#533397
+""
+There are usually both levels of division present. From the top, there are deployment units. These are named 'logically' (in your terms, think Eclipse features). Inside deployment unit, you have functional division of packages (think Eclipse plugins).
+
+For example, feature is com.feature, and it consists of com.feature.client, com.feature.core and com.feature.ui plugins. Inside plugins, I have very little division to other packages, although that's not unusual too.
+
+Update: Btw, there is great talk by Juergen Hoeller about code organization at InfoQ: http://www.infoq.com/presentations/code-organization-large-projects. Juergen is one of architects of Spring, and knows a lot about this stuff.
+
+- Peter Štibraný
+""
+""
+Reason is that "com.company.project.feature" is unit of deployment. At this level, some features are optional, and can be skipped (i.e. not deployed). However, inside feature, things are not optional, and you usually want them all. Here it makes more sense to divive by layers
+
+- Peter Štibraný
+""
+
+
+>> http://stackoverflow.com/questions/533102/what-strategy-do-you-use-for-package-naming-in-java-projects-and-why/534501#534501
+""
+For package design, I first divide by layer, then by some other functionality.
+
+There are some additional rules:
+
+  1. layers are stacked from most general (bottom) to most specific (top)
+  2. each layer has a public interface (abstraction)
+  3. a layer can only depend on the public interface of another layer - (encapsulation)
+  4. a layer can only depend on more general layers (dependencies from top to bottom)
+  5. a layer preferably depends on the layer directly below it
+
+So, for a web application for example, you could have the following layers in your application tier (from top to bottom):
+
+  - presentation layer: generates the UI that will be shown in the client tier
+  - application layer: contains logic that is specific to an application, stateful
+  - service layer: groups functionality by domain, stateless
+  - integration layer: provides access to the backend tier (db, jms, email, ...)
+
+For the resulting package layout, these are some additional rules:
+
+  - the root of every package name is <prefix.company>.<appname>.<layer>
+  - the interface of a layer is further split up by functionality: <root>.<logic>
+  - the private implementation of a layer is prefixed with private: <root>.private
+
+
+- eljenso
+""
+

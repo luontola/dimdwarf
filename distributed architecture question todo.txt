@@ -1,0 +1,34 @@
+
+Here is the kind of architecture that I have been thinking about using. Would you know some algorithms that might be useful in this situation?
+
+The target audience of the system is developers of MMO games. MMO games are expected to have the following characteristics:
+
+- Changes to the data are mostly local, since players can affect in-game objects only when they are near them. This natural concurrency should be exploited for scalability. Smart algorithms are needed, so that the players and the data that they operate on will be moved to the same server.
+
+- Low worst-case latency is more important than throughput. Real-time games are very sensitive to lag.
+
+- Consistency is more important than durability. Dupe bugs (duplicating things like gold or items) and other consistency problems are not wanted in MMO games. But losing recent changes (some seconds or minutes) because of a system failure does not spoil the game experience.
+
+
+The system is a distributed object database, providing high availability and scalability, using a shared-nothing architecture. The objects are stored in the database in a serialized format, using key-value pairs of byte arrays. Code is executed inside the system as short transactional asynchronous tasks. If a task fails because of a transaction conflict, the transaction will be rolled back and the task retried.
+
+Each object has a master copy of it in one of the server nodes, and multiple replica copies of it on other server nodes. Only the master copy may be written by the server where it is located, so all writes are local. It is possible to change which node has the master copy of an object, so that related tasks and objects would be located on the same node. In case of a node failure, the replica copies will be used to recover a recent version of the object.
+
+The system uses [multiversion concurrency control](http://en.wikipedia.org/wiki/Multiversion_concurrency_control), [snapshot isolation](http://en.wikipedia.org/wiki/Snapshot_isolation). Tasks read a consistent snapshot of the system's state, which is not necessarily up to date (by maybe some tens of milliseconds). Two transactions can not write the same object concurrently.
+
+When a request (from a user or a scheduled task) arrives to the system, the task will be moved to the server node which has the most of the data needed by that task locally, and the task will be executed there.
+
+- **Question:** What algorithms can be used to determine what data is used by the task, and where that data is located?
+
+When a task modifies the master copy of an object, then when the task commits, the updated object's data will be sent to all other nodes which have a replica copy of that object. Asynchronous replication is used. It should be ensured that each object has at least one replica, so that the system may recover from the failure of the master copy's node.
+
+- **Question:** What if the node crashes right after sending a response to the client, but before the modifications have been replicated to another node? How to detect that some of the recent transactions have failed, so that the client could be notified about it? Holding back sending the response to the client until the data is replicated would increase latency.
+
+When a task modifies the replica copy of an object, then the node will ask for the master node of that object to transfer the ownership of that object here, so that this node's copy could be upgraded from a replica to the master copy. The task will block while waiting for the ownership transfer over network. If the master copy was modified concurrently, the task will be rolled back and retried.
+
+When a task tries to read an object of which this node does not have a copy, it will find out which node has the master copy, and will request a replica copy of it. The current task will block while waiting for the copy to be transferred over the network to it, after which the task will continue execution.
+
+- **Question:** How to locate which node has the master copy of an object? I think one possibility would be to have directory nodes which know the current location of each object. What other methods there are, for example could some P2P algorithm be used to locate objects by their ID? How important is it to have only one types of nodes, as said [here](http://www.webperformancematters.com/journal/2007/8/21/asynchronous-architectures-4.html) about symmetry?
+
+- **Question:** How to make sure that this and the other blocking operations in the system do not cause deadlock?
+

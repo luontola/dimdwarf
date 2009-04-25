@@ -1,0 +1,124 @@
+15.8.2008 18:55-20:16	1,5h	* Project structure
+17.8.2008 03:22-03:40	0,5h	* Project structure
+
+17.8.2008 19:52-24:00	4h	Transactions
+18.8.2008 00:00-0:32	0,5h	Transactions
+
+18.8.2008 00:32-02:35	2h	Database: blob
+18.8.2008 14:56-17:30	2,5h	Database: in-memory database
+18.8.2008 22:22-24:00	1,5h	Database: in-memory database
+19.8.2008 00:00-01:33	1,5h	Database: in-memory database
+19.8.2008 12:55-13:41	1h	Database: in-memory database
+19.8.2008 17:32-17:54	0,5h	Database: in-memory database
+20.8.2008 16:03-18:19	2h	Database: in-memory database
+21.8.2008 13:59-15:25	1,5h	Database: in-memory database
+24.8.2008 22:57-24:00	1h	Database: in-memory database
+25.8.2008 00:00-01:24	1,5h	Database: in-memory database
+
+25.8.2008 16:16-16:56	0,5h	Entities: creating references
+31.8.2008 13:47-14:10	0,5h	* Project refactoring: renamed a module, updated copyrights
+31.8.2008 15:34-19:27	4h	Entities: reading references, flushing entities
+1.9.2008 13:58-14:19	0,5h	* Project refactoring: documented the thread-safeness of classes
+1.9.2008 14:19-16:39	2h	Entities: entity storage, serialization
+4.9.2008 19:22-21:49	2,5h	Entities: serialization
+
+4.9.2008 21:49-22:38	1h	Transparent references: convert JUnit tests to JDave specs
+5.9.2008 02:09-02:35	0,5h	* Minor refactoring, documented the thread-safeness of classes
+5.9.2008 15:33-16:22	1h	Thread context
+5.9.2008 16:22-19:51	3,5h	Transparent references: convert JUnit tests to JDave specs
+
+9.9.2008 15:09-16:43	1,5h	Bytecode instrumentation: utilities
+9.9.2008 16:43-18:21	1,5h	Transparent references: generate equals and hashCode methods, tref proxy with concrete superclass
+9.9.2008 18:21-19:18	1h	Bytecode instrumentation: java.lang.instrument agent
+9.9.2008 21:44-23:47	2h	Transparent references: tag entities with annotations
+
+9.9.2008 23:47-24:00	0h	* Project refactoring: reordered packages to limit public API
+10.9.2008 00:00-00:54	1h	* Project refactoring: reordered packages to limit public API
+
+11.9.2008 18:20-19:58	1,5h	Database: multiple database tables
+11.9.2008 21:00-23:17	2,5h	Database: multiple database tables
+
+11.9.2008 23:17-24:00	0,5h	* Project refactoring: reordered packages, removed Entities.getId() from public API, broke Context's dependencies
+12.9.2008 00:00-00:19	0,5h	* Project refactoring: reordered packages, removed Entities.getId() from public API, broke Context's dependencies
+
+12.9.2008 16:14-18:14	2h	Iterating database keys
+12.9.2008 18:14-20:23	2h	Entity bindings, iterating bindings
+12.9.2008 20:35-22:57	2,5h	Entity bindings, accessing entities by ID, iterating entities
+
+13.9.2008 20:00-21:10	1h	Task scope
+13.9.2008 21:10-24:00	3h	Running tasks, Guice integration
+14.9.2008 00:00-01:02	1h	Running tasks, Guice integration
+
+14.9.2008 (at times)	1h	* Project refactoring: improved naming and readability
+
+29.9.2008 12:56-13:44	1h	* Project refactoring: documented transaction isolation levels
+
+3.10.2008 19:05-21:13	2h	* Writing documentation, updating web site style
+
+17.10.2008 16:44-17:20	0,5h	* Project refactoring: documented warnings for ThreadContext, TODO items for TaskExecutor
+19.10.2008 05:10-06:39	1,5h	* Project refactoring: improved code readability
+
+29.10.2008 01:35-02:05	0,5h	* Project refactoring: tidied unchecked casts
+30.10.2008 14:09-15:49	1,5h	* Project refactoring: byte representation of BigInteger
+
+2.11.2008 23:36-24:00	0,5h	* Project refactoring: refactored public API
+3.11.2008 00:00-01:46	1,5h	# EntityManager refactoring: simplified EntityManager
+
+12.11.2008 21:59-23:47	1,5h	* Project refactoring: nested task filters
+13.11.2008 17:55-18:53	1h	* Project refactoring: tidied guice modules, fixed EntityIdFactory's scope
+17.11.2008 00:20-01:54	1,5h	* Project refactoring: some additions to project goals, create links from class names automatically, renamed dimdwarf-server module to dimdwarf-core
+
+17.11.2008 12:36-13:28	1h	* Project refactoring: added specs to web site
+18.11.2008 16:10-17:47	1,5h	# InMemoryDatabase refactoring: extracted VolatileDatabase* from InMemoryDatabase
+18.11.2008 19:14-20:13	1h	# InMemoryDatabase refactoring: extracted VolatileDatabase* from InMemoryDatabase
+19.11.2008 12:39-14:21	1,5h	# InMemoryDatabase refactoring: simplified InMemoryDatabaseTable's locking with GroupLock
+19.11.2008 14:49-16:31	2h	* Project refactoring: begun using JSR 305 annotations
+20.11.2008 18:18-24:00	5,5h	# InMemoryDatabase refactoring: refactored revision management of InMemoryDatabase
+21.11.2008 00:00-01:23	1,5h	# InMemoryDatabase refactoring: refactored revision management of InMemoryDatabase
+21.11.2008 12:38-13:39	1h	# InMemoryDatabase refactoring: extracted InMemoryDatabaseManager from InMemoryDatabase
+
+24.11.2008 20:05-24:00	4h	Task scheduling
+25.11.2008 00:00-01:33	1,5h	Task scheduling
+25.11.2008 15:27-19:03	3,5h	Task scheduling: transactions
+25.11.2008 22:05-24:00	2h	Task scheduling: cancelling tasks with ScheduledFuture
+26.11.2008 00:00-00:36	0,5h	Task scheduling: cancelling tasks with ScheduledFuture
+26.11.2008 19:49-24:00	4h	Task scheduling: refactored TaskScheduler to use RecoverableSet and allow takes outside task context, TaskThreadPool
+27.11.2008 00:00-01:54	2h	Task scheduling: TaskThreadPool
+27.11.2008 21:05-24:00	3h	Task scheduling: await until all running tasks have ended (TaskThreadPool), fixed concurrency bugs in tests, refactored tests
+28.11.2008 00:00-03:04	3h	Task scheduling: integration testing, task scheduling modules, finding and fixing concurrency bugs, made tests more robust
+
+29.11.2008 21:25-24:00	2,5h	Garbage collecting: MockGraph, ConcurrentMarkSweepCollector
+30.11.2008 00:00-01:07	1h	Garbage collecting: ConcurrentMarkSweepCollector
+30.11.2008 21:58-24:00	2h	Garbage collecting: ConcurrentMarkSweepCollector, EntityGraph
+1.12.2008 00:00-0:34	0,5h	* Project refactoring: refactored threading in tests
+2.12.2008 17:48-18:14	0,5h	# Task scheduling: fixed concurrency bugs in tests
+2.12.2008 19:50-22:26	2,5h	Garbage collecting: metadata for database entries
+2.12.2008 22:58-23:27	0,5h	* Project refactoring: renamed and reordered entity/binding database classes to *Repository and *Dao
+3.12.2008 19:50-24:00	4h	Garbage collecting: EntityGraph, transactionally isolated IterableKeys
+10.12.2008 18:36-22:00	3,5h	Garbage collecting: GC integration, running incremental tasks
+10.12.2008 22:00-24:00	2h	# Task scheduling: refactored SchedulingControl to be the top level object
+11.12.2008 00:00-00:21	0,5h	Garbage collecting: GC integration
+11.12.2008 15:29-22:28	7h	Garbage collecting: notify GC about reference mutations
+12.12.2008 12:38-17:48	5h	Garbage collecting: GC integration (mutator listeners)
+13.12.2008 17:30-18:54	1,5h	Task scheduling improvements: retry limits for failing tasks
+13.12.2008 18:54-19:29	0,5h	Garbage collecting: run GC without producing garbage
+13.12.2008 19:50-21:41	2h	Task scheduling improvements: retry limits for failing tasks, only transaction conflict exceptions may cause retry (refactored GroupLock)
+13.12.2008 21:41-23:14	1,5h	Garbage collecting: run GC without producing garbage
+14.12.2008 13:26-13:52	0,5h	Garbage collecting: got rid of DatabaseTableWithMetadata.getMetaTable
+18.12.2008 16:13-16:56	0,5h	* Project refactoring: separeted dimdwarf-api-internal to its own module (for Darkstar integration), reduced dependencies to EntityObject
+24.12.2008 17:39-18:26	1h	* Project refactoring: made AOP agent more configurable for Darkstar integration
+27.12.2008 16:40-18:40	2h	Entity improvements: generate equals/hashCode only for annotated entity classes, do not update unmodified entities to database
+27.12.2008 18:40-21:05	2,5h	Entity improvements: do not require entities using concrete-baseclass-proxies to have an accessible default constructor
+27.12.2008 21:05-23:40	2,5h	* Project refactoring: switching over to Git
+18.1.2009 18:10-19:38	1,5h	Task scheduling improvements: single-threaded execution mode for repeatedly failing tasks
+18.1.2009 19:38-20:05	0,5h	* Project refactoring: updated license and copyright statements
+--
+
+24.4.2009 16:30-17:20	1h	* Project refactoring: begun using Mockito
+
+
+next:
+	- refactor TaskSchedulerImpl
+	- refactor ConcurrentMarkSweepCollector (remove DatabaseTableWithMetadata)
+	- reference counting collector
+	- combined CMS+RC collector integration (run CMS periodically, once every N reference counting epochs)
