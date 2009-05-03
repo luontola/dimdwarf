@@ -970,7 +970,9 @@ Apps-kansiossa ovat palvelimella ajettavien sovellusten tiedostot. Useat eri sov
 
 Extensions ja Apps -kansioissa olevien tiedostojen levitys klusterin kaikille nodeille tapahtuu automaattisesti, jos jollain nodella ei ole kyseistä pakettia. Järjestelmä tarkistaa paketin SHA-1:n perusteella, että kaikilla nodeilla on sama versio paketista. Tietokannassa on tallessa tieto siitä, että mikä kirjasto on asennettuna: SHA-1, nimi, versio, asennusaika ja jakelupaketin tiedostonimi.
 
-Data-kansiossa on kullekin nodelle oma kansionsa, johon on tallennettu noden konfiguraatio ja tietokanta. Vastaavasti Logs-kansiossa on nodekohtaiset logitiedostot. Kansiot on nimetty muotoon "<cluster-name>@<node-id>".
+Data-kansiossa on kullekin nodelle oma kansionsa, johon on tallennettu noden konfiguraatio ja tietokanta.
+
+Vastaavasti Logs-kansiossa on nodekohtaiset logitiedostot. Kansiot on nimetty muotoon "<cluster-name>@<node-id>". Vanhat logitiedostot pyyhitään automaattisesti tietyn ajan päästä (ks. Release It! luku 5.4), oletuksena vaikka 30 päivää. Mieluiten kirjoita logit niille varattuun kansioon tai neuvo asennusohjeissa ylläpitäjää tekemään tarvittavat symboliset linkit.
 
 DEXT-tiedostot ovat ZIP-tiedostoja, joiden rakenne on:
 	/dimdwarf-extension.xml
@@ -1087,12 +1089,69 @@ http://en.wikipedia.org/wiki/Load_balancing_(computing)
 ... http://en.wikipedia.org/wiki/Application_Delivery_Controller
 "An application delivery controller (ADC) is a network device in the datacenter that helps perform common tasks done by web sites in an effort to remove load from the web servers themselves. Many also provide load balancing. They usually sit between the firewall/router and the web farm. The ADC is in many cases described as the next generation load balancer. They tend to offer more advanced features such as content manipulation, advanced routing strategies as well as highly configurable server health monitoring."
 
-IP Routing - How Does Load Balancing Work?
-... http://www.cisco.com/en/US/tech/tk365/technologies_tech_note09186a0080094820.shtml
-
 It's Always the Load Balancer
 ... http://www.oreillynet.com/pub/a/oreilly/networking/news/slb_0301.html
 
 Barracuda Load Balancer (jokin tyypillinen laite)
 ... http://www.barracudanetworks.com/ns/products/balancer_overview.php
+
+
+>> 30.4.2009
+
+Temporal and Behavioral Coupling in Distributed Systems
+http://www.infoq.com/news/2009/04/coupling
+""
+Usage of the *Command-oriented* design typically allows to lower the degree of temporal coupling, especially when asynchronous interactions are used. Coupling can be lowered even further by implementing a "resumable" programming model common for orchestration engines implementations. In this design:
+
+Senders typically determine what needs to be done, but rely on receivers to determine how to execute their instructions. This behavioral coupling can require providers to evolve (message formats, supported operations) in lockstep with changing consumer demands.
+
+Lowest degree of both temporal and behavioral coupling can be achieved in the case of the *Event-oriented* design, especially when it is coupled with a "resumable" programming model:
+
+Receivers determine both what needs to be done and how to do it based on the content of received messages. Can be difficult to trace the execution path of an end-to-end transaction or activity. Exposing an "ExtinguishFire" operation is a command-oriented way of executing a business process; acting on "FireStarted" notifications an event-oriented approach.
+""
+
+Dimdwarfin protokolla olisi hyvä suunnitella mahdollisimman event-tyyppiseksi. Viestin lähettäjällä pitäisi olla mahdollisimman vähän odotuksia siitä, että miten sen lähettämä viesti lähetetään. Esimerkiksi backup-noden ei pitäisi tarvita lähettää kuittausta commit-viestistä master-nodelle. Sen sijaan, directory-node voi havaita, että oliosta ei ole riittävästi kopioita, jolloin se voi ~1 sekuntin timeoutin jälkeen lähettää master-nodelle viestin, että backup-millä nodeilla on backup-kopio ja kuinka monta kopiota pitäisi olla. Master-node voi sitten tehdä tarvittavat johtopäätökset ja lähettää kopion oliosta, paitsi jos olion omistajuus on jo vaihtunut tai oliota on päivitetty uuteen versioon.
+
+
+>> 2.5.2009
+
+	ROLLING UPGRADES
+
+A vision of enterprise platform: Hot & Distributed Deployment
+http://ayende.com/Blog/archive/2007/11/24/A-vision-of-enterprise-platform-Hot-amp-Distributed-Deployment.aspx
+
+Optimoi Dimdwarfin deployment-prosessi tuotantoa ja kehitystä varten. Tuotannossa ei saa tulla yhtään katkosta palveluun ja päivityksen pitää onnistua yhdellä komennolla. Kehityksessä edit/run-sykli pitää olla mahdollisimman nopea ja suoraviivainen, niin että muutosten kokeileminen on vaivatonta. Kehityksessä voi myös olla hyvä, jos sovelluksen tilan pystyy jäädyttämään snapshotiksi ja sitten ajamaan yhä uudestaan samasta kohtaa uudella koodilla ja mahdollistaa debuggauksen.
+
+Mahdollinen päivitysprosessi:
+	(1) Käynnistetään kunkin backend-noden rinnalle uutta koodia pyörittävä backend-node (sama fyysinen kone tiedonsiirron nopeuttamiseksi). Nodeille ladataan uusi ohjelmakoodi, mutta tietokantaa ei initialisoida, vaan se on täysin tyhjä.
+	(2) Koordinaattori kertoo kaikille, että mikä node tulee korvaamaan minkä, jotta cachet pystytään päivittämään paikallisesti melko suurella todennäköisyydellä.
+	(3) Uusi node peilaa vanhan noden dataa samaan tapaan kuin backup-nodet, mutta se ei lähetä klusteriin mitään kuittausviestejä.
+	(4) Kun kaikki nodet ovat lähes synkassa, niin koordinaattori käskee tekemään vaihdoksen tietyllä aikaleimalla, arviolta parin sekuntin päästä.
+	(5) Ajanhetken jälkeen uudet taskit suoritetaan uusilla nodeilla ja jos vanhoilla nodeilla vielä pyörivät taskit yrittävät lukea jo päivitettyä dataa, niin task keskeytetään ja siirretään uudelle nodelle.
+	(6) Kun vanhoilta nodeilta pyörineet taskit ovat päättyneet, niin vanhat nodet sammutetaan. Vaihtoehtoisesti vanhat koneet voivat pysyä päällä ja tallettaa snapshotin sovelluksesta (päivityksen käynnistäneen aikaleiman kohdalla), niin että päivityksen pystyy tarvittaessa perumaan nopeasti.
+
+Toinen vaihtoehtoinen tapa päivittää ohjelmakoodia, on että itse nodeja ei käynnistetä uudestaan, vaan jokaisen noden sisällä olevat worker-säikeet käynnistetään uudella ClassLoaderilla. Se voisi olla jonkin verran tehokkaampaa, mutta ClassLoaderin kanssa sählääminen korottaa bugien todennäköisyyttä.
+
+
+	INTEGRATION/ACCEPTANCE TESTING
+
+Tee testausframework Dimdwarfin systeemitestejä varten. Pyöritä nodeja omissa täysimittaisissa prosesseissaan, mutta kuuntele prosessien välisiä viestejä. Mahdollista viestien korruptoiminen, yhteyksien katkaiseminen ja nodejen tappaminen ohjelmallisesti. Käytä riittävän isoja timeout-arvoja (esim. 1 sekunti), jotta testit ovat toistettavia. Logita kaikki viestit ja mahdollista debuggaus Dimdwarf Systemlordilla, jos testi ei mene läpi.
+
+Yhteyksien kuunteleminen voi onnistua esim. kustomoidulla trackerilla, joka ilmoittaa nodeille oikean osoitteen sijaan testiframeworkin proxyn osoitteen. Proxy välittää viestit eteenpäin, mahdollisesti muuttaen niitä (tarvitaan viestitason CRC32-tarkistus) tai katkaisten yhteyden.
+
+
+http://www.dslreports.com/forum/remark,13525942
+"CRC32 is useful for a communications checksum, because it's fast and efficient and effective at catching the kinds of errors that happen over a communictions line (short bursts of errors, at most, in relatively small blocksizes). It's easy to implement and long predates MD5. But if you're using it for anything other than a communications checksum, it's being abused."
+
+
+http://unixwiz.net/techtips/iguide-crypto-hashes.html
+"True checksums, such as a Cyclic Redundancy Check are designed to catch data-transmission errors and not deliberate attempts at tampering with data. Aside of the small output space (usually 32 bits), they are not designed with the same properties in mind."
+
+
+Timeouttien käyttäminen:
+http://mina.apache.org/faq.html#FAQ-HowcanIdetectwhentheremotepeerdoesn%2527tsendaresponsemessageformyrequestmessage%253F
+""
+Q: How can I detect when the remote peer doesn't send a response message for my request message?
+A: You can't use sessionIdle event simply here. You'll have to use java.util.concurrent.ScheduledExecutor (or OpenSymphony Quartz as an alternative). Schedule a timeout task to be executed on timeout situation for each request message, and cancel it when you receive the corresponding response message.
+""
 
