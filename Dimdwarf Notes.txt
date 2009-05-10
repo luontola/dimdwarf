@@ -1155,3 +1155,13 @@ Q: How can I detect when the remote peer doesn't send a response message for my 
 A: You can't use sessionIdle event simply here. You'll have to use java.util.concurrent.ScheduledExecutor (or OpenSymphony Quartz as an alternative). Schedule a timeout task to be executed on timeout situation for each request message, and cancel it when you receive the corresponding response message.
 ""
 
+
+>> 10.5.2009
+
+	SUBMODULES
+
+How to create a modular application with Guice with interacting modules or submodules?
+http://groups.google.com/group/google-guice/browse_thread/thread/fec721d760e19d51?hl=en
+
+java.util.ServiceLoader
+http://java.sun.com/javase/6/docs/api/java/util/ServiceLoader.html
