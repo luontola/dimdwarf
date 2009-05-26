@@ -1165,3 +1165,23 @@ http://groups.google.com/group/google-guice/browse_thread/thread/fec721d760e19d5
 
 java.util.ServiceLoader
 http://java.sun.com/javase/6/docs/api/java/util/ServiceLoader.html
+
+
+>> 26.5.2009
+
+	DOCUMENTATION
+
+http://stackoverflow.com/questions/911716/how-to-encourage-new-programmers-to-read-documentation/912327#912327
+""
+I find this is the best approach:
+
+* Make top level documentation very simple - don't complicate it with detail. A simple overview of the software/API/whatever it is you're trying to document. The purpose of this document is to introduce general architecture/paradigms/concepts/language/lexicon used. Sort of a "My software in a nutshell" or "Learn my software in 24 hours".
+
+* Make a lower level document that goes into more detail, but isn't necessarily detailed. This will allow someone to skip through the document without missing major points because they're overly bogged down in detail. Consider this an architectural overview of each of the components - once again, don't get bogged down in the details. This is the "Teach yourself X in 21 days" style document. It goes into more detail but is still a way off from overwhelming you with a whole load of currently irrelevant information.
+
+* Technical document that breaks down to a lower level - this is the actual API document.
+
+Admittedly the reader has potentially read the same things 3 times, but effectively by the time they're done the top level document, they understand what you're talking about without knowing any of the inside details. If you need them to get something done, they know where to look to figure out what you're talking about - they can gloss through the 2nd level document looking for what you're talking about, and then when they've found the correct component, they can drill into the 3rd level document for the details.
+
+Much like a hierarchical search...
+""
