@@ -1185,3 +1185,29 @@ Admittedly the reader has potentially read the same things 3 times, but effectiv
 
 Much like a hierarchical search...
 ""
+
+
+>> 28.5.2009
+
+	PROFILING, EXPLORATORY TESTING
+
+support exploratory testing:
+- make it possible to go backwards in time
+- show the internals of what is happening
+
+
+http://www.infoq.com/interviews/micro-scale-retro-futurist-anachro-syndicalism
+""
+I have this theory: exploratory testing is an overly difficult job, because our systems are not designed to help the exploratory tester to do her job, so for example it’s often the case you would be doing some exploratory testing, you will be going along, trying things out, you will be investigating something and you will say “Oh that was interesting”. And what you want to do is back up in time to the step before then and start playing with little variations.
+
+Systems don’t let you back up in time, for those of you who know for example Rails and the design pattern thing, it’s a mistake in my opinion for web frameworks to treat incoming requests as nothing more than a call to a method, they should be using the command pattern so that you can undo kinds of things.
+
+Another example is it’s often the case that if you are doing testing of a web application, that you don’t want to look at all the pretty stuff on the screen, I committed a really embarrassing bug in a shipped product, that I didn’t notice and I would have noticed it if I could have said to the application “You know how normally you show the screen with the hyperlinks underlined and the actual URL hidden behind the link? I want you to grey out all the text show me nothing but the http:// www those links and if I have had that different view of the results of an operation I would have not been publicly humiliated, which is good.
+
+And that also have implications about system design because of the style the system design is and that is you call a method and it blacks out the string of HTML, is not the right system, you want something more like a builder pattern.
+
+We have to do exploratory testing anyway because we need to find those bugs where “Oh you forgot to do something or Oh you intended the wrong thing”. Now, if our systems were structured for exploratory testing, we’d get a lot more benefit from exploratory testing at a lot less cost. And it is my belief that the combination of let’s call it example driven development where you write your test cases on a whiteboard, you have the programmers implementing them with standard unit testing practices, you have people demonstrating what they have accomplished to the product owner, who then erases the test from the whiteboard and the you have this backend exploratory testing which was very fluid and very fast and very effective, then we are progressively shrinking the role that conventionally automated acceptance tests play. They are producing less and less value so you can take them out and shoot them and not do them anymore.
+
+And so my current idea is to shoot off into the fringes of the testing world and explore making systems that are heavily tuned for exploratory testing, build stuff with them and see if that hypothesis is correct. Because in many, many cases the actual automation of automated acceptance tests it’s really a sinkhole, it sucks the fun out of the project. And I think where you suck fun out you suck value out as well.
+""
+
