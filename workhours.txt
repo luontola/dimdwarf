@@ -115,7 +115,7 @@
 --
 
 24.4.2009 16:30-17:20	1h	* Project refactoring: begun using Mockito
-
+1.6.2009 0:23-0:51	0,5h	# Transparent references: refactoring
 
 next:
 	- refactor TaskSchedulerImpl
