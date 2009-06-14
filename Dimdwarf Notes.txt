@@ -1253,3 +1253,14 @@ ks. http://www.infoq.com/presentations/SpringOne-Keynote-Rod-Johnson @ 1:38-1:51
 - audit history of all commands from UI and scripts
 - browse command history: what, where, which app, who, how long it took etc.
 
+
+	MANAGEMENT CONSOLE
+
+ROO-tyylinen konsoli Dimdwarf-klusterin hallintaan voisi olla kätevä. Se antaisi TAB-autocompletionin, kontekstiriippuvaisia vihjeitä ja olisi helposti suoritettavissa SSH-yhteyden läpi. Perus-monitorointi voisi myös olla mahdollista sen kautta - sysadmin yhdistää palvelimeen SSH:lla ja tarkkailee konsoliin piirtyvää värikoodattua ASCII-grafiikkaa klusterin tilasta.
+
+Ehkä olisi myös mahdollista kirjoitaa skriptejä (samoin kuin Scala-tulkissa), joilla voi tehdä kyselyjä klusterin datastoreen. Kyselyt voitaisiin ajaa Dimdwarf-taskeina, jotka oletuksena aborttaavat aina, mutta jotka voivat myös tehdä muutoksia tietokantaan. Järjestelmä palauttaa skriptin tulostaman tekstin. Skriptien käyttämä sessio on konfiguroitavissa, joko oma sessio tai jonkin tietyn käyttäjän sessio. Skriptikielenä voisi olla Scala tai ehkä paremminkin Groovy, koska se on dynaamisesti tyypitetty.
+
+Viitteet:
+http://blog.springsource.com/2009/05/01/roo-part-1/
+http://en.wikipedia.org/wiki/Text_user_interface
+http://groovy.codehaus.org/
