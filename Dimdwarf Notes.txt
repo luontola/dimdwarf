@@ -1222,3 +1222,34 @@ ks. http://www.infoq.com/presentations/SpringOne-Keynote-Rod-Johnson @ 0:49-0:51
 http://blog.springsource.com/2009/05/01/roo-part-1/
 http://blog.springsource.com/2009/05/27/roo-part-2/
 
+
+	SERVER MONITORING AND MANAGEMENT
+
+Esimerkki enterprise-tason data center server management -softasta:
+
+Spring tc Server Demo
+ks. http://www.infoq.com/presentations/SpringOne-Keynote-Rod-Johnson @ 1:38-1:51
+
+- satojen koneiden hallinta
+- tietoja deadlockeista ja muista virheistä
+- histogrammi mm. muistinkulutuksesta koko klusterin tasolla, myös yksittäisten koneiden tasolla
+- sovelluksien deployaus kaikille koneille (war selaimen kautta, tai kunkin serverin tietämä polku war:iin)
+- millä koneilla sovellus on pyörimässä
+- sovelluksien monitorointi:
+	- per method metrics: controllers, repositories
+	- SLA: failed authentications
+	- notifications when too many failures
+	- free physical memory
+	- sovelluksen sisälle purautuminen
+- server configuration:
+	- jsp defaults
+	- static content
+	- create data sources
+	- modifying JVM options (includes recommendations for heap size etc.)
+- scripted deployments and configuration changes (tcsadmin):
+	- useimmat asiat, mitä voi säätää webbikälin kautta, ovat skriptattavissa
+	- e.g. managing groups, configuration accross entire group of servers with single command
+	- undeploy-application, list-applications, list-servers
+- audit history of all commands from UI and scripts
+- browse command history: what, where, which app, who, how long it took etc.
+
