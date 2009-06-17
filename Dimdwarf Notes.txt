@@ -1258,9 +1258,58 @@ ks. http://www.infoq.com/presentations/SpringOne-Keynote-Rod-Johnson @ 1:38-1:51
 
 ROO-tyylinen konsoli Dimdwarf-klusterin hallintaan voisi olla kätevä. Se antaisi TAB-autocompletionin, kontekstiriippuvaisia vihjeitä ja olisi helposti suoritettavissa SSH-yhteyden läpi. Perus-monitorointi voisi myös olla mahdollista sen kautta - sysadmin yhdistää palvelimeen SSH:lla ja tarkkailee konsoliin piirtyvää värikoodattua ASCII-grafiikkaa klusterin tilasta.
 
-Ehkä olisi myös mahdollista kirjoitaa skriptejä (samoin kuin Scala-tulkissa), joilla voi tehdä kyselyjä klusterin datastoreen. Kyselyt voitaisiin ajaa Dimdwarf-taskeina, jotka oletuksena aborttaavat aina, mutta jotka voivat myös tehdä muutoksia tietokantaan. Järjestelmä palauttaa skriptin tulostaman tekstin. Skriptien käyttämä sessio on konfiguroitavissa, joko oma sessio tai jonkin tietyn käyttäjän sessio. Skriptikielenä voisi olla Scala tai ehkä paremminkin Groovy, koska se on dynaamisesti tyypitetty.
+Ehkä olisi myös mahdollista kirjoitaa skriptejä (samoin kuin Scala-tulkissa), joilla voi tehdä kyselyjä klusterin datastoreen. Kyselyt voitaisiin ajaa Dimdwarf-taskeina, jotka oletuksena aborttaavat aina, mutta jotka voivat myös tehdä muutoksia tietokantaan. Järjestelmä palauttaa skriptin tulostaman tekstin. Skriptien käyttämä sessio on konfiguroitavissa, joko oma sessio tai jonkin tietyn käyttäjän sessio. Skriptikielenä voisi olla Scala tai ehkä paremminkin Groovy (joka on dynaamisesti tyypitetty) tai BeanShell (varta vasten tarkoitettu skriptaukseen).
 
 Viitteet:
 http://blog.springsource.com/2009/05/01/roo-part-1/
 http://en.wikipedia.org/wiki/Text_user_interface
 http://groovy.codehaus.org/
+
+
+>> 15.6.2009
+
+	MONITORING UI
+
+Making Monitoring UIs Suck Less
+!! http://www.youtube.com/watch?v=EzyqGcQA6cY
+
+- goals:
+	- reduce mental effort to parse
+	- support subjective evaluation
+	- customize & filter by situation
+	- help to forecast situations
+	- only necessary detail
+	- offer more detail on demand
+	- encourage frequent revision
+
+- monitoring: find out what to pay more attention to (not what to do about it)
+- users do also other things, monitoring needs to be done quickly, without much mental effort
+- run `uptime`, look at server load
+	- is the server load high enough that he needs to investigate (subjective information)?
+	- is there enought time to investigate?
+	- is it *important* enough for me to investigate?
+		-> like alarm
+- problems with alarms:
+	- you never know they're coming
+	- they force you to act, even when you can't
+	- if you can't address them, what do you do? cancel, ignore, snooze?
+- alarms don't give enough information, graphs take lots of screen area
+	- two threshoholds: ignore, attend -> divide graph to three areas (ignored, heating, attend)
+	- idea: show a vertical bar that shows "heat", where between the two thresholds (@ ~13 min)
+- when multiple values to monitor, lots of operations
+	- assign a value for head, 0.0-1.0
+		- show maximun for a set of values ("OR"), "in this report something is wrong", dig into more detail
+		- show minimum for a set of values ("AND"), "there are not enough logins/posts/replies happening, maybe some users can not login"
+	- minimum information to find out something is wrong, give move detail when investigating
+- find out what is causing the most anxiety to the users, create monitoring for those areas
+- show heat trends, how it's been changing, how fast, estimate future (@ 27 min)
+	- but takes lots of screen areas, like graphs
+	-> shrink to a dot and two vertical lines (@ 28 min)
+- identify what to monitor, perceive the situation at a glance, dig into details, refine/modify the situation
+- be able to ignore things that you know are not important, "that disk is failing, but it's already going to be replaced"
+- alarms are still needed, heat meters are a supplement to alarms, you can look at heat meters when you have time
+- in some situations, have a monitor for the first derivative of a value, how fast the actual value is changing
+- iterview questions: (@ 34 min)
+	- what are you looking at? (bottom-up)
+	- what are you looking for? (top-down)
+	- what describes a normal situation? -> monitor negation of normal
