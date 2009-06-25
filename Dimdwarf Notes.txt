@@ -1354,3 +1354,14 @@ Kysymyksenä on, että miten resetoidaan entity referencet ja transparent refere
 On mietittävä, että miten profiloijalle saadaan annettua tieto siitä, että cachetettu database entry luettiin. Vaihtoehtoja on ainakin kaksi: (1) Lähetetään main threadille database entryn lukupyyntö ja main thread vastaa siihen antamalla datan kuten ennenkin, ja worker thread joko jättää vastauksen huomioimatta tai varmistaa, että cachetettu olio on sama versio kuin mitä main thread vastasi. Varmistuksen kanssa tiedetään, ettei mikään muu task ole muuttanut cachetettua entityä. Immutable-entityjen tapauksessa tämä tiedetään jo muutenkin, joten ehkä vain mutable-entityjen kanssa pitää tehdä tämä tarkistus. (2) Lähetetään main threadille ilmoitus, että kyseinen database entry luettiin cachesta. Main thread ei käsittele ilmoitusta mitenkään, mutta profiloija saattaa haluta laittaa sen talteen. Lisäksi monitoroija voi haluta kerätä tilastoja siitä, että kuinka paljon on cache-osumia.
 
 Erityisesti serialisoidun datan tilaoptimoinnissa käytetyt ObjectStreamClass-viitteet ovat immutable-tyyppisiä entityjä. Niiden tapauksessa voitaneen käyttää erikoismenettelyjä, koska ne ovat kriittisiä serialisoinnin kannalta. (1) Ensinnäkin ne säilytetään singleton-cachessa, jonka sisältö ei vanhene, koska sen sisältö pysyy vakiona kullekin ohjelmaversiolle. Application upgraden yhteydessä sinne jää rippeitä edellisen version luokista, mutta kyseessä on vain pienestä vakiokertoimesta (kaksinkertainen muistinkulutus). Koska server node käynnistetään uudelleen upgraden yhteydessä, niin yksi server node lukee enintään kahden eri version serialisoituja datoja. (2) Toiseksi niiden lukemisesta ei kannattane lähettää viestiä main threadille, koska siitä tulisi lukemattoman monia ilmoituksia - kymmenittäin per entityn lukeminen. Niiden lukemiset eivät myöskään ole mielenkiintoisa sovelluksen profiloinnin ja monitoroinnin kannalta, koska niiden lukeminen cachesta tapahtuu ennalta määrätyllä tavalla, johon ei pysty vaikuttamaan muuttamalla/optimoimalla sovellusta.
+
+
+>> 25.6.2009
+
+	DISTRIBUTED COORDINATION AND CONFIGURATION MANAGEMENT
+
+ZooKeeper voisi olla hyvä huolehtimaan klusterien koordinoinnista ja server nodejen meta-datan säilyttämisestä. Sitten Dimdwarfin ei välttämättä tarvitse toteuttaa omaa trackeria ja coordinator nodea.
+
+http://hadoop.apache.org/zookeeper/
+http://wiki.apache.org/hadoop/ZooKeeper
+http://wiki.apache.org/hadoop/ZooKeeper/ProjectDescription
