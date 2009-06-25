@@ -1365,3 +1365,13 @@ ZooKeeper voisi olla hyvä huolehtimaan klusterien koordinoinnista ja server nod
 http://hadoop.apache.org/zookeeper/
 http://wiki.apache.org/hadoop/ZooKeeper
 http://wiki.apache.org/hadoop/ZooKeeper/ProjectDescription
+
+
+	LIFT AND OTHER WEB FRAMEWORKS
+
+Lift frameworkin kehittäjä suunnittelee ehkä jotain, mikä saattaa sivuta Dimdwarfia: "It's clear to me that it's time for a unified data and data management model that goes beyond OR mapping and that is scalably transactional.  I've put together a model that looks to the developer like STM but is backed with ZooKeeper and Cassandra."
+
+http://article.gmane.org/gmane.comp.lang.scala/16438
+http://blog.lostlake.org/index.php?/archives/94-Lift,-Goat-Rodeo-and-Such.html
+http://thread.gmane.org/gmane.comp.java.hadoop.zookeeper.user/99
+http://article.gmane.org/gmane.comp.lang.scala/16486
