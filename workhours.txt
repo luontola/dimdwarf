@@ -116,8 +116,24 @@
 
 24.4.2009 16:30-17:20	1h	* Project refactoring: begun using Mockito
 1.6.2009 0:23-0:51	0,5h	# Transparent references: refactoring
+12.8.2009 16:09-16:43	0,5h	# Entities: refactoring
 
 next:
+	- refactor: replace BigInteger with EntityId (see EntityInfo)
+	- refactor: remove DatabaseTableWithMetadata (remove also GC; tag old impl for reference when creating the new impl)
+	- new architecture:
+		- message queue
+		- database
+		- task scheduling
+		- garbage collection
+		- message channels
+		- client sessions
+		- refactor: separate master and worker sides of the message queue to their own modules:
+			* dimdwarf-domain = message queue, messages
+			* dimdwarf-master = db, scheduler, gc, networking
+			* dimwdarf-worker = context, tx, entities, serial
+
+todo for old architecture:
 	- refactor TaskSchedulerImpl
 	- refactor ConcurrentMarkSweepCollector (remove DatabaseTableWithMetadata)
 	- reference counting collector
