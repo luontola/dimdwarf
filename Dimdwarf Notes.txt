@@ -1375,3 +1375,49 @@ http://article.gmane.org/gmane.comp.lang.scala/16438
 http://blog.lostlake.org/index.php?/archives/94-Lift,-Goat-Rodeo-and-Such.html
 http://thread.gmane.org/gmane.comp.java.hadoop.zookeeper.user/99
 http://article.gmane.org/gmane.comp.lang.scala/16486
+
+
+>> 12.8.2009
+
+	OPTIMISTIC AND PESSIMISTIC LOCKING
+
+Experiment with optimistic and pessimistic locking. Optimistic should perform better when there is little conflicts, but otherwise pessimistic should be better.
+
+Try to create a hybrid locking system, where by default optimistic is used, but when an object has lots of contention, that object will be locked pessimistically. The system may also hold back from giving ownership of an object to another server node, when it knows that one of its own running tasks will write that object. ("Mark for update" is anyways needed to detect write conflicts early, so that tasks can be restarted already before they commit.)
+
+The new architecture should make it possible to change the locking scheme quite easily. For pessimistic locking to work, deadlock detection might also be needed.
+
+To determine when to use pessimistic locking, each object may in its database meta-data have fields about how many times the object has been written and how many write conflicts there have been (counting read access is not possible accurately, because other server nodes can read them freely). The meta-data is copied to the new server node always when the ownership of an object is changed. As the database is an in-memory data structure, updating the meta-data is practically free.
+
+
+Jackal von ÖRF:
+""
+	Quote from: Tim B on 2009-08-11, 17:32:27
+	"I want to see the state of managed object X but I don't care if it goes out of date after I get it and I'm not going to change it."
+
+Sounds very much like snapshot isolation and optimistic concurrency control. http://en.wikipedia.org/wiki/Concurrency_control
+
+Darkstar uses pessimistic concurrency control and serializable isolation. With Dimdwarf I'm going for optimistic multiversion concurrency control and snapshot isolation, which provides roughly such semantics as you mentioned.
+
+In general, pessimistic locking might perform better when there is much contention, but otherwise a more optimistic approach may give better performance because of less locking. It will be interesting to see how they compare in Darkstar/Dimdwarf's use cases. My hypothesis is that if we can implement reasonably reliable heuristics that predict which objects a task will write, then we can execute the conflicting tasks serially and avoid conflicting writes, which in turn would make the optimistic approach perform better.
+""
+
+stp:
+""
+	Quote from: Jackal von ÖRF on 2009-08-11, 20:13:08
+	"In general, pessimistic locking might perform better when there is much contention, but otherwise a more optimistic approach may give better performance because of less locking."
+
+FYI, I implemented some experimental optimistic schemes about a year ago (with David, during his last internship with Darkstar). This was indeed what we saw. For applications with little conflict the optimistic schemes worked very well, but got hammered when there was any significant amount of conflict (maybe around 15%? I can't remember exactly now). You can find a forward and reverse checker in the data-exp branch, and given the current APIs, these should be pretty easy to re-implement and try running (though you'll want a backing store that won't itself do any pessimistic checking, like the in-memory store in the tests).
+
+	Quote
+	"My hypothesis is that if we can implement reasonably reliable heuristics that predict which objects a task will write, then we can execute the conflicting tasks serially and avoid conflicting writes, which in turn would make the optimistic approach perform better."
+
+I've also done some experiments here. There are indeed some decent ways to predict access patterns, and given these one of the thoughts for future work is to help reduce conflict by serializing execution. Note that the scheduler already has a notion of dependency between scheduled tasks, and there's a flexible mechanism for determining how to react to failure. It should be very easy to experiment with what you suggest in the current system, and if you do please let us all know what you learn!
+
+seth
+""
+
+Jackal von ÖRF:
+""
+It came to my mind, that it might be possible to have a hybrid solution where the choice between optimistic and pessimistic is done on a per-object basis. For example, by default use optimistic for everything, but when some object causes too many write conflicts, the system will handle access to that object pessimistically. Has this ever been tried?
+""
