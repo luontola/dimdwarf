@@ -116,16 +116,16 @@
 
 24.4.2009 16:30-17:20	1h	* Project refactoring: begun using Mockito
 1.6.2009 0:23-0:51	0,5h	# Transparent references: refactoring
-12.8.2009 16:09-16:43	0,5h	# Entities: refactoring
+12.8.2009 16:09-16:43	0,5h	# Entities: refactoring, created EntityApi
+13.8.2009 13:52-15:49	2h	# Entities: refactoring, created EntityId
+13.8.2009 15:49-17:05	1,5h	* Project refactoring: removed current GC impl and database metadata support, because the new architecture can not reuse them
 
 next:
-	- refactor: replace BigInteger with EntityId (see EntityInfo)
-	- refactor: remove DatabaseTableWithMetadata (remove also GC; tag old impl for reference when creating the new impl)
 	- new architecture:
 		- message queue
 		- database
 		- task scheduling
-		- garbage collection
+		- garbage collection (old implementation tagged "old-gc-impl" for reference)
 		- message channels
 		- client sessions
 		- refactor: separate master and worker sides of the message queue to their own modules:
