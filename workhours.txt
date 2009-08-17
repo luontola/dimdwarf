@@ -115,10 +115,13 @@
 --
 
 24.4.2009 16:30-17:20	1h	* Project refactoring: begun using Mockito
-1.6.2009 0:23-0:51	0,5h	# Transparent references: refactoring
+1.6.2009 00:23-00:51	0,5h	# Transparent references: refactoring
 12.8.2009 16:09-16:43	0,5h	# Entities: refactoring, created EntityApi
 13.8.2009 13:52-15:49	2h	# Entities: refactoring, created EntityId
 13.8.2009 15:49-17:05	1,5h	* Project refactoring: removed current GC impl and database metadata support, because the new architecture can not reuse them
+17.8.2009 22:41-23:27	1h	* Project refactoring: upgraded dependencies, use Guice 2.0 features
+17.8.2009 23:27-24:00	0,5h	# Thread context: extracted reusable ThreadScope from TaskScope
+18.8.2009 00:00-00:23	0,5h	# Thread context: extracted reusable ThreadScope from TaskScope
 
 next:
 	- refactor: split dimdwarf-core, prepare separate master and worker modules:
