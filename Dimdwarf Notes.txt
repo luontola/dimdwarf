@@ -1421,3 +1421,14 @@ Jackal von ÖRF:
 ""
 It came to my mind, that it might be possible to have a hybrid solution where the choice between optimistic and pessimistic is done on a per-object basis. For example, by default use optimistic for everything, but when some object causes too many write conflicts, the system will handle access to that object pessimistically. Has this ever been tried?
 ""
+
+
+>> 4.9.2009
+
+	STRESS TESTING
+
+Below are examples of Darkstar failing under load. Try to test similar conditions on Dimdwarf.
+
+http://www.projectdarkstar.com/component/option,com_smf/Itemid,120/topic,1159.15
+http://captainmisterhagan.blogspot.com/2009/09/first-version-bench.html
+
