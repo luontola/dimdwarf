@@ -6,9 +6,8 @@ package net.orfjackal.dimdwarf.entities;
 
 import jdave.*;
 import jdave.junit4.JDaveRunner;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import org.junit.runner.RunWith;
-
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -18,7 +17,7 @@ import java.math.BigInteger;
 @Group({"fast"})
 public class EntityIdFactorySpec extends Specification<Object> {
 
-    private static final BigInteger LARGEST_USED_ID = BigInteger.valueOf(42);
+    private static final ObjectIdMigration LARGEST_USED_ID = ObjectIdMigration.valueOf(42);
 
     private EntityIdFactoryImpl factory;
 
@@ -30,14 +29,14 @@ public class EntityIdFactorySpec extends Specification<Object> {
     public class AnEntityIdFactory {
 
         public void startsFromTheNextUnusedId() {
-            BigInteger nextUnused = LARGEST_USED_ID.add(BigInteger.ONE);
+            ObjectIdMigration nextUnused = LARGEST_USED_ID.add(ObjectIdMigration.ONE);
             specify(factory.newId(), should.equal(nextUnused));
         }
 
         public void incrementsTheIdOnEveryCall() {
-            BigInteger id1 = factory.newId();
-            BigInteger id2 = factory.newId();
-            specify(id2, should.equal(id1.add(BigInteger.ONE)));
+            ObjectIdMigration id1 = factory.newId();
+            ObjectIdMigration id2 = factory.newId();
+            specify(id2, should.equal(id1.add(ObjectIdMigration.ONE)));
         }
     }
 }

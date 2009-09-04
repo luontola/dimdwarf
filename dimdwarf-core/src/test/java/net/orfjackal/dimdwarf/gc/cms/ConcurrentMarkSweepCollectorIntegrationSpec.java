@@ -8,6 +8,7 @@ import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
 import net.orfjackal.dimdwarf.api.EntityInfo;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.gc.entities.GarbageCollectorManager;
 import net.orfjackal.dimdwarf.modules.CommonModules;
@@ -17,7 +18,6 @@ import net.orfjackal.dimdwarf.tasks.*;
 import net.orfjackal.dimdwarf.util.Objects;
 import org.junit.runner.RunWith;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.*;
@@ -39,12 +39,12 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
 
     private GarbageCollectorManager gc;
 
-    private BigInteger liveRootId;
-    private BigInteger liveRefId;
-    private BigInteger garbageRootId;
-    private BigInteger garbageRefId;
-    private BigInteger garbageCycleId1;
-    private BigInteger garbageCycleId2;
+    private ObjectIdMigration liveRootId;
+    private ObjectIdMigration liveRefId;
+    private ObjectIdMigration garbageRootId;
+    private ObjectIdMigration garbageRefId;
+    private ObjectIdMigration garbageCycleId1;
+    private ObjectIdMigration garbageCycleId2;
 
     public void create() throws Exception {
         server = new TestServer(
@@ -111,7 +111,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
         });
     }
 
-    private boolean entityExists(final BigInteger id) {
+    private boolean entityExists(final ObjectIdMigration id) {
         final AtomicBoolean exists = new AtomicBoolean(false);
         taskContext.execute(new Runnable() {
             public void run() {
@@ -149,7 +149,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
 
     public class WhenThereAreMutationsDuringGarbageCollection {
 
-        private List<BigInteger> liveNodesCreated = new ArrayList<BigInteger>();
+        private List<ObjectIdMigration> liveNodesCreated = new ArrayList<ObjectIdMigration>();
 
         public void create() throws Throwable {
             server.changeLoggingLevel(TransactionFilter.class, Level.WARNING);
@@ -170,7 +170,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
             for (int i = 0; i < 10; i++) {
                 taskContext.execute(new Runnable() {
                     public void run() {
-                        BigInteger id = createALiveNode();
+                        ObjectIdMigration id = createALiveNode();
                         liveNodesCreated.add(id);
                     }
                 });
@@ -184,7 +184,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
             }
         }
 
-        private BigInteger createALiveNode() {
+        private ObjectIdMigration createALiveNode() {
             DummyInterface liveRoot = (DummyInterface) entities.get().read(liveRootId);
             List<DummyInterface> childrenOfRoot = Objects.uncheckedCast(liveRoot.getOther());
             DummyEntity liveNode = new DummyEntity();
@@ -193,7 +193,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
         }
 
         public void theMutatorListenerMakesSureThatNoLiveNodesAreCollected() {
-            for (BigInteger node : liveNodesCreated) {
+            for (ObjectIdMigration node : liveNodesCreated) {
                 specify(node + " of " + liveNodesCreated, entityExists(node));
             }
         }

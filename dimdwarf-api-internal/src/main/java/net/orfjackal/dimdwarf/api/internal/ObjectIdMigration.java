@@ -4,26 +4,31 @@
 
 package net.orfjackal.dimdwarf.api.internal;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
  * @since 13.8.2009
  */
-public class ObjectIdMigration {
+public class ObjectIdMigration implements Serializable {
 
-    private final BigInteger bi;
+    public static final ObjectIdMigration ZERO = new ObjectIdMigration(0);
+    public static final ObjectIdMigration ONE = new ObjectIdMigration(1);
+    public static final ObjectIdMigration TEN = new ObjectIdMigration(10);
+
+    public final BigInteger bigId;
 
     public ObjectIdMigration(int signum, byte[] magnitude) {
-        bi = new BigInteger(signum, magnitude);
+        bigId = new BigInteger(signum, magnitude);
     }
 
     public ObjectIdMigration(byte[] val) {
-        bi = new BigInteger(val);
+        bigId = new BigInteger(val);
     }
 
     public ObjectIdMigration(long val) {
-        bi = BigInteger.valueOf(val);
+        bigId = BigInteger.valueOf(val);
     }
 
     public static ObjectIdMigration valueOf(long val) {
@@ -31,22 +36,30 @@ public class ObjectIdMigration {
     }
 
     public byte[] toByteArray() {
-        return bi.toByteArray();
+        return bigId.toByteArray();
     }
 
-    public ObjectIdMigration add(ObjectIdMigration val) {
-        return new ObjectIdMigration(val.bi.longValue() + 1);
+    public ObjectIdMigration add(ObjectIdMigration that) {
+        return new ObjectIdMigration(this.bigId.longValue() + that.bigId.longValue());
     }
 
     public int hashCode() {
-        return bi.hashCode();
+        return bigId.hashCode();
     }
 
     public boolean equals(Object obj) {
-        return bi.equals(obj);
+        if (!(obj instanceof ObjectIdMigration)) {
+            return false;
+        }
+        ObjectIdMigration that = (ObjectIdMigration) obj;
+        return bigId.equals(that.bigId);
     }
 
     public String toString() {
-        return bi.toString();
+        return bigId.toString();
+    }
+
+    public int signum() {
+        return bigId.signum();
     }
 }

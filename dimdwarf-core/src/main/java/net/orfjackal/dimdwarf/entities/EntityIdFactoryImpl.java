@@ -5,9 +5,9 @@
 package net.orfjackal.dimdwarf.entities;
 
 import com.google.inject.*;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -19,16 +19,16 @@ public class EntityIdFactoryImpl implements EntityIdFactory {
 
     // using java.util.concurrent.atomic.AtomicLong would also be an option
 
-    private BigInteger nextId;
+    private ObjectIdMigration nextId;
 
     @Inject
-    public EntityIdFactoryImpl(@MaxEntityId BigInteger largestUsedId) {
-        nextId = largestUsedId.add(BigInteger.ONE);
+    public EntityIdFactoryImpl(@MaxEntityId ObjectIdMigration largestUsedId) {
+        nextId = largestUsedId.add(ObjectIdMigration.ONE);
     }
 
-    public synchronized BigInteger newId() {
-        BigInteger currentId = nextId;
-        nextId = nextId.add(BigInteger.ONE);
+    public synchronized ObjectIdMigration newId() {
+        ObjectIdMigration currentId = nextId;
+        nextId = nextId.add(ObjectIdMigration.ONE);
         return currentId;
     }
 }

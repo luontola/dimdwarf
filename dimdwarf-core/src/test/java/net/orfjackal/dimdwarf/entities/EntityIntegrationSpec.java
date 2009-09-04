@@ -14,7 +14,6 @@ import net.orfjackal.dimdwarf.modules.options.NullGarbageCollectionOption;
 import net.orfjackal.dimdwarf.tasks.TaskExecutor;
 import org.junit.runner.RunWith;
 
-import java.math.BigInteger;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -44,7 +43,7 @@ public class EntityIntegrationSpec extends Specification<Object> {
     public class WhenTasksAreRun {
 
         public void entitiesCreatedInOneTaskCanBeReadInTheNextTask() {
-            final AtomicReference<BigInteger> id = new AtomicReference<BigInteger>();
+            final AtomicReference<ObjectIdMigration> id = new AtomicReference<ObjectIdMigration>();
             taskExecutor.execute(new Runnable() {
                 public void run() {
                     EntityReferenceFactory factory = injector.getInstance(EntityReferenceFactory.class);
@@ -63,19 +62,19 @@ public class EntityIntegrationSpec extends Specification<Object> {
 
         public void entityIdsAreUniqueOverAllTasks() {
             final Provider<EntityInfo> info = injector.getProvider(EntityInfo.class);
-            final AtomicReference<BigInteger> idInFirstTask = new AtomicReference<BigInteger>();
+            final AtomicReference<ObjectIdMigration> idInFirstTask = new AtomicReference<ObjectIdMigration>();
             taskExecutor.execute(new Runnable() {
                 public void run() {
-                    BigInteger id1 = info.get().getEntityId(new DummyEntity());
+                    ObjectIdMigration id1 = info.get().getEntityId(new DummyEntity());
                     idInFirstTask.set(id1);
                 }
             });
             taskExecutor.execute(new Runnable() {
                 public void run() {
-                    BigInteger id2 = info.get().getEntityId(new DummyEntity());
-                    BigInteger id1 = idInFirstTask.get();
+                    ObjectIdMigration id2 = info.get().getEntityId(new DummyEntity());
+                    ObjectIdMigration id1 = idInFirstTask.get();
                     specify(id2, should.not().equal(id1));
-                    specify(id2, should.equal(id1.add(BigInteger.ONE)));
+                    specify(id2, should.equal(id1.add(ObjectIdMigration.ONE)));
                 }
             });
         }

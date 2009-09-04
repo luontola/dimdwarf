@@ -11,7 +11,6 @@ import org.jetbrains.annotations.TestOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -26,8 +25,8 @@ public class EntityManagerImpl implements EntityManager {
     private final EntityRepository repository;
     private final EntityApi entityApi;
 
-    private final Map<EntityObject, BigInteger> entities = new IdentityHashMap<EntityObject, BigInteger>();
-    private final Map<BigInteger, EntityObject> entitiesById = new HashMap<BigInteger, EntityObject>();
+    private final Map<EntityObject, ObjectIdMigration> entities = new IdentityHashMap<EntityObject, ObjectIdMigration>();
+    private final Map<ObjectIdMigration, EntityObject> entitiesById = new HashMap<ObjectIdMigration, EntityObject>();
     private final Queue<EntityObject> flushQueue = new ArrayDeque<EntityObject>();
     private State state = State.ACTIVE;
 
@@ -43,10 +42,10 @@ public class EntityManagerImpl implements EntityManager {
         return entities.size();
     }
 
-    public BigInteger getEntityId(EntityObject entity) {
+    public ObjectIdMigration getEntityId(EntityObject entity) {
         checkStateIs(State.ACTIVE, State.FLUSHING);
         checkIsEntity(entity);
-        BigInteger id = getIdOfLoadedEntity(entity);
+        ObjectIdMigration id = getIdOfLoadedEntity(entity);
         if (id == null) {
             id = createIdForNewEntity(entity);
         }
@@ -59,17 +58,17 @@ public class EntityManagerImpl implements EntityManager {
         }
     }
 
-    private BigInteger getIdOfLoadedEntity(EntityObject entity) {
+    private ObjectIdMigration getIdOfLoadedEntity(EntityObject entity) {
         return entities.get(entity);
     }
 
-    private BigInteger createIdForNewEntity(EntityObject entity) {
-        BigInteger id = idFactory.newId();
+    private ObjectIdMigration createIdForNewEntity(EntityObject entity) {
+        ObjectIdMigration id = idFactory.newId();
         register(entity, id);
         return id;
     }
 
-    public EntityObject getEntityById(BigInteger id) {
+    public EntityObject getEntityById(ObjectIdMigration id) {
         checkStateIs(State.ACTIVE);
         EntityObject entity = getLoadedEntity(id);
         if (entity == null) {
@@ -79,33 +78,33 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Nullable
-    private EntityObject getLoadedEntity(BigInteger id) {
+    private EntityObject getLoadedEntity(ObjectIdMigration id) {
         return entitiesById.get(id);
     }
 
-    private EntityObject loadEntityFromDatabase(BigInteger id) {
+    private EntityObject loadEntityFromDatabase(ObjectIdMigration id) {
         EntityObject entity = (EntityObject) repository.read(id);
         register(entity, id);
         return entity;
     }
 
-    private void register(EntityObject entity, BigInteger id) {
+    private void register(EntityObject entity, ObjectIdMigration id) {
         if (state == State.FLUSHING) {
             flushQueue.add(entity);
         }
-        BigInteger prevIdOfSameEntity = entities.put(entity, id);
+        ObjectIdMigration prevIdOfSameEntity = entities.put(entity, id);
         EntityObject prevEntityWithSameId = entitiesById.put(id, entity);
         assert prevIdOfSameEntity == null && prevEntityWithSameId == null : ""
                 + "Registered an entity twise: " + entity + ", " + id
                 + " (Previous was: " + prevEntityWithSameId + ", " + prevIdOfSameEntity + ")";
     }
 
-    public BigInteger firstKey() {
+    public ObjectIdMigration firstKey() {
         checkStateIs(State.ACTIVE);
         return repository.firstKey();
     }
 
-    public BigInteger nextKeyAfter(BigInteger currentKey) {
+    public ObjectIdMigration nextKeyAfter(ObjectIdMigration currentKey) {
         checkStateIs(State.ACTIVE);
         return repository.nextKeyAfter(currentKey);
     }
@@ -129,7 +128,7 @@ public class EntityManagerImpl implements EntityManager {
     private void flush() {
         EntityObject entity;
         while ((entity = flushQueue.poll()) != null) {
-            BigInteger id = entities.get(entity);
+            ObjectIdMigration id = entities.get(entity);
             repository.update(id, entity);
         }
     }

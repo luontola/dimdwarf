@@ -8,7 +8,7 @@ import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
 import net.orfjackal.dimdwarf.api.EntityInfo;
-import net.orfjackal.dimdwarf.api.internal.EntityReference;
+import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.gc.*;
 import net.orfjackal.dimdwarf.modules.CommonModules;
@@ -17,7 +17,6 @@ import net.orfjackal.dimdwarf.tasks.TaskExecutor;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Nullable;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.Executor;
 
@@ -41,8 +40,8 @@ public class EntityMutatorListenerSpec extends Specification<Object> {
                 new CommonModules(),
                 new AbstractModule() {
                     protected void configure() {
-                        bind(new TypeLiteral<GarbageCollector<BigInteger>>() {}).toInstance(new NullGarbageCollectionOption.NullGarbageCollector());
-                        bind(new TypeLiteral<MutatorListener<BigInteger>>() {}).toInstance(listener);
+                        bind(new TypeLiteral<GarbageCollector<ObjectIdMigration>>() {}).toInstance(new NullGarbageCollectionOption.NullGarbageCollector());
+                        bind(new TypeLiteral<MutatorListener<ObjectIdMigration>>() {}).toInstance(listener);
                     }
                 });
         bindings = injector.getProvider(BindingRepository.class);
@@ -56,11 +55,11 @@ public class EntityMutatorListenerSpec extends Specification<Object> {
         private static final String ROOT_BINDING = "root";
 
         // graph: root -> node1 -> node2
-        private BigInteger rootId;
-        private BigInteger nodeId1;
-        private BigInteger nodeId2;
-        private BigInteger otherNodeId;
-        private BigInteger garbageId;
+        private ObjectIdMigration rootId;
+        private ObjectIdMigration nodeId1;
+        private ObjectIdMigration nodeId2;
+        private ObjectIdMigration otherNodeId;
+        private ObjectIdMigration garbageId;
 
         public void create() {
             taskContext.execute(new Runnable() {
@@ -203,19 +202,19 @@ public class EntityMutatorListenerSpec extends Specification<Object> {
     }
 
 
-    private static class MutatorListenerSpy implements MutatorListener<BigInteger> {
+    private static class MutatorListenerSpy implements MutatorListener<ObjectIdMigration> {
 
         public final List<String> events = new ArrayList<String>();
 
-        public void onNodeCreated(BigInteger node) {
+        public void onNodeCreated(ObjectIdMigration node) {
             events.add("*" + node);
         }
 
-        public void onReferenceCreated(@Nullable BigInteger source, BigInteger target) {
+        public void onReferenceCreated(@Nullable ObjectIdMigration source, ObjectIdMigration target) {
             events.add("+" + source + "->" + target);
         }
 
-        public void onReferenceRemoved(@Nullable BigInteger source, BigInteger target) {
+        public void onReferenceRemoved(@Nullable ObjectIdMigration source, ObjectIdMigration target) {
             events.add("-" + source + "->" + target);
         }
 

@@ -8,7 +8,7 @@ import jdave.*;
 import jdave.junit4.JDaveRunner;
 import net.orfjackal.dimdwarf.aop.conf.*;
 import net.orfjackal.dimdwarf.api.Entity;
-import net.orfjackal.dimdwarf.api.internal.EntityReference;
+import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.context.*;
 import net.orfjackal.dimdwarf.entities.*;
 import org.junit.runner.RunWith;
@@ -16,7 +16,6 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -34,7 +33,7 @@ public class AddEqualsAndHashCodeMethodsForEntitiesSpec extends Specification<Ob
         EntityReferenceFactory factory = new EntityReferenceFactory() {
             public <T> EntityReference<T> createReference(T entity) {
                 entityHelperCalled++;
-                return new EntityReferenceImpl<T>(BigInteger.ONE, entity);
+                return new EntityReferenceImpl<T>(ObjectIdMigration.ONE, entity);
             }
         };
         ThreadContext.setUp(new FakeContext().with(EntityReferenceFactory.class, factory));

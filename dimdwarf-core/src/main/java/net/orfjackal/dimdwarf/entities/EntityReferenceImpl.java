@@ -5,12 +5,11 @@
 package net.orfjackal.dimdwarf.entities;
 
 import com.google.inject.Inject;
-import net.orfjackal.dimdwarf.api.internal.EntityReference;
+import net.orfjackal.dimdwarf.api.internal.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.*;
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -20,11 +19,11 @@ import java.math.BigInteger;
 public class EntityReferenceImpl<T> implements EntityReference<T>, Externalizable {
     private static final long serialVersionUID = 1L;
 
-    private BigInteger id;
+    private ObjectIdMigration id;
     @Nullable private transient T entity;
     @Nullable private transient EntityManager entityManager;
 
-    public EntityReferenceImpl(BigInteger id, T entity) {
+    public EntityReferenceImpl(ObjectIdMigration id, T entity) {
         assert id != null;
         assert entity != null;
         this.id = id;
@@ -42,7 +41,7 @@ public class EntityReferenceImpl<T> implements EntityReference<T>, Externalizabl
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte[] bytes = (byte[]) in.readObject();
-        id = new BigInteger(bytes);
+        id = new ObjectIdMigration(bytes);
     }
 
     /**
@@ -61,7 +60,7 @@ public class EntityReferenceImpl<T> implements EntityReference<T>, Externalizabl
         return entity;
     }
 
-    public BigInteger getEntityId() {
+    public ObjectIdMigration getEntityId() {
         return id;
     }
 

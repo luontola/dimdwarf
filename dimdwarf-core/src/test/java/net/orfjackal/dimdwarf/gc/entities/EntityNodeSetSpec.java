@@ -8,6 +8,7 @@ import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
 import net.orfjackal.dimdwarf.api.EntityInfo;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import net.orfjackal.dimdwarf.entities.DummyEntity;
 import net.orfjackal.dimdwarf.gc.*;
 import net.orfjackal.dimdwarf.modules.CommonModules;
@@ -15,7 +16,6 @@ import net.orfjackal.dimdwarf.modules.options.NullGarbageCollectionOption;
 import net.orfjackal.dimdwarf.tasks.TaskExecutor;
 import org.junit.runner.RunWith;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.Executor;
 
@@ -34,8 +34,8 @@ public class EntityNodeSetSpec extends Specification<Object> {
     private Provider<EntityInfo> info;
     private Provider<NodeSetFactory> factory;
 
-    private BigInteger entityId1;
-    private BigInteger entityId2;
+    private ObjectIdMigration entityId1;
+    private ObjectIdMigration entityId2;
 
     public void create() throws Exception {
         Injector injector = Guice.createInjector(
@@ -48,7 +48,7 @@ public class EntityNodeSetSpec extends Specification<Object> {
         factory = injector.getProvider(NodeSetFactory.class);
     }
 
-    private NodeSet<BigInteger> getNodeSet(String name) {
+    private NodeSet<ObjectIdMigration> getNodeSet(String name) {
         return factory.get().create(name);
     }
 
@@ -58,7 +58,7 @@ public class EntityNodeSetSpec extends Specification<Object> {
         public void itContainsNoEntityIds() {
             taskContext.execute(new Runnable() {
                 public void run() {
-                    NodeSet<BigInteger> set = getNodeSet(SET_NAME);
+                    NodeSet<ObjectIdMigration> set = getNodeSet(SET_NAME);
                     specify(set.pollFirst(), should.equal(null));
                 }
             });
@@ -78,7 +78,7 @@ public class EntityNodeSetSpec extends Specification<Object> {
             });
             taskContext.execute(new Runnable() {
                 public void run() {
-                    NodeSet<BigInteger> set = getNodeSet(SET_NAME);
+                    NodeSet<ObjectIdMigration> set = getNodeSet(SET_NAME);
                     set.add(entityId1);
                     set.add(entityId2);
                 }
@@ -88,8 +88,8 @@ public class EntityNodeSetSpec extends Specification<Object> {
         public void thoseEntityIdsCanBeTakenFromIt() {
             taskContext.execute(new Runnable() {
                 public void run() {
-                    NodeSet<BigInteger> set = getNodeSet(SET_NAME);
-                    List<BigInteger> taken = new ArrayList<BigInteger>();
+                    NodeSet<ObjectIdMigration> set = getNodeSet(SET_NAME);
+                    List<ObjectIdMigration> taken = new ArrayList<ObjectIdMigration>();
                     taken.add(set.pollFirst());
                     taken.add(set.pollFirst());
                     specify(taken, should.containExactly(entityId1, entityId2));
@@ -101,7 +101,7 @@ public class EntityNodeSetSpec extends Specification<Object> {
         public void otherSetsHaveDifferentContents() {
             taskContext.execute(new Runnable() {
                 public void run() {
-                    NodeSet<BigInteger> set = getNodeSet(OTHER_SET_NAME);
+                    NodeSet<ObjectIdMigration> set = getNodeSet(OTHER_SET_NAME);
                     specify(set.pollFirst(), should.equal(null));
                 }
             });

@@ -14,7 +14,6 @@ import org.jmock.Expectations;
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -42,7 +41,7 @@ public class ProxyWithConcreteSuperclassSpec extends Specification<Object> {
             entity = new MyEntity(42);
             checking(new Expectations() {{
                 one(referenceFactory).createReference(entity);
-                will(returnValue(new EntityReferenceImpl<EntityObject>(BigInteger.ONE, entity)));
+                will(returnValue(new EntityReferenceImpl<EntityObject>(ObjectIdMigration.ONE, entity)));
             }});
             proxy = proxyFactory.createTransparentReference(entity);
         }

@@ -5,11 +5,11 @@
 package net.orfjackal.dimdwarf.modules.options;
 
 import com.google.inject.*;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import net.orfjackal.dimdwarf.gc.*;
 import net.orfjackal.dimdwarf.tasks.util.IncrementalTask;
 
 import javax.annotation.Nullable;
-import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -19,34 +19,34 @@ import java.util.*;
 public class NullGarbageCollectionOption extends AbstractModule {
 
     protected void configure() {
-        bind(new TypeLiteral<GarbageCollector<BigInteger>>() {}).toInstance(new NullGarbageCollector());
-        bind(new TypeLiteral<MutatorListener<BigInteger>>() {}).toInstance(new NullMutatorListener());
+        bind(new TypeLiteral<GarbageCollector<ObjectIdMigration>>() {}).toInstance(new NullGarbageCollector());
+        bind(new TypeLiteral<MutatorListener<ObjectIdMigration>>() {}).toInstance(new NullMutatorListener());
     }
 
-    public static class NullGarbageCollector implements GarbageCollector<BigInteger> {
+    public static class NullGarbageCollector implements GarbageCollector<ObjectIdMigration> {
 
         public List<? extends IncrementalTask> getCollectorStagesToExecute() {
             return Collections.emptyList();
         }
 
-        public MutatorListener<BigInteger> getMutatorListener() {
+        public MutatorListener<ObjectIdMigration> getMutatorListener() {
             return new NullMutatorListener();
         }
 
-        public Enum<?> getColor(BigInteger node) {
+        public Enum<?> getColor(ObjectIdMigration node) {
             return null;
         }
     }
 
-    public static class NullMutatorListener implements MutatorListener<BigInteger> {
+    public static class NullMutatorListener implements MutatorListener<ObjectIdMigration> {
 
-        public void onNodeCreated(BigInteger node) {
+        public void onNodeCreated(ObjectIdMigration node) {
         }
 
-        public void onReferenceCreated(@Nullable BigInteger source, BigInteger target) {
+        public void onReferenceCreated(@Nullable ObjectIdMigration source, ObjectIdMigration target) {
         }
 
-        public void onReferenceRemoved(@Nullable BigInteger source, BigInteger target) {
+        public void onReferenceRemoved(@Nullable ObjectIdMigration source, ObjectIdMigration target) {
         }
     }
 }

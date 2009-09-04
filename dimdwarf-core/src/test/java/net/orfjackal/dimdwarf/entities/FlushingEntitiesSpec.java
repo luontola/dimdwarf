@@ -6,13 +6,11 @@ package net.orfjackal.dimdwarf.entities;
 
 import jdave.*;
 import jdave.junit4.JDaveRunner;
-import net.orfjackal.dimdwarf.api.internal.DimdwarfEntityApi;
+import net.orfjackal.dimdwarf.api.internal.*;
 import org.jmock.Expectations;
 import org.jmock.api.Invocation;
 import org.jmock.lib.action.CustomAction;
 import org.junit.runner.RunWith;
-
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -30,7 +28,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
     public void create() throws Exception {
         repository = mock(EntityRepository.class);
-        manager = new EntityManagerImpl(new EntityIdFactoryImpl(BigInteger.ZERO), repository, new DimdwarfEntityApi());
+        manager = new EntityManagerImpl(new EntityIdFactoryImpl(ObjectIdMigration.ZERO), repository, new DimdwarfEntityApi());
         refFactory = new EntityReferenceFactoryImpl(manager);
 
         entity = new DummyEntity();
@@ -42,14 +40,14 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theyAreStoredInDatabase() {
             checking(new Expectations() {{
-                one(repository).update(BigInteger.ONE, entity);
+                one(repository).update(ObjectIdMigration.ONE, entity);
             }});
             manager.flushAllEntitiesToDatabase();
         }
 
         public void flushingTwiseIsNotAllowed() {
             checking(new Expectations() {{
-                one(repository).update(BigInteger.ONE, entity);
+                one(repository).update(ObjectIdMigration.ONE, entity);
             }});
             manager.flushAllEntitiesToDatabase();
             specify(new Block() {
@@ -61,7 +59,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theEntityManagerCanNotBeUsedAfterFlushHasEnded() {
             checking(new Expectations() {{
-                one(repository).update(BigInteger.ONE, entity);
+                one(repository).update(ObjectIdMigration.ONE, entity);
             }});
             manager.flushAllEntitiesToDatabase();
 
@@ -73,7 +71,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
                 public void run() throws Throwable {
-                    manager.getEntityById(BigInteger.ONE);
+                    manager.getEntityById(ObjectIdMigration.ONE);
                 }
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
@@ -83,7 +81,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
                 public void run() throws Throwable {
-                    manager.nextKeyAfter(BigInteger.ONE);
+                    manager.nextKeyAfter(ObjectIdMigration.ONE);
                 }
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
@@ -98,8 +96,8 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theyAreStoredInDatabase() {
             checking(new Expectations() {{
-                one(repository).update(BigInteger.ONE, entity); will(new RegisterEntity(newEntity));
-                one(repository).update(BigInteger.valueOf(2), newEntity);
+                one(repository).update(ObjectIdMigration.ONE, entity); will(new RegisterEntity(newEntity));
+                one(repository).update(ObjectIdMigration.valueOf(2), newEntity);
             }});
             manager.flushAllEntitiesToDatabase();
         }
@@ -109,7 +107,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theyAreStoredInDatabaseOnlyOnce() {
             checking(new Expectations() {{
-                one(repository).update(BigInteger.ONE, entity); will(new RegisterEntity(entity));
+                one(repository).update(ObjectIdMigration.ONE, entity); will(new RegisterEntity(entity));
             }});
             manager.flushAllEntitiesToDatabase();
         }

@@ -8,6 +8,7 @@ import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
 import net.orfjackal.dimdwarf.api.EntityInfo;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.modules.CommonModules;
 import net.orfjackal.dimdwarf.modules.options.NullGarbageCollectionOption;
@@ -15,7 +16,6 @@ import net.orfjackal.dimdwarf.tasks.TaskExecutor;
 import net.orfjackal.dimdwarf.util.Objects;
 import org.junit.runner.RunWith;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.*;
@@ -33,7 +33,7 @@ public class EntityGraphSpec extends Specification<Object> {
     private Provider<BindingRepository> bindings;
     private Provider<EntityGraph> graph;
 
-    private BigInteger entityId;
+    private ObjectIdMigration entityId;
 
     public void create() throws Exception {
         Injector injector = Guice.createInjector(
@@ -47,8 +47,8 @@ public class EntityGraphSpec extends Specification<Object> {
         graph = injector.getProvider(EntityGraph.class);
     }
 
-    private BigInteger createDummyEntity() {
-        final AtomicReference<BigInteger> entityId = new AtomicReference<BigInteger>();
+    private ObjectIdMigration createDummyEntity() {
+        final AtomicReference<ObjectIdMigration> entityId = new AtomicReference<ObjectIdMigration>();
         taskContext.execute(new Runnable() {
             public void run() {
                 DummyEntity e = new DummyEntity();
@@ -58,8 +58,8 @@ public class EntityGraphSpec extends Specification<Object> {
         return entityId.get();
     }
 
-    private BigInteger createBoundDummyEntity(final String binding) {
-        final AtomicReference<BigInteger> entityId = new AtomicReference<BigInteger>();
+    private ObjectIdMigration createBoundDummyEntity(final String binding) {
+        final AtomicReference<ObjectIdMigration> entityId = new AtomicReference<ObjectIdMigration>();
         taskContext.execute(new Runnable() {
             public void run() {
                 DummyEntity e = new DummyEntity();
@@ -154,9 +154,9 @@ public class EntityGraphSpec extends Specification<Object> {
 
     public class WhenThereAreManyEntities {
 
-        private BigInteger entityId1;
-        private BigInteger entityId2;
-        private BigInteger entityId3;
+        private ObjectIdMigration entityId1;
+        private ObjectIdMigration entityId2;
+        private ObjectIdMigration entityId3;
 
         public void create() {
             entityId1 = createBoundDummyEntity("binding1");
@@ -182,13 +182,13 @@ public class EntityGraphSpec extends Specification<Object> {
             specify(iterateInSeparateTasks(), should.containExactly(entityId1, entityId2));
         }
 
-        private List<BigInteger> iterateInSeparateTasks() {
+        private List<ObjectIdMigration> iterateInSeparateTasks() {
             final AtomicBoolean hasNext = new AtomicBoolean();
-            final List<BigInteger> nodes = new ArrayList<BigInteger>();
+            final List<ObjectIdMigration> nodes = new ArrayList<ObjectIdMigration>();
             do {
                 taskContext.execute(new Runnable() {
                     public void run() {
-                        Iterator<BigInteger> it = getIterator();
+                        Iterator<ObjectIdMigration> it = getIterator();
                         hasNext.set(it.hasNext());
                         if (it.hasNext()) {
                             nodes.add(it.next());
@@ -199,11 +199,11 @@ public class EntityGraphSpec extends Specification<Object> {
             return nodes;
         }
 
-        private Iterator<BigInteger> getIterator() {
+        private Iterator<ObjectIdMigration> getIterator() {
             return Objects.uncheckedCast(getHolder().getOther());
         }
 
-        private void setIterator(Iterator<BigInteger> iter) {
+        private void setIterator(Iterator<ObjectIdMigration> iter) {
             getHolder().setOther(iter);
         }
 
@@ -214,8 +214,8 @@ public class EntityGraphSpec extends Specification<Object> {
 
     public class WhenTheEntityHasReferencesToOtherEntities {
 
-        private BigInteger entityId1;
-        private BigInteger entityId2;
+        private ObjectIdMigration entityId1;
+        private ObjectIdMigration entityId2;
 
         public void create() {
             taskContext.execute(new Runnable() {

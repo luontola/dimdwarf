@@ -13,7 +13,6 @@ import org.jmock.Expectations;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -23,7 +22,7 @@ import java.math.BigInteger;
 @Group({"fast"})
 public class ReadingEntityReferencesSpec extends Specification<Object> {
 
-    private static final BigInteger ENTITY_ID = BigInteger.valueOf(42);
+    private static final ObjectIdMigration ENTITY_ID = ObjectIdMigration.valueOf(42);
 
     private EntityIdFactory idFactory;
     private EntityRepository repository;
@@ -39,7 +38,7 @@ public class ReadingEntityReferencesSpec extends Specification<Object> {
         entity = new DummyEntity();
     }
 
-    private Expectations loadsFromRepository(final BigInteger id, final DummyEntity entity) {
+    private Expectations loadsFromRepository(final ObjectIdMigration id, final DummyEntity entity) {
         return new Expectations() {{
             one(repository).read(id); will(returnValue(entity));
         }};

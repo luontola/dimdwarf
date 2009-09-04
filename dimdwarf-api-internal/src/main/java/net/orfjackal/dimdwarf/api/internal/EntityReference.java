@@ -4,8 +4,6 @@
 
 package net.orfjackal.dimdwarf.api.internal;
 
-import java.math.BigInteger;
-
 /**
  * Reference to an entity, equivalent to Darkstar's ManagedReference.
  *
@@ -16,5 +14,5 @@ public interface EntityReference<T> {
 
     T get();
 
-    BigInteger getEntityId();
+    ObjectIdMigration getEntityId();
 }

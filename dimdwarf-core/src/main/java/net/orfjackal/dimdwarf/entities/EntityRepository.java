@@ -4,21 +4,21 @@
 
 package net.orfjackal.dimdwarf.entities;
 
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import net.orfjackal.dimdwarf.db.DatabaseTable;
 
 import javax.annotation.Nonnull;
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
  * @since 31.8.2008
  */
-public interface EntityRepository extends DatabaseTable<BigInteger, Object> {
+public interface EntityRepository extends DatabaseTable<ObjectIdMigration, Object> {
 
     @Nonnull
-    Object read(BigInteger id) throws EntityNotFoundException;
+    Object read(ObjectIdMigration id) throws EntityNotFoundException;
 
-    void update(BigInteger id, Object entity);
+    void update(ObjectIdMigration id, Object entity);
 
-    void delete(BigInteger id);
+    void delete(ObjectIdMigration id);
 }

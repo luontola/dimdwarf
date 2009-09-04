@@ -4,8 +4,6 @@
 
 package net.orfjackal.dimdwarf.api;
 
-import java.math.BigInteger;
-
 /**
  * @author Esko Luontola
  * @since 2.11.2008
@@ -20,5 +18,5 @@ public interface EntityInfo {
      *
      * @throws IllegalArgumentException if the object is not an entity.
      */
-    BigInteger getEntityId(Object entity);
+    net.orfjackal.dimdwarf.api.internal.ObjectIdMigration getEntityId(Object entity);
 }

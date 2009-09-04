@@ -6,12 +6,12 @@ package net.orfjackal.dimdwarf.scheduler;
 
 import com.google.inject.Provider;
 import net.orfjackal.dimdwarf.api.EntityInfo;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -38,7 +38,7 @@ public class RecoverableSetImpl<T> implements RecoverableSet<T> {
     }
 
     private String keyFor(T value) {
-        BigInteger id = info.get().getEntityId(value);
+        ObjectIdMigration id = info.get().getEntityId(value);
         return prefix + id;
     }
 

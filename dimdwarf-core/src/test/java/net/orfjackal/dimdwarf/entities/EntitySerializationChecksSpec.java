@@ -6,7 +6,7 @@ package net.orfjackal.dimdwarf.entities;
 
 import jdave.*;
 import jdave.junit4.JDaveRunner;
-import net.orfjackal.dimdwarf.api.internal.DimdwarfEntityApi;
+import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.db.*;
 import net.orfjackal.dimdwarf.entities.dao.EntityDao;
 import net.orfjackal.dimdwarf.gc.entities.GcAwareEntityRepository;
@@ -16,8 +16,6 @@ import static net.orfjackal.dimdwarf.util.Objects.uncheckedCast;
 import org.jmock.Expectations;
 import org.junit.runner.RunWith;
 
-import java.math.BigInteger;
-
 /**
  * @author Esko Luontola
  * @since 4.9.2008
@@ -26,7 +24,7 @@ import java.math.BigInteger;
 @Group({"fast"})
 public class EntitySerializationChecksSpec extends Specification<Object> {
 
-    private static final BigInteger ENTITY_ID = BigInteger.valueOf(42);
+    private static final ObjectIdMigration ENTITY_ID = ObjectIdMigration.valueOf(42);
 
     private DatabaseTableWithMetadata<Blob, Blob> db;
     private GcAwareEntityRepository repository;
@@ -47,22 +45,22 @@ public class EntitySerializationChecksSpec extends Specification<Object> {
                 new GcAwareEntityRepository(
                         new EntityDao(
                                 db,
-                                new ConvertBigIntegerToBytes(),
+                                new ConvertEntityIdToBytes(),
                                 new NoConversion<Blob>()),
                         serializer,
                         new NullGarbageCollectionOption.NullMutatorListener());
         entity = new DummyEntity();
     }
 
-    private Expectations entityIsUpdated(final BigInteger entityId) {
+    private Expectations entityIsUpdated(final ObjectIdMigration entityId) {
         return new Expectations() {{
             one(db).update(with(equal(asBytes(entityId))), with(aNonNull(Blob.class)));
             allowing(db).read(asBytes(entityId)); will(returnValue(Blob.EMPTY_BLOB));
         }};
     }
 
-    private static Blob asBytes(BigInteger id) {
-        return new ConvertBigIntegerToBytes().forth(id);
+    private static Blob asBytes(ObjectIdMigration id) {
+        return new ConvertEntityIdToBytes().forth(id);
     }
 
 
@@ -79,7 +77,7 @@ public class EntitySerializationChecksSpec extends Specification<Object> {
 
         public void referringAnEntityThroughAnEntityReferenceIsAllowed() {
             checking(entityIsUpdated(ENTITY_ID));
-            entity.other = new EntityReferenceImpl<DummyEntity>(BigInteger.valueOf(123), new DummyEntity());
+            entity.other = new EntityReferenceImpl<DummyEntity>(ObjectIdMigration.valueOf(123), new DummyEntity());
             repository.update(ENTITY_ID, entity);
         }
 

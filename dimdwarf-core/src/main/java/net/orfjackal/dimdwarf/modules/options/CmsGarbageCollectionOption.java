@@ -5,10 +5,9 @@
 package net.orfjackal.dimdwarf.modules.options;
 
 import com.google.inject.*;
+import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
 import net.orfjackal.dimdwarf.gc.*;
 import net.orfjackal.dimdwarf.gc.cms.ConcurrentMarkSweepCollector;
-
-import java.math.BigInteger;
 
 /**
  * @author Esko Luontola
@@ -17,23 +16,23 @@ import java.math.BigInteger;
 public class CmsGarbageCollectionOption extends AbstractModule {
 
     protected void configure() {
-        bind(new TypeLiteral<GarbageCollector<BigInteger>>() {}).toProvider(GarbageCollectorProvider.class);
-        bind(new TypeLiteral<MutatorListener<BigInteger>>() {}).toProvider(MutatorListenerProvider.class);
+        bind(new TypeLiteral<GarbageCollector<ObjectIdMigration>>() {}).toProvider(GarbageCollectorProvider.class);
+        bind(new TypeLiteral<MutatorListener<ObjectIdMigration>>() {}).toProvider(MutatorListenerProvider.class);
     }
 
-    private static class GarbageCollectorProvider implements Provider<GarbageCollector<BigInteger>> {
-        @Inject public Graph<BigInteger> graph;
+    private static class GarbageCollectorProvider implements Provider<GarbageCollector<ObjectIdMigration>> {
+        @Inject public Graph<ObjectIdMigration> graph;
         @Inject public NodeSetFactory factory;
 
-        public GarbageCollector<BigInteger> get() {
-            return new ConcurrentMarkSweepCollector<BigInteger>(graph, factory);
+        public GarbageCollector<ObjectIdMigration> get() {
+            return new ConcurrentMarkSweepCollector<ObjectIdMigration>(graph, factory);
         }
     }
 
-    private static class MutatorListenerProvider implements Provider<MutatorListener<BigInteger>> {
-        @Inject public GarbageCollector<BigInteger> collector;
+    private static class MutatorListenerProvider implements Provider<MutatorListener<ObjectIdMigration>> {
+        @Inject public GarbageCollector<ObjectIdMigration> collector;
 
-        public MutatorListener<BigInteger> get() {
+        public MutatorListener<ObjectIdMigration> get() {
             return collector.getMutatorListener();
         }
     }

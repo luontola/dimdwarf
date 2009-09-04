@@ -13,8 +13,6 @@ import net.orfjackal.dimdwarf.util.StubProvider;
 import org.jmock.Expectations;
 import org.junit.runner.RunWith;
 
-import java.math.BigInteger;
-
 /**
  * @author Esko Luontola
  * @since 9.9.2008
@@ -23,7 +21,7 @@ import java.math.BigInteger;
 @Group({"fast"})
 public class GettingEntityIdSpec extends Specification<Object> {
 
-    private static final BigInteger ENTITY_ID = BigInteger.valueOf(42);
+    private static final ObjectIdMigration ENTITY_ID = ObjectIdMigration.valueOf(42);
 
     private EntityInfoImpl entityInfo;
     private EntityManager entityManager;
