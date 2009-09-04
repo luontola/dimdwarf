@@ -22,7 +22,7 @@ import java.io.IOException;
 @Group({"fast"})
 public class ReadingEntityReferencesSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ENTITY_ID = ObjectIdMigration.valueOf(42);
+    private static final ObjectIdMigration ENTITY_ID = new ObjectIdMigration(42);
 
     private EntityIdFactory idFactory;
     private EntityRepository repository;

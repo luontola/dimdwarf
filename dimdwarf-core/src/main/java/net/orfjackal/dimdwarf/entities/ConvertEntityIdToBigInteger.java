@@ -29,6 +29,6 @@ public class ConvertEntityIdToBigInteger implements Converter<ObjectIdMigration,
         if (value == null) {
             return null;
         }
-        return value.bigId;
+        return value.toBigInteger();
     }
 }

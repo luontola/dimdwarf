@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 @Group({"fast"})
 public class FlushingEntitiesSpec extends Specification<Object> {
 
+    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+
     private EntityRepository repository;
     private EntityManagerImpl manager;
     private EntityReferenceFactory refFactory;
@@ -28,7 +30,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
     public void create() throws Exception {
         repository = mock(EntityRepository.class);
-        manager = new EntityManagerImpl(new EntityIdFactoryImpl(ObjectIdMigration.ZERO), repository, new DimdwarfEntityApi());
+        manager = new EntityManagerImpl(new EntityIdFactoryImpl(new ObjectIdMigration(0)), repository, new DimdwarfEntityApi());
         refFactory = new EntityReferenceFactoryImpl(manager);
 
         entity = new DummyEntity();
@@ -40,14 +42,14 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theyAreStoredInDatabase() {
             checking(new Expectations() {{
-                one(repository).update(ObjectIdMigration.ONE, entity);
+                one(repository).update(ID1, entity);
             }});
             manager.flushAllEntitiesToDatabase();
         }
 
         public void flushingTwiseIsNotAllowed() {
             checking(new Expectations() {{
-                one(repository).update(ObjectIdMigration.ONE, entity);
+                one(repository).update(ID1, entity);
             }});
             manager.flushAllEntitiesToDatabase();
             specify(new Block() {
@@ -59,7 +61,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theEntityManagerCanNotBeUsedAfterFlushHasEnded() {
             checking(new Expectations() {{
-                one(repository).update(ObjectIdMigration.ONE, entity);
+                one(repository).update(ID1, entity);
             }});
             manager.flushAllEntitiesToDatabase();
 
@@ -71,7 +73,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
                 public void run() throws Throwable {
-                    manager.getEntityById(ObjectIdMigration.ONE);
+                    manager.getEntityById(ID1);
                 }
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
@@ -81,7 +83,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
                 public void run() throws Throwable {
-                    manager.nextKeyAfter(ObjectIdMigration.ONE);
+                    manager.nextKeyAfter(ID1);
                 }
             }, should.raise(IllegalStateException.class));
             specify(new Block() {
@@ -96,8 +98,8 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theyAreStoredInDatabase() {
             checking(new Expectations() {{
-                one(repository).update(ObjectIdMigration.ONE, entity); will(new RegisterEntity(newEntity));
-                one(repository).update(ObjectIdMigration.valueOf(2), newEntity);
+                one(repository).update(ID1, entity); will(new RegisterEntity(newEntity));
+                one(repository).update(new ObjectIdMigration(2), newEntity);
             }});
             manager.flushAllEntitiesToDatabase();
         }
@@ -107,7 +109,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
         public void theyAreStoredInDatabaseOnlyOnce() {
             checking(new Expectations() {{
-                one(repository).update(ObjectIdMigration.ONE, entity); will(new RegisterEntity(entity));
+                one(repository).update(ID1, entity); will(new RegisterEntity(entity));
             }});
             manager.flushAllEntitiesToDatabase();
         }

@@ -25,6 +25,8 @@ import java.lang.instrument.ClassFileTransformer;
 @Group({"fast"})
 public class AddEqualsAndHashCodeMethodsForEntitiesSpec extends Specification<Object> {
 
+    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+
     private int entityHelperCalled = 0;
     private Object target;
 
@@ -33,7 +35,7 @@ public class AddEqualsAndHashCodeMethodsForEntitiesSpec extends Specification<Ob
         EntityReferenceFactory factory = new EntityReferenceFactory() {
             public <T> EntityReference<T> createReference(T entity) {
                 entityHelperCalled++;
-                return new EntityReferenceImpl<T>(ObjectIdMigration.ONE, entity);
+                return new EntityReferenceImpl<T>(ID1, entity);
             }
         };
         ThreadContext.setUp(new FakeContext().with(EntityReferenceFactory.class, factory));

@@ -25,6 +25,9 @@ import java.util.*;
 @Group({"fast"})
 public class TransparentReferenceSpec extends Specification<Object> {
 
+    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+    private static final ObjectIdMigration ID2 = new ObjectIdMigration(2);
+
     private EntityReferenceFactory referenceFactory;
     private TransparentReferenceFactory proxyFactory;
     private DummyEntity entity;
@@ -48,7 +51,7 @@ public class TransparentReferenceSpec extends Specification<Object> {
         private Object proxy;
 
         public void create() {
-            checking(referenceIsCreatedFor(entity, ObjectIdMigration.ONE));
+            checking(referenceIsCreatedFor(entity, ID1));
             proxy = proxyFactory.createTransparentReference(entity);
         }
 
@@ -75,7 +78,7 @@ public class TransparentReferenceSpec extends Specification<Object> {
         public void itImplementsTheSameInterfacesAsTheSuperclassesOfTheEntity() {
             final DummyEntity subclassEntity = new DummyEntity() {
             };
-            checking(referenceIsCreatedFor(subclassEntity, ObjectIdMigration.TEN));
+            checking(referenceIsCreatedFor(subclassEntity, ID2));
             TransparentReference subclassProxy = proxyFactory.createTransparentReference(subclassEntity);
             specify(subclassProxy instanceof DummyInterface);
         }
@@ -123,7 +126,7 @@ public class TransparentReferenceSpec extends Specification<Object> {
                     throw new IllegalArgumentException("thrown by entity");
                 }
             };
-            checking(referenceIsCreatedFor(exceptionThrower, ObjectIdMigration.TEN));
+            checking(referenceIsCreatedFor(exceptionThrower, ID2));
             final DummyInterface proxy = (DummyInterface) proxyFactory.createTransparentReference(exceptionThrower);
             specify(new Block() {
                 public void run() throws Throwable {
@@ -153,7 +156,7 @@ public class TransparentReferenceSpec extends Specification<Object> {
             ObjectSerializerImpl serializer = new ObjectSerializerImpl(new SerializationListener[0], new SerializationReplacer[]{
                     new ReplaceEntitiesWithTransparentReferences(proxyFactory, entityApi)
             });
-            checking(referenceIsCreatedFor(entity, ObjectIdMigration.ONE));
+            checking(referenceIsCreatedFor(entity, ID1));
             Blob data = serializer.serialize(new SerializationTestEntity(entity, new DummyObject())).getSerializedBytes();
             deserialized = (SerializationTestEntity) serializer.deserialize(data).getDeserializedObject();
         }

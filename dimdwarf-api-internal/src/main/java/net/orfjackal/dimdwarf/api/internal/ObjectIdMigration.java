@@ -13,38 +13,22 @@ import java.math.BigInteger;
  */
 public class ObjectIdMigration implements Serializable {
 
-    public static final ObjectIdMigration ZERO = new ObjectIdMigration(0);
-    public static final ObjectIdMigration ONE = new ObjectIdMigration(1);
-    public static final ObjectIdMigration TEN = new ObjectIdMigration(10);
-
-    public final BigInteger bigId;
-
-    public ObjectIdMigration(int signum, byte[] magnitude) {
-        bigId = new BigInteger(signum, magnitude);
-    }
-
-    public ObjectIdMigration(byte[] val) {
-        bigId = new BigInteger(val);
-    }
+    public final ObjectId objId;
 
     public ObjectIdMigration(long val) {
-        bigId = BigInteger.valueOf(val);
+        objId = new ObjectId(val);
     }
 
-    public static ObjectIdMigration valueOf(long val) {
-        return new ObjectIdMigration(val);
+    private ObjectIdMigration(ObjectId objId) {
+        this.objId = objId;
     }
 
-    public byte[] toByteArray() {
-        return bigId.toByteArray();
-    }
-
-    public ObjectIdMigration add(ObjectIdMigration that) {
-        return new ObjectIdMigration(this.bigId.longValue() + that.bigId.longValue());
+    public ObjectIdMigration next() {
+        return new ObjectIdMigration(this.objId.next());
     }
 
     public int hashCode() {
-        return bigId.hashCode();
+        return objId.hashCode();
     }
 
     public boolean equals(Object obj) {
@@ -52,14 +36,14 @@ public class ObjectIdMigration implements Serializable {
             return false;
         }
         ObjectIdMigration that = (ObjectIdMigration) obj;
-        return bigId.equals(that.bigId);
+        return objId.equals(that.objId);
     }
 
     public String toString() {
-        return bigId.toString();
+        return objId.toString();
     }
 
-    public int signum() {
-        return bigId.signum();
+    public BigInteger toBigInteger() {
+        return objId.toBigInteger();
     }
 }

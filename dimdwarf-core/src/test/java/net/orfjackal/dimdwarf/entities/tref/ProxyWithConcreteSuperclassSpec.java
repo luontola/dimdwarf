@@ -23,6 +23,8 @@ import java.io.Serializable;
 @Group({"fast"})
 public class ProxyWithConcreteSuperclassSpec extends Specification<Object> {
 
+    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+
     private EntityReferenceFactory referenceFactory;
     private TransparentReferenceFactory proxyFactory;
     private EntityApi entityApi = new DimdwarfEntityApi();
@@ -41,7 +43,7 @@ public class ProxyWithConcreteSuperclassSpec extends Specification<Object> {
             entity = new MyEntity(42);
             checking(new Expectations() {{
                 one(referenceFactory).createReference(entity);
-                will(returnValue(new EntityReferenceImpl<EntityObject>(ObjectIdMigration.ONE, entity)));
+                will(returnValue(new EntityReferenceImpl<EntityObject>(ID1, entity)));
             }});
             proxy = proxyFactory.createTransparentReference(entity);
         }

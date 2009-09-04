@@ -27,6 +27,8 @@ import java.util.logging.Level;
 @Group({"fast"})
 public class RetryableExceptionsSpec extends Specification<Object> {
 
+    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+
     private TestServer server;
     private Executor taskContext;
     private Provider<EntityDao> entities;
@@ -85,14 +87,14 @@ public class RetryableExceptionsSpec extends Specification<Object> {
                 public void run() {
                     runCount.incrementAndGet();
                     countDownAndAwait(bothTasksRunning);
-                    entities.get().update(ObjectIdMigration.ONE, value1);
+                    entities.get().update(ID1, value1);
                 }
             };
             Runnable task2 = new Runnable() {
                 public void run() {
                     runCount.incrementAndGet();
                     countDownAndAwait(bothTasksRunning);
-                    entities.get().update(ObjectIdMigration.ONE, value2);
+                    entities.get().update(ID1, value2);
                 }
             };
 

@@ -9,17 +9,17 @@ import net.orfjackal.dimdwarf.api.internal.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import java.io.*;
+import java.io.Serializable;
 
 /**
  * @author Esko Luontola
  * @since 25.8.2008
  */
 @NotThreadSafe
-public class EntityReferenceImpl<T> implements EntityReference<T>, Externalizable {
+public class EntityReferenceImpl<T> implements EntityReference<T>, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private ObjectIdMigration id;
+    private final ObjectIdMigration id;
     @Nullable private transient T entity;
     @Nullable private transient EntityManager entityManager;
 
@@ -28,20 +28,6 @@ public class EntityReferenceImpl<T> implements EntityReference<T>, Externalizabl
         assert entity != null;
         this.id = id;
         this.entity = entity;
-    }
-
-    public EntityReferenceImpl() {
-        // default constructor is required by Externalizable
-    }
-
-    public void writeExternal(ObjectOutput out) throws IOException {
-        byte[] bytes = id.toByteArray();
-        out.writeObject(bytes);
-    }
-
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte[] bytes = (byte[]) in.readObject();
-        id = new ObjectIdMigration(bytes);
     }
 
     /**

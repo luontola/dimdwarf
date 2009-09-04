@@ -35,8 +35,8 @@ public class EntityIdentitySpec extends Specification<Object> {
         proxyFactory = new TransparentReferenceFactoryImpl(StubProvider.wrap(referenceFactory));
         ent1 = new DummyEntity();
         ent2 = new DummyEntity();
-        checking(referencesMayBeCreatedFor(ent1, ObjectIdMigration.valueOf(1)));
-        checking(referencesMayBeCreatedFor(ent2, ObjectIdMigration.valueOf(2)));
+        checking(referencesMayBeCreatedFor(ent1, new ObjectIdMigration(1)));
+        checking(referencesMayBeCreatedFor(ent2, new ObjectIdMigration(2)));
         tref1 = proxyFactory.createTransparentReference(ent1);
         tref1b = proxyFactory.createTransparentReference(ent1);
         tref2 = proxyFactory.createTransparentReference(ent2);
@@ -122,14 +122,14 @@ public class EntityIdentitySpec extends Specification<Object> {
 
         public void equalsMethodOnProxyWillNotDelegateToEntity() {
             final EntityObject entity = mock(EntityObject.class);
-            checking(referencesMayBeCreatedFor(entity, ObjectIdMigration.valueOf(3)));
+            checking(referencesMayBeCreatedFor(entity, new ObjectIdMigration(3)));
             TransparentReference proxy = proxyFactory.createTransparentReference(entity);
             proxy.equals(entity);
         }
 
         public void hashCodeMethodOnProxyWillNotDelegateToEntity() {
             final EntityObject entity = mock(EntityObject.class);
-            checking(referencesMayBeCreatedFor(entity, ObjectIdMigration.valueOf(3)));
+            checking(referencesMayBeCreatedFor(entity, new ObjectIdMigration(3)));
             TransparentReference proxy = proxyFactory.createTransparentReference(entity);
             proxy.hashCode();
         }

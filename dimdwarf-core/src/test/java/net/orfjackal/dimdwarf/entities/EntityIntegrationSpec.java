@@ -74,7 +74,7 @@ public class EntityIntegrationSpec extends Specification<Object> {
                     ObjectIdMigration id2 = info.get().getEntityId(new DummyEntity());
                     ObjectIdMigration id1 = idInFirstTask.get();
                     specify(id2, should.not().equal(id1));
-                    specify(id2, should.equal(id1.add(ObjectIdMigration.ONE)));
+                    specify(id2, should.equal(id1.next()));
                 }
             });
         }

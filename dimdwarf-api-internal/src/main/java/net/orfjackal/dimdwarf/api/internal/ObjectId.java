@@ -41,4 +41,9 @@ public class ObjectId implements EntityId, Serializable {
     public String toString() {
         return getClass().getSimpleName() + "(" + id + ")";
     }
+
+    // TODO: remove this method, use an external ID generator
+    public ObjectId next() {
+        return new ObjectId(id + 1);
+    }
 }

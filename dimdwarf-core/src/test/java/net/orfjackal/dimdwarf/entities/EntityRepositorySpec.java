@@ -23,8 +23,8 @@ import java.util.concurrent.*;
 @Group({"fast"})
 public class EntityRepositorySpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ENTITY_ID = ObjectIdMigration.valueOf(42);
-    private static final ObjectIdMigration INVALID_ENTITY_ID = ObjectIdMigration.valueOf(999);
+    private static final ObjectIdMigration ENTITY_ID = new ObjectIdMigration(42);
+    private static final ObjectIdMigration INVALID_ENTITY_ID = new ObjectIdMigration(999);
 
     private Executor taskContext;
     private Provider<EntityRepository> entities;

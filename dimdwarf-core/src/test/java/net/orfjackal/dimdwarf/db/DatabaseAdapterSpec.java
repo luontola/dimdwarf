@@ -29,7 +29,7 @@ public class DatabaseAdapterSpec extends Specification<Object> {
     private DatabaseTable<String, ObjectIdMigration> tableAdapter;
 
     private String key = "key";
-    private ObjectIdMigration value = ObjectIdMigration.TEN;
+    private ObjectIdMigration value = new ObjectIdMigration(42);
     private Blob keyBytes;
     private Blob valueBytes;
 

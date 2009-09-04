@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 @Group({"fast"})
 public class EntityIdFactorySpec extends Specification<Object> {
 
-    private static final ObjectIdMigration LARGEST_USED_ID = ObjectIdMigration.valueOf(42);
+    private static final ObjectIdMigration LARGEST_USED_ID = new ObjectIdMigration(42);
 
     private EntityIdFactoryImpl factory;
 
@@ -29,14 +29,14 @@ public class EntityIdFactorySpec extends Specification<Object> {
     public class AnEntityIdFactory {
 
         public void startsFromTheNextUnusedId() {
-            ObjectIdMigration nextUnused = LARGEST_USED_ID.add(ObjectIdMigration.ONE);
+            ObjectIdMigration nextUnused = LARGEST_USED_ID.next();
             specify(factory.newId(), should.equal(nextUnused));
         }
 
         public void incrementsTheIdOnEveryCall() {
             ObjectIdMigration id1 = factory.newId();
             ObjectIdMigration id2 = factory.newId();
-            specify(id2, should.equal(id1.add(ObjectIdMigration.ONE)));
+            specify(id2, should.equal(id1.next()));
         }
     }
 }

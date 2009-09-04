@@ -46,7 +46,8 @@ public class CreatingEntityReferencesSpec extends Specification<Object> {
 
         public void create() {
             checking(new Expectations() {{
-                one(idFactory).newId(); will(returnValue(ObjectIdMigration.valueOf(42)));
+                one(idFactory).newId();
+                will(returnValue(new ObjectIdMigration(42)));
             }});
             ref = refFactory.createReference(entity);
         }
@@ -60,7 +61,7 @@ public class CreatingEntityReferencesSpec extends Specification<Object> {
         }
 
         public void theEntityGetsAnId() {
-            specify(ref.getEntityId(), should.equal(ObjectIdMigration.valueOf(42)));
+            specify(ref.getEntityId(), should.equal(new ObjectIdMigration(42)));
         }
 
         public void onMultipleCallsAllReferencesToTheSameObjectAreEqual() {
@@ -82,8 +83,10 @@ public class CreatingEntityReferencesSpec extends Specification<Object> {
 
         public void create() {
             checking(new Expectations() {{
-                one(idFactory).newId(); will(returnValue(ObjectIdMigration.valueOf(1)));
-                one(idFactory).newId(); will(returnValue(ObjectIdMigration.valueOf(2)));
+                one(idFactory).newId();
+                will(returnValue(new ObjectIdMigration(1)));
+                one(idFactory).newId();
+                will(returnValue(new ObjectIdMigration(2)));
             }});
             ref1 = refFactory.createReference(entity);
             ref2 = refFactory.createReference(new DummyEntity());
@@ -98,8 +101,8 @@ public class CreatingEntityReferencesSpec extends Specification<Object> {
         }
 
         public void eachEntityGetsItsOwnId() {
-            specify(ref1.getEntityId(), should.equal(ObjectIdMigration.valueOf(1)));
-            specify(ref2.getEntityId(), should.equal(ObjectIdMigration.valueOf(2)));
+            specify(ref1.getEntityId(), should.equal(new ObjectIdMigration(1)));
+            specify(ref2.getEntityId(), should.equal(new ObjectIdMigration(2)));
         }
     }
 }

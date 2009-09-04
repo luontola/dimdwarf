@@ -22,8 +22,8 @@ public class AccessingEntitiesByIdSpec extends Specification<Object> {
     private EntityManager manager;
 
     private DummyEntity entity1 = new DummyEntity();
-    private ObjectIdMigration id1 = ObjectIdMigration.valueOf(1);
-    private ObjectIdMigration id2 = ObjectIdMigration.valueOf(2);
+    private ObjectIdMigration id1 = new ObjectIdMigration(1);
+    private ObjectIdMigration id2 = new ObjectIdMigration(2);
 
     public void create() throws Exception {
         repository = mock(EntityRepository.class);

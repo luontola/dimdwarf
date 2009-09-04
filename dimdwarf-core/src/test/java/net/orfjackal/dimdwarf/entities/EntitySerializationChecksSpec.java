@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 @Group({"fast"})
 public class EntitySerializationChecksSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ENTITY_ID = ObjectIdMigration.valueOf(42);
+    private static final ObjectIdMigration ENTITY_ID = new ObjectIdMigration(42);
 
     private DatabaseTableWithMetadata<Blob, Blob> db;
     private GcAwareEntityRepository repository;
@@ -77,7 +77,7 @@ public class EntitySerializationChecksSpec extends Specification<Object> {
 
         public void referringAnEntityThroughAnEntityReferenceIsAllowed() {
             checking(entityIsUpdated(ENTITY_ID));
-            entity.other = new EntityReferenceImpl<DummyEntity>(ObjectIdMigration.valueOf(123), new DummyEntity());
+            entity.other = new EntityReferenceImpl<DummyEntity>(new ObjectIdMigration(123), new DummyEntity());
             repository.update(ENTITY_ID, entity);
         }
 

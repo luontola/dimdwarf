@@ -31,7 +31,7 @@ public class EntityModule extends AbstractModule {
         bind(EntityIdFactory.class).to(EntityIdFactoryImpl.class);
         bind(ObjectIdMigration.class)
                 .annotatedWith(MaxEntityId.class)
-                .toInstance(ObjectIdMigration.ZERO); // TODO: import from database
+                .toInstance(new ObjectIdMigration(0)); // TODO: import from database
 
         bind(EntityRepository.class).to(GcAwareEntityRepository.class);
         bind(databaseTableConnectionWithMetadata())

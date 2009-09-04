@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @Group({"fast"})
 public class GettingEntityIdSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ENTITY_ID = ObjectIdMigration.valueOf(42);
+    private static final ObjectIdMigration ENTITY_ID = new ObjectIdMigration(42);
 
     private EntityInfoImpl entityInfo;
     private EntityManager entityManager;

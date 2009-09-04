@@ -23,12 +23,12 @@ public class EntityIdFactoryImpl implements EntityIdFactory {
 
     @Inject
     public EntityIdFactoryImpl(@MaxEntityId ObjectIdMigration largestUsedId) {
-        nextId = largestUsedId.add(ObjectIdMigration.ONE);
+        nextId = largestUsedId.next();
     }
 
     public synchronized ObjectIdMigration newId() {
         ObjectIdMigration currentId = nextId;
-        nextId = nextId.add(ObjectIdMigration.ONE);
+        nextId = nextId.next();
         return currentId;
     }
 }
