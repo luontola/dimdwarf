@@ -4,7 +4,7 @@
 
 package net.orfjackal.dimdwarf.entities;
 
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.db.DatabaseTable;
 
 import javax.annotation.Nonnull;
@@ -13,12 +13,12 @@ import javax.annotation.Nonnull;
  * @author Esko Luontola
  * @since 31.8.2008
  */
-public interface EntityRepository extends DatabaseTable<ObjectIdMigration, Object> {
+public interface EntityRepository extends DatabaseTable<EntityId, Object> {
 
     @Nonnull
-    Object read(ObjectIdMigration id) throws EntityNotFoundException;
+    Object read(EntityId id) throws EntityNotFoundException;
 
-    void update(ObjectIdMigration id, Object entity);
+    void update(EntityId id, Object entity);
 
-    void delete(ObjectIdMigration id);
+    void delete(EntityId id);
 }

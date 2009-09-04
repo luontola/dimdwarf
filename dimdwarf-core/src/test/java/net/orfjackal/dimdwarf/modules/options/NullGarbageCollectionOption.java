@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.modules.options;
 
 import com.google.inject.*;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.gc.*;
 import net.orfjackal.dimdwarf.tasks.util.IncrementalTask;
 
@@ -19,34 +19,34 @@ import java.util.*;
 public class NullGarbageCollectionOption extends AbstractModule {
 
     protected void configure() {
-        bind(new TypeLiteral<GarbageCollector<ObjectIdMigration>>() {}).toInstance(new NullGarbageCollector());
-        bind(new TypeLiteral<MutatorListener<ObjectIdMigration>>() {}).toInstance(new NullMutatorListener());
+        bind(new TypeLiteral<GarbageCollector<EntityId>>() {}).toInstance(new NullGarbageCollector());
+        bind(new TypeLiteral<MutatorListener<EntityId>>() {}).toInstance(new NullMutatorListener());
     }
 
-    public static class NullGarbageCollector implements GarbageCollector<ObjectIdMigration> {
+    public static class NullGarbageCollector implements GarbageCollector<EntityId> {
 
         public List<? extends IncrementalTask> getCollectorStagesToExecute() {
             return Collections.emptyList();
         }
 
-        public MutatorListener<ObjectIdMigration> getMutatorListener() {
+        public MutatorListener<EntityId> getMutatorListener() {
             return new NullMutatorListener();
         }
 
-        public Enum<?> getColor(ObjectIdMigration node) {
+        public Enum<?> getColor(EntityId node) {
             return null;
         }
     }
 
-    public static class NullMutatorListener implements MutatorListener<ObjectIdMigration> {
+    public static class NullMutatorListener implements MutatorListener<EntityId> {
 
-        public void onNodeCreated(ObjectIdMigration node) {
+        public void onNodeCreated(EntityId node) {
         }
 
-        public void onReferenceCreated(@Nullable ObjectIdMigration source, ObjectIdMigration target) {
+        public void onReferenceCreated(@Nullable EntityId source, EntityId target) {
         }
 
-        public void onReferenceRemoved(@Nullable ObjectIdMigration source, ObjectIdMigration target) {
+        public void onReferenceRemoved(@Nullable EntityId source, EntityId target) {
         }
     }
 }

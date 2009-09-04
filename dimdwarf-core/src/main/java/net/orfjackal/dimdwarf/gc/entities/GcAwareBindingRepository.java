@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.gc.entities;
 
 import com.google.inject.Inject;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.entities.dao.BindingDao;
 import net.orfjackal.dimdwarf.gc.MutatorListener;
@@ -22,12 +22,12 @@ public class GcAwareBindingRepository implements BindingRepository {
 
     private final BindingDao bindings;
     private final ConvertEntityToEntityId entityToId;
-    private final MutatorListener<ObjectIdMigration> listener;
+    private final MutatorListener<EntityId> listener;
 
     @Inject
     public GcAwareBindingRepository(BindingDao bindings,
                                     ConvertEntityToEntityId entityToId,
-                                    MutatorListener<ObjectIdMigration> listener) {
+                                    MutatorListener<EntityId> listener) {
         this.bindings = bindings;
         this.entityToId = entityToId;
         this.listener = listener;
@@ -38,18 +38,18 @@ public class GcAwareBindingRepository implements BindingRepository {
     }
 
     public Object read(String binding) {
-        ObjectIdMigration oldTarget = bindings.read(binding);
+        EntityId oldTarget = bindings.read(binding);
         return entityToId.back(oldTarget);
     }
 
     public void update(String binding, Object entity) {
-        ObjectIdMigration oldTarget = bindings.read(binding);
-        ObjectIdMigration newTarget = entityToId.forth(entity);
+        EntityId oldTarget = bindings.read(binding);
+        EntityId newTarget = entityToId.forth(entity);
         bindings.update(binding, newTarget);
         fireBindingUpdated(oldTarget, newTarget);
     }
 
-    private void fireBindingUpdated(@Nullable ObjectIdMigration oldTarget, @Nullable ObjectIdMigration newTarget) {
+    private void fireBindingUpdated(@Nullable EntityId oldTarget, @Nullable EntityId newTarget) {
         if (oldTarget != null) {
             listener.onReferenceRemoved(null, oldTarget);
         }
@@ -59,12 +59,12 @@ public class GcAwareBindingRepository implements BindingRepository {
     }
 
     public void delete(String binding) {
-        ObjectIdMigration oldTarget = bindings.read(binding);
+        EntityId oldTarget = bindings.read(binding);
         bindings.delete(binding);
         fireBindingDeleted(oldTarget);
     }
 
-    private void fireBindingDeleted(ObjectIdMigration oldTarget) {
+    private void fireBindingDeleted(EntityId oldTarget) {
         fireBindingUpdated(oldTarget, null);
     }
 

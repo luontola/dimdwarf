@@ -7,7 +7,7 @@ package net.orfjackal.dimdwarf.aop;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
 import net.orfjackal.dimdwarf.aop.conf.*;
-import net.orfjackal.dimdwarf.api.Entity;
+import net.orfjackal.dimdwarf.api.*;
 import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.context.*;
 import net.orfjackal.dimdwarf.entities.*;
@@ -25,7 +25,7 @@ import java.lang.instrument.ClassFileTransformer;
 @Group({"fast"})
 public class AddEqualsAndHashCodeMethodsForEntitiesSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+    private static final EntityId ID1 = new EntityObjectId(1);
 
     private int entityHelperCalled = 0;
     private Object target;

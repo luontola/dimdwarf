@@ -23,7 +23,7 @@ import java.io.Serializable;
 @Group({"fast"})
 public class ProxyWithConcreteSuperclassSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+    private static final EntityObjectId ID1 = new EntityObjectId(1);
 
     private EntityReferenceFactory referenceFactory;
     private TransparentReferenceFactory proxyFactory;

@@ -6,6 +6,7 @@ package net.orfjackal.dimdwarf.entities;
 
 import jdave.*;
 import jdave.junit4.JDaveRunner;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.db.*;
 import net.orfjackal.dimdwarf.entities.dao.EntityDao;
@@ -24,7 +25,7 @@ import org.junit.runner.RunWith;
 @Group({"fast"})
 public class EntitySerializationChecksSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ENTITY_ID = new ObjectIdMigration(42);
+    private static final EntityId ENTITY_ID = new EntityObjectId(42);
 
     private DatabaseTableWithMetadata<Blob, Blob> db;
     private GcAwareEntityRepository repository;
@@ -52,14 +53,14 @@ public class EntitySerializationChecksSpec extends Specification<Object> {
         entity = new DummyEntity();
     }
 
-    private Expectations entityIsUpdated(final ObjectIdMigration entityId) {
+    private Expectations entityIsUpdated(final EntityId entityId) {
         return new Expectations() {{
             one(db).update(with(equal(asBytes(entityId))), with(aNonNull(Blob.class)));
             allowing(db).read(asBytes(entityId)); will(returnValue(Blob.EMPTY_BLOB));
         }};
     }
 
-    private static Blob asBytes(ObjectIdMigration id) {
+    private static Blob asBytes(EntityId id) {
         return new ConvertEntityIdToBytes().forth(id);
     }
 
@@ -77,7 +78,7 @@ public class EntitySerializationChecksSpec extends Specification<Object> {
 
         public void referringAnEntityThroughAnEntityReferenceIsAllowed() {
             checking(entityIsUpdated(ENTITY_ID));
-            entity.other = new EntityReferenceImpl<DummyEntity>(new ObjectIdMigration(123), new DummyEntity());
+            entity.other = new EntityReferenceImpl<DummyEntity>(new EntityObjectId(123), new DummyEntity());
             repository.update(ENTITY_ID, entity);
         }
 

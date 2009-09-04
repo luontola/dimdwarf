@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.entities.dao;
 
 import com.google.inject.Inject;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.db.*;
 import net.orfjackal.dimdwarf.entities.ConvertEntityIdToBytes;
 
@@ -14,12 +14,13 @@ import net.orfjackal.dimdwarf.entities.ConvertEntityIdToBytes;
  * @since 2.12.2008
  */
 public class EntityDao
-        extends DatabaseTableWithMetadataAdapter<ObjectIdMigration, Blob, Blob, Blob>
-        implements DatabaseTableWithMetadata<ObjectIdMigration, Blob> {
+        extends DatabaseTableWithMetadataAdapter<EntityId, Blob, Blob, Blob>
+        implements DatabaseTableWithMetadata<EntityId, Blob> {
 
     @Inject
     public EntityDao(@EntitiesTable DatabaseTableWithMetadata<Blob, Blob> parent,
-                     ConvertEntityIdToBytes keys, NoConversion<Blob> values) {
+                     ConvertEntityIdToBytes keys,
+                     NoConversion<Blob> values) {
         super(parent, keys, values);
     }
 }

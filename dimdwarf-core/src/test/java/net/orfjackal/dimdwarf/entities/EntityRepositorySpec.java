@@ -7,7 +7,8 @@ package net.orfjackal.dimdwarf.entities;
 import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
+import net.orfjackal.dimdwarf.api.internal.EntityObjectId;
 import net.orfjackal.dimdwarf.modules.*;
 import net.orfjackal.dimdwarf.modules.options.NullGarbageCollectionOption;
 import net.orfjackal.dimdwarf.tasks.TaskExecutor;
@@ -23,8 +24,8 @@ import java.util.concurrent.*;
 @Group({"fast"})
 public class EntityRepositorySpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ENTITY_ID = new ObjectIdMigration(42);
-    private static final ObjectIdMigration INVALID_ENTITY_ID = new ObjectIdMigration(999);
+    private static final EntityId ENTITY_ID = new EntityObjectId(42);
+    private static final EntityId INVALID_ENTITY_ID = new EntityObjectId(999);
 
     private Executor taskContext;
     private Provider<EntityRepository> entities;
@@ -42,7 +43,7 @@ public class EntityRepositorySpec extends Specification<Object> {
         entityManager = injector.getProvider(EntityManager.class);
     }
 
-    private void createDummyEntity(final ObjectIdMigration entityId, final Object other) {
+    private void createDummyEntity(final EntityId entityId, final Object other) {
         taskContext.execute(new Runnable() {
             public void run() {
                 specify(entities.get().exists(entityId), should.equal(false));

@@ -7,7 +7,8 @@ package net.orfjackal.dimdwarf.tasks;
 import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
+import net.orfjackal.dimdwarf.api.internal.EntityObjectId;
 import net.orfjackal.dimdwarf.db.Blob;
 import net.orfjackal.dimdwarf.entities.dao.EntityDao;
 import net.orfjackal.dimdwarf.modules.CommonModules;
@@ -27,7 +28,7 @@ import java.util.logging.Level;
 @Group({"fast"})
 public class RetryableExceptionsSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+    private static final EntityId ID1 = new EntityObjectId(1);
 
     private TestServer server;
     private Executor taskContext;

@@ -6,6 +6,7 @@ package net.orfjackal.dimdwarf.entities;
 
 import jdave.*;
 import jdave.junit4.JDaveRunner;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.api.internal.*;
 import org.jmock.Expectations;
 import org.jmock.api.Invocation;
@@ -20,7 +21,8 @@ import org.junit.runner.RunWith;
 @Group({"fast"})
 public class FlushingEntitiesSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
+    private static final EntityId ID1 = new EntityObjectId(1);
+    private static final EntityObjectId ID2 = new EntityObjectId(2);
 
     private EntityRepository repository;
     private EntityManagerImpl manager;
@@ -30,7 +32,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
 
     public void create() throws Exception {
         repository = mock(EntityRepository.class);
-        manager = new EntityManagerImpl(new EntityIdFactoryImpl(new ObjectIdMigration(0)), repository, new DimdwarfEntityApi());
+        manager = new EntityManagerImpl(new EntityIdFactoryImpl(0), repository, new DimdwarfEntityApi());
         refFactory = new EntityReferenceFactoryImpl(manager);
 
         entity = new DummyEntity();
@@ -99,7 +101,7 @@ public class FlushingEntitiesSpec extends Specification<Object> {
         public void theyAreStoredInDatabase() {
             checking(new Expectations() {{
                 one(repository).update(ID1, entity); will(new RegisterEntity(newEntity));
-                one(repository).update(new ObjectIdMigration(2), newEntity);
+                one(repository).update(ID2, newEntity);
             }});
             manager.flushAllEntitiesToDatabase();
         }

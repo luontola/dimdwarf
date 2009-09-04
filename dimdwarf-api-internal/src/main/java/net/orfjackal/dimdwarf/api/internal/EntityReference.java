@@ -4,6 +4,8 @@
 
 package net.orfjackal.dimdwarf.api.internal;
 
+import net.orfjackal.dimdwarf.api.EntityId;
+
 /**
  * Reference to an entity, equivalent to Darkstar's ManagedReference.
  *
@@ -14,5 +16,5 @@ public interface EntityReference<T> {
 
     T get();
 
-    ObjectIdMigration getEntityId();
+    EntityId getEntityId();
 }

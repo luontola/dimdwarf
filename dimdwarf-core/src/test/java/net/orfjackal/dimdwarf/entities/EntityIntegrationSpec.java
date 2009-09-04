@@ -7,7 +7,7 @@ package net.orfjackal.dimdwarf.entities;
 import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
-import net.orfjackal.dimdwarf.api.EntityInfo;
+import net.orfjackal.dimdwarf.api.*;
 import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.modules.CommonModules;
 import net.orfjackal.dimdwarf.modules.options.NullGarbageCollectionOption;
@@ -43,7 +43,7 @@ public class EntityIntegrationSpec extends Specification<Object> {
     public class WhenTasksAreRun {
 
         public void entitiesCreatedInOneTaskCanBeReadInTheNextTask() {
-            final AtomicReference<ObjectIdMigration> id = new AtomicReference<ObjectIdMigration>();
+            final AtomicReference<EntityId> id = new AtomicReference<EntityId>();
             taskExecutor.execute(new Runnable() {
                 public void run() {
                     EntityReferenceFactory factory = injector.getInstance(EntityReferenceFactory.class);
@@ -62,19 +62,18 @@ public class EntityIntegrationSpec extends Specification<Object> {
 
         public void entityIdsAreUniqueOverAllTasks() {
             final Provider<EntityInfo> info = injector.getProvider(EntityInfo.class);
-            final AtomicReference<ObjectIdMigration> idInFirstTask = new AtomicReference<ObjectIdMigration>();
+            final AtomicReference<EntityId> idInFirstTask = new AtomicReference<EntityId>();
             taskExecutor.execute(new Runnable() {
                 public void run() {
-                    ObjectIdMigration id1 = info.get().getEntityId(new DummyEntity());
+                    EntityId id1 = info.get().getEntityId(new DummyEntity());
                     idInFirstTask.set(id1);
                 }
             });
             taskExecutor.execute(new Runnable() {
                 public void run() {
-                    ObjectIdMigration id2 = info.get().getEntityId(new DummyEntity());
-                    ObjectIdMigration id1 = idInFirstTask.get();
+                    EntityId id2 = info.get().getEntityId(new DummyEntity());
+                    EntityId id1 = idInFirstTask.get();
                     specify(id2, should.not().equal(id1));
-                    specify(id2, should.equal(id1.next()));
                 }
             });
         }

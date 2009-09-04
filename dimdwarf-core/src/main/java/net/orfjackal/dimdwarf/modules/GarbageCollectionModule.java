@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.modules;
 
 import com.google.inject.*;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.entities.dao.EntityDao;
 import net.orfjackal.dimdwarf.gc.*;
 import net.orfjackal.dimdwarf.gc.entities.*;
@@ -18,7 +18,7 @@ import net.orfjackal.dimdwarf.util.Objects;
 public class GarbageCollectionModule extends AbstractModule {
 
     protected void configure() {
-        bind(new TypeLiteral<Graph<ObjectIdMigration>>() {}).to(EntityGraphWrapper.class);
+        bind(new TypeLiteral<Graph<EntityId>>() {}).to(EntityGraphWrapper.class);
         bind(NodeSetFactory.class).to(EntityNodeSetFactory.class);
 
         bind(GarbageCollectorManager.class).to(GarbageCollectorManagerImpl.class);

@@ -7,6 +7,7 @@ package net.orfjackal.dimdwarf.entities.tref;
 import com.google.inject.Provider;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.util.StubProvider;
@@ -21,7 +22,7 @@ import org.junit.runner.RunWith;
 @Group({"fast"})
 public class GettingEntityIdSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ENTITY_ID = new ObjectIdMigration(42);
+    private static final EntityId ENTITY_ID = new EntityObjectId(42);
 
     private EntityInfoImpl entityInfo;
     private EntityManager entityManager;

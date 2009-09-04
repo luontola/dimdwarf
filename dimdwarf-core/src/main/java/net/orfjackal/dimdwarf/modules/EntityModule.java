@@ -29,9 +29,9 @@ public class EntityModule extends AbstractModule {
         bind(TransparentReferenceFactory.class).to(TransparentReferenceFactoryImpl.class);
 
         bind(EntityIdFactory.class).to(EntityIdFactoryImpl.class);
-        bind(ObjectIdMigration.class)
+        bind(Long.class)
                 .annotatedWith(MaxEntityId.class)
-                .toInstance(new ObjectIdMigration(0)); // TODO: import from database
+                .toInstance(0L); // TODO: import from database
 
         bind(EntityRepository.class).to(GcAwareEntityRepository.class);
         bind(databaseTableConnectionWithMetadata())

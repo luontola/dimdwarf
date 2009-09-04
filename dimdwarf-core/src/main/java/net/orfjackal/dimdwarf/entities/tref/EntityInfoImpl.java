@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.entities.tref;
 
 import com.google.inject.Inject;
-import net.orfjackal.dimdwarf.api.EntityInfo;
+import net.orfjackal.dimdwarf.api.*;
 import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.entities.EntityManager;
 
@@ -27,7 +27,7 @@ public class EntityInfoImpl implements EntityInfo {
         this.entityApi = entityApi;
     }
 
-    public ObjectIdMigration getEntityId(Object entity) {
+    public EntityId getEntityId(Object entity) {
         if (entityApi.isEntity(entity)) {
             return getIdFromEntity(entity);
         }
@@ -37,11 +37,11 @@ public class EntityInfoImpl implements EntityInfo {
         throw new IllegalArgumentException("Not an entity: " + entity);
     }
 
-    private ObjectIdMigration getIdFromEntity(Object entity) {
+    private EntityId getIdFromEntity(Object entity) {
         return entityManager.getEntityId((EntityObject) entity);
     }
 
-    private ObjectIdMigration getIdFromProxy(Object proxy) {
+    private EntityId getIdFromProxy(Object proxy) {
         TransparentReference tref = (TransparentReference) proxy;
         return tref.getEntityReference$TREF().getEntityId();
     }

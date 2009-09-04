@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.modules.options;
 
 import com.google.inject.*;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.gc.*;
 import net.orfjackal.dimdwarf.gc.cms.ConcurrentMarkSweepCollector;
 
@@ -16,23 +16,23 @@ import net.orfjackal.dimdwarf.gc.cms.ConcurrentMarkSweepCollector;
 public class CmsGarbageCollectionOption extends AbstractModule {
 
     protected void configure() {
-        bind(new TypeLiteral<GarbageCollector<ObjectIdMigration>>() {}).toProvider(GarbageCollectorProvider.class);
-        bind(new TypeLiteral<MutatorListener<ObjectIdMigration>>() {}).toProvider(MutatorListenerProvider.class);
+        bind(new TypeLiteral<GarbageCollector<EntityId>>() {}).toProvider(GarbageCollectorProvider.class);
+        bind(new TypeLiteral<MutatorListener<EntityId>>() {}).toProvider(MutatorListenerProvider.class);
     }
 
-    private static class GarbageCollectorProvider implements Provider<GarbageCollector<ObjectIdMigration>> {
-        @Inject public Graph<ObjectIdMigration> graph;
+    private static class GarbageCollectorProvider implements Provider<GarbageCollector<EntityId>> {
+        @Inject public Graph<EntityId> graph;
         @Inject public NodeSetFactory factory;
 
-        public GarbageCollector<ObjectIdMigration> get() {
-            return new ConcurrentMarkSweepCollector<ObjectIdMigration>(graph, factory);
+        public GarbageCollector<EntityId> get() {
+            return new ConcurrentMarkSweepCollector<EntityId>(graph, factory);
         }
     }
 
-    private static class MutatorListenerProvider implements Provider<MutatorListener<ObjectIdMigration>> {
-        @Inject public GarbageCollector<ObjectIdMigration> collector;
+    private static class MutatorListenerProvider implements Provider<MutatorListener<EntityId>> {
+        @Inject public GarbageCollector<EntityId> collector;
 
-        public MutatorListener<ObjectIdMigration> get() {
+        public MutatorListener<EntityId> get() {
             return collector.getMutatorListener();
         }
     }

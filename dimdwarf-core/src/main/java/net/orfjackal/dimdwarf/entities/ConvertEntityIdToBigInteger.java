@@ -4,7 +4,8 @@
 
 package net.orfjackal.dimdwarf.entities;
 
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
+import net.orfjackal.dimdwarf.api.internal.EntityObjectId;
 import net.orfjackal.dimdwarf.db.Converter;
 
 import javax.annotation.Nullable;
@@ -14,18 +15,18 @@ import java.math.BigInteger;
  * @author Esko Luontola
  * @since 13.8.2009
  */
-public class ConvertEntityIdToBigInteger implements Converter<ObjectIdMigration, BigInteger> {
+public class ConvertEntityIdToBigInteger implements Converter<EntityId, BigInteger> {
 
     @Nullable
-    public ObjectIdMigration back(@Nullable BigInteger value) {
+    public EntityId back(@Nullable BigInteger value) {
         if (value == null) {
             return null;
         }
-        return new ObjectIdMigration(value.longValue());
+        return new EntityObjectId(value.longValue());
     }
 
     @Nullable
-    public BigInteger forth(@Nullable ObjectIdMigration value) {
+    public BigInteger forth(@Nullable EntityId value) {
         if (value == null) {
             return null;
         }

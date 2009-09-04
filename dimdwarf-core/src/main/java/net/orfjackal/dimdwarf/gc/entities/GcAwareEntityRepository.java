@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.gc.entities;
 
 import com.google.inject.Inject;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.db.Blob;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.entities.dao.EntityDao;
@@ -26,30 +26,30 @@ public class GcAwareEntityRepository implements EntityRepository {
 
     private final EntityDao entities;
     private final ObjectSerializer serializer;
-    private final MutatorListener<ObjectIdMigration> listener;
+    private final MutatorListener<EntityId> listener;
 
-    private final Map<ObjectIdMigration, Set<ObjectIdMigration>> referencesOnRead = new HashMap<ObjectIdMigration, Set<ObjectIdMigration>>();
+    private final Map<EntityId, Set<EntityId>> referencesOnRead = new HashMap<EntityId, Set<EntityId>>();
 
     @Inject
     public GcAwareEntityRepository(EntityDao entities,
                                    ObjectSerializer serializer,
-                                   MutatorListener<ObjectIdMigration> listener) {
+                                   MutatorListener<EntityId> listener) {
         this.entities = entities;
         this.serializer = serializer;
         this.listener = listener;
     }
 
-    public boolean exists(ObjectIdMigration id) {
+    public boolean exists(EntityId id) {
         return entities.exists(id);
     }
 
-    public Object read(ObjectIdMigration id) {
+    public Object read(EntityId id) {
         DeserializationResult oldData = readFromDatabase(id);
         cacheReferencesOnRead(id, oldData);
         return oldData.getDeserializedObject();
     }
 
-    private DeserializationResult readFromDatabase(ObjectIdMigration id) {
+    private DeserializationResult readFromDatabase(EntityId id) {
         Blob bytes = entities.read(id);
         if (bytes.equals(Blob.EMPTY_BLOB)) {
             throw new EntityNotFoundException("id=" + id);
@@ -57,17 +57,17 @@ public class GcAwareEntityRepository implements EntityRepository {
         return serializer.deserialize(bytes);
     }
 
-    private void cacheReferencesOnRead(ObjectIdMigration id, DeserializationResult oldData) {
-        Set<ObjectIdMigration> oldReferences = getReferencedEntities(oldData);
+    private void cacheReferencesOnRead(EntityId id, DeserializationResult oldData) {
+        Set<EntityId> oldReferences = getReferencedEntities(oldData);
         referencesOnRead.put(id, oldReferences);
     }
 
-    private static Set<ObjectIdMigration> getReferencedEntities(ResultWithMetadata result) {
-        List<ObjectIdMigration> possibleDuplicates = result.getMetadata(EntityReferenceListener.class);
-        return new HashSet<ObjectIdMigration>(possibleDuplicates);
+    private static Set<EntityId> getReferencedEntities(ResultWithMetadata result) {
+        List<EntityId> possibleDuplicates = result.getMetadata(EntityReferenceListener.class);
+        return new HashSet<EntityId>(possibleDuplicates);
     }
 
-    public void update(ObjectIdMigration id, Object entity) {
+    public void update(EntityId id, Object entity) {
         SerializationResult newData = serializer.serialize(entity);
         if (hasBeenModified(id, newData)) {
             entities.update(id, newData.getSerializedBytes());
@@ -75,15 +75,15 @@ public class GcAwareEntityRepository implements EntityRepository {
         }
     }
 
-    private boolean hasBeenModified(ObjectIdMigration id, SerializationResult newData) {
+    private boolean hasBeenModified(EntityId id, SerializationResult newData) {
         Blob oldBytes = entities.read(id);
         Blob newBytes = newData.getSerializedBytes();
         return !oldBytes.equals(newBytes);
     }
 
-    private void fireEntityUpdated(ObjectIdMigration id, SerializationResult newData) {
-        Set<ObjectIdMigration> newReferences = getReferencedEntities(newData);
-        Set<ObjectIdMigration> oldReferences = referencesOnRead.remove(id);
+    private void fireEntityUpdated(EntityId id, SerializationResult newData) {
+        Set<EntityId> newReferences = getReferencedEntities(newData);
+        Set<EntityId> oldReferences = referencesOnRead.remove(id);
         if (oldReferences == null) {
             oldReferences = Collections.emptySet();
             fireEntityCreated(id);
@@ -92,43 +92,43 @@ public class GcAwareEntityRepository implements EntityRepository {
         fireReferencesCreated(id, newReferences, oldReferences);
     }
 
-    private void fireEntityCreated(ObjectIdMigration id) {
+    private void fireEntityCreated(EntityId id) {
         listener.onNodeCreated(id);
     }
 
-    private void fireReferencesRemoved(ObjectIdMigration id, Set<ObjectIdMigration> newReferences, Set<ObjectIdMigration> oldReferences) {
-        for (ObjectIdMigration targetId : oldReferences) {
+    private void fireReferencesRemoved(EntityId id, Set<EntityId> newReferences, Set<EntityId> oldReferences) {
+        for (EntityId targetId : oldReferences) {
             if (!newReferences.contains(targetId)) {
                 listener.onReferenceRemoved(id, targetId);
             }
         }
     }
 
-    private void fireReferencesCreated(ObjectIdMigration id, Set<ObjectIdMigration> newReferences, Set<ObjectIdMigration> oldReferences) {
-        for (ObjectIdMigration targetId : newReferences) {
+    private void fireReferencesCreated(EntityId id, Set<EntityId> newReferences, Set<EntityId> oldReferences) {
+        for (EntityId targetId : newReferences) {
             if (!oldReferences.contains(targetId)) {
                 listener.onReferenceCreated(id, targetId);
             }
         }
     }
 
-    public void delete(ObjectIdMigration id) {
+    public void delete(EntityId id) {
         DeserializationResult oldData = readFromDatabase(id);
         entities.delete(id);
         fireEntityDeleted(id, oldData);
     }
 
-    private void fireEntityDeleted(ObjectIdMigration id, DeserializationResult oldData) {
-        Set<ObjectIdMigration> newReferences = Collections.emptySet();
-        Set<ObjectIdMigration> oldReferences = getReferencedEntities(oldData);
+    private void fireEntityDeleted(EntityId id, DeserializationResult oldData) {
+        Set<EntityId> newReferences = Collections.emptySet();
+        Set<EntityId> oldReferences = getReferencedEntities(oldData);
         fireReferencesRemoved(id, newReferences, oldReferences);
     }
 
-    public ObjectIdMigration firstKey() {
+    public EntityId firstKey() {
         return entities.firstKey();
     }
 
-    public ObjectIdMigration nextKeyAfter(ObjectIdMigration currentKey) {
+    public EntityId nextKeyAfter(EntityId currentKey) {
         return entities.nextKeyAfter(currentKey);
     }
 }

@@ -7,8 +7,7 @@ package net.orfjackal.dimdwarf.gc.entities;
 import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
-import net.orfjackal.dimdwarf.api.EntityInfo;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.*;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.modules.CommonModules;
 import net.orfjackal.dimdwarf.modules.options.NullGarbageCollectionOption;
@@ -33,7 +32,7 @@ public class EntityGraphSpec extends Specification<Object> {
     private Provider<BindingRepository> bindings;
     private Provider<EntityGraph> graph;
 
-    private ObjectIdMigration entityId;
+    private EntityId entityId;
 
     public void create() throws Exception {
         Injector injector = Guice.createInjector(
@@ -47,8 +46,8 @@ public class EntityGraphSpec extends Specification<Object> {
         graph = injector.getProvider(EntityGraph.class);
     }
 
-    private ObjectIdMigration createDummyEntity() {
-        final AtomicReference<ObjectIdMigration> entityId = new AtomicReference<ObjectIdMigration>();
+    private EntityId createDummyEntity() {
+        final AtomicReference<EntityId> entityId = new AtomicReference<EntityId>();
         taskContext.execute(new Runnable() {
             public void run() {
                 DummyEntity e = new DummyEntity();
@@ -58,8 +57,8 @@ public class EntityGraphSpec extends Specification<Object> {
         return entityId.get();
     }
 
-    private ObjectIdMigration createBoundDummyEntity(final String binding) {
-        final AtomicReference<ObjectIdMigration> entityId = new AtomicReference<ObjectIdMigration>();
+    private EntityId createBoundDummyEntity(final String binding) {
+        final AtomicReference<EntityId> entityId = new AtomicReference<EntityId>();
         taskContext.execute(new Runnable() {
             public void run() {
                 DummyEntity e = new DummyEntity();
@@ -154,9 +153,9 @@ public class EntityGraphSpec extends Specification<Object> {
 
     public class WhenThereAreManyEntities {
 
-        private ObjectIdMigration entityId1;
-        private ObjectIdMigration entityId2;
-        private ObjectIdMigration entityId3;
+        private EntityId entityId1;
+        private EntityId entityId2;
+        private EntityId entityId3;
 
         public void create() {
             entityId1 = createBoundDummyEntity("binding1");
@@ -182,13 +181,13 @@ public class EntityGraphSpec extends Specification<Object> {
             specify(iterateInSeparateTasks(), should.containExactly(entityId1, entityId2));
         }
 
-        private List<ObjectIdMigration> iterateInSeparateTasks() {
+        private List<EntityId> iterateInSeparateTasks() {
             final AtomicBoolean hasNext = new AtomicBoolean();
-            final List<ObjectIdMigration> nodes = new ArrayList<ObjectIdMigration>();
+            final List<EntityId> nodes = new ArrayList<EntityId>();
             do {
                 taskContext.execute(new Runnable() {
                     public void run() {
-                        Iterator<ObjectIdMigration> it = getIterator();
+                        Iterator<EntityId> it = getIterator();
                         hasNext.set(it.hasNext());
                         if (it.hasNext()) {
                             nodes.add(it.next());
@@ -199,11 +198,11 @@ public class EntityGraphSpec extends Specification<Object> {
             return nodes;
         }
 
-        private Iterator<ObjectIdMigration> getIterator() {
+        private Iterator<EntityId> getIterator() {
             return Objects.uncheckedCast(getHolder().getOther());
         }
 
-        private void setIterator(Iterator<ObjectIdMigration> iter) {
+        private void setIterator(Iterator<EntityId> iter) {
             getHolder().setOther(iter);
         }
 
@@ -214,8 +213,8 @@ public class EntityGraphSpec extends Specification<Object> {
 
     public class WhenTheEntityHasReferencesToOtherEntities {
 
-        private ObjectIdMigration entityId1;
-        private ObjectIdMigration entityId2;
+        private EntityId entityId1;
+        private EntityId entityId2;
 
         public void create() {
             taskContext.execute(new Runnable() {

@@ -5,7 +5,7 @@
 package net.orfjackal.dimdwarf.gc.entities;
 
 import com.google.inject.Inject;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.db.*;
 import net.orfjackal.dimdwarf.entities.dao.*;
 import net.orfjackal.dimdwarf.gc.Graph;
@@ -19,7 +19,7 @@ import java.util.*;
  * @author Esko Luontola
  * @since 30.11.2008
  */
-public class EntityGraph implements Graph<ObjectIdMigration> {
+public class EntityGraph implements Graph<EntityId> {
 
     private final EntityDao entities;
     private final BindingDao bindings;
@@ -32,38 +32,38 @@ public class EntityGraph implements Graph<ObjectIdMigration> {
         this.serializer = serializer;
     }
 
-    public Iterable<ObjectIdMigration> getAllNodes() {
-        return new Iterable<ObjectIdMigration>() {
-            public Iterator<ObjectIdMigration> iterator() {
+    public Iterable<EntityId> getAllNodes() {
+        return new Iterable<EntityId>() {
+            public Iterator<EntityId> iterator() {
                 return new AllNodesIterator(entities);
             }
         };
     }
 
-    public Iterable<ObjectIdMigration> getRootNodes() {
-        return new Iterable<ObjectIdMigration>() {
-            public Iterator<ObjectIdMigration> iterator() {
+    public Iterable<EntityId> getRootNodes() {
+        return new Iterable<EntityId>() {
+            public Iterator<EntityId> iterator() {
                 return new RootNodesIterator(bindings);
             }
         };
     }
 
-    public Iterable<ObjectIdMigration> getConnectedNodesOf(ObjectIdMigration node) {
+    public Iterable<EntityId> getConnectedNodesOf(EntityId node) {
         Blob entity = entities.read(node);
-        List<ObjectIdMigration> ids = getReferencedEntityIds(entity);
-        return new SerializableIterable<ObjectIdMigration>(ids);
+        List<EntityId> ids = getReferencedEntityIds(entity);
+        return new SerializableIterable<EntityId>(ids);
     }
 
-    private List<ObjectIdMigration> getReferencedEntityIds(Blob entity) {
+    private List<EntityId> getReferencedEntityIds(Blob entity) {
         DeserializationResult result = serializer.deserialize(entity);
         return result.getMetadata(EntityReferenceListener.class);
     }
 
-    public void removeNode(ObjectIdMigration node) {
+    public void removeNode(EntityId node) {
         entities.delete(node);
     }
 
-    public byte[] getMetadata(ObjectIdMigration node, String metaKey) {
+    public byte[] getMetadata(EntityId node, String metaKey) {
         if (entities.exists(node)) {
             return entities.readMetadata(node, metaKey).getByteArray();
         } else {
@@ -71,15 +71,15 @@ public class EntityGraph implements Graph<ObjectIdMigration> {
         }
     }
 
-    public void setMetadata(ObjectIdMigration node, String metaKey, byte[] metaValue) {
+    public void setMetadata(EntityId node, String metaKey, byte[] metaValue) {
         entities.updateMetadata(node, metaKey, Blob.fromBytes(metaValue));
     }
 
 
-    private static class AllNodesIterator implements Iterator<ObjectIdMigration>, Serializable {
+    private static class AllNodesIterator implements Iterator<EntityId>, Serializable {
         private static final long serialVersionUID = 1L;
 
-        private final DatabaseKeyIterator<ObjectIdMigration> iterator = new DatabaseKeyIterator<ObjectIdMigration>();
+        private final DatabaseKeyIterator<EntityId> iterator = new DatabaseKeyIterator<EntityId>();
 
         public AllNodesIterator(EntityDao entities) {
             setEntityDao(entities);
@@ -94,7 +94,7 @@ public class EntityGraph implements Graph<ObjectIdMigration> {
             return iterator.hasNext();
         }
 
-        public ObjectIdMigration next() {
+        public EntityId next() {
             return iterator.next();
         }
 
@@ -103,7 +103,7 @@ public class EntityGraph implements Graph<ObjectIdMigration> {
         }
     }
 
-    private static class RootNodesIterator implements Iterator<ObjectIdMigration>, Serializable {
+    private static class RootNodesIterator implements Iterator<EntityId>, Serializable {
         private static final long serialVersionUID = 1L;
 
         private final DatabaseKeyIterator<String> iterator = new DatabaseKeyIterator<String>();
@@ -123,7 +123,7 @@ public class EntityGraph implements Graph<ObjectIdMigration> {
             return iterator.hasNext();
         }
 
-        public ObjectIdMigration next() {
+        public EntityId next() {
             String binding = iterator.next();
             return bindings.read(binding);
         }

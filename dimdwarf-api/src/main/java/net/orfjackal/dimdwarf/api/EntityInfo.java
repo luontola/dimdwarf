@@ -10,13 +10,11 @@ package net.orfjackal.dimdwarf.api;
  */
 public interface EntityInfo {
 
-    // TODO: replace BigInteger with a class EntityId to avoid primitive obsession 
-
     /**
      * Returns a unique ID for the specified entity. The parameter may be an entity
      * or a transparent reference proxy of an entity.
      *
      * @throws IllegalArgumentException if the object is not an entity.
      */
-    net.orfjackal.dimdwarf.api.internal.ObjectIdMigration getEntityId(Object entity);
+    EntityId getEntityId(Object entity);
 }

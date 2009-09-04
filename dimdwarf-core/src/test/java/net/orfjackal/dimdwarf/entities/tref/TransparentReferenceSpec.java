@@ -6,6 +6,7 @@ package net.orfjackal.dimdwarf.entities.tref;
 
 import jdave.*;
 import jdave.junit4.JDaveRunner;
+import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.db.Blob;
 import net.orfjackal.dimdwarf.entities.*;
@@ -25,8 +26,8 @@ import java.util.*;
 @Group({"fast"})
 public class TransparentReferenceSpec extends Specification<Object> {
 
-    private static final ObjectIdMigration ID1 = new ObjectIdMigration(1);
-    private static final ObjectIdMigration ID2 = new ObjectIdMigration(2);
+    private static final EntityId ID1 = new EntityObjectId(1);
+    private static final EntityId ID2 = new EntityObjectId(2);
 
     private EntityReferenceFactory referenceFactory;
     private TransparentReferenceFactory proxyFactory;
@@ -39,7 +40,7 @@ public class TransparentReferenceSpec extends Specification<Object> {
         entity = new DummyEntity();
     }
 
-    private Expectations referenceIsCreatedFor(final EntityObject entity, final ObjectIdMigration id) {
+    private Expectations referenceIsCreatedFor(final EntityObject entity, final EntityId id) {
         return new Expectations() {{
             one(referenceFactory).createReference(entity); will(returnValue(new EntityReferenceImpl<EntityObject>(id, entity)));
         }};

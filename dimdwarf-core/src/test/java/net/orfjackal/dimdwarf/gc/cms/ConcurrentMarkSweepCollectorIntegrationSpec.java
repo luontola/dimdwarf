@@ -7,8 +7,7 @@ package net.orfjackal.dimdwarf.gc.cms;
 import com.google.inject.*;
 import jdave.*;
 import jdave.junit4.JDaveRunner;
-import net.orfjackal.dimdwarf.api.EntityInfo;
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.*;
 import net.orfjackal.dimdwarf.entities.*;
 import net.orfjackal.dimdwarf.gc.entities.GarbageCollectorManager;
 import net.orfjackal.dimdwarf.modules.CommonModules;
@@ -39,12 +38,12 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
 
     private GarbageCollectorManager gc;
 
-    private ObjectIdMigration liveRootId;
-    private ObjectIdMigration liveRefId;
-    private ObjectIdMigration garbageRootId;
-    private ObjectIdMigration garbageRefId;
-    private ObjectIdMigration garbageCycleId1;
-    private ObjectIdMigration garbageCycleId2;
+    private EntityId liveRootId;
+    private EntityId liveRefId;
+    private EntityId garbageRootId;
+    private EntityId garbageRefId;
+    private EntityId garbageCycleId1;
+    private EntityId garbageCycleId2;
 
     public void create() throws Exception {
         server = new TestServer(
@@ -111,7 +110,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
         });
     }
 
-    private boolean entityExists(final ObjectIdMigration id) {
+    private boolean entityExists(final EntityId id) {
         final AtomicBoolean exists = new AtomicBoolean(false);
         taskContext.execute(new Runnable() {
             public void run() {
@@ -149,7 +148,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
 
     public class WhenThereAreMutationsDuringGarbageCollection {
 
-        private List<ObjectIdMigration> liveNodesCreated = new ArrayList<ObjectIdMigration>();
+        private List<EntityId> liveNodesCreated = new ArrayList<EntityId>();
 
         public void create() throws Throwable {
             server.changeLoggingLevel(TransactionFilter.class, Level.WARNING);
@@ -170,7 +169,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
             for (int i = 0; i < 10; i++) {
                 taskContext.execute(new Runnable() {
                     public void run() {
-                        ObjectIdMigration id = createALiveNode();
+                        EntityId id = createALiveNode();
                         liveNodesCreated.add(id);
                     }
                 });
@@ -184,7 +183,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
             }
         }
 
-        private ObjectIdMigration createALiveNode() {
+        private EntityId createALiveNode() {
             DummyInterface liveRoot = (DummyInterface) entities.get().read(liveRootId);
             List<DummyInterface> childrenOfRoot = Objects.uncheckedCast(liveRoot.getOther());
             DummyEntity liveNode = new DummyEntity();
@@ -193,7 +192,7 @@ public class ConcurrentMarkSweepCollectorIntegrationSpec extends Specification<O
         }
 
         public void theMutatorListenerMakesSureThatNoLiveNodesAreCollected() {
-            for (ObjectIdMigration node : liveNodesCreated) {
+            for (EntityId node : liveNodesCreated) {
                 specify(node + " of " + liveNodesCreated, entityExists(node));
             }
         }

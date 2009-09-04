@@ -5,7 +5,8 @@
 package net.orfjackal.dimdwarf.entities;
 
 import com.google.inject.Inject;
-import net.orfjackal.dimdwarf.api.internal.*;
+import net.orfjackal.dimdwarf.api.EntityId;
+import net.orfjackal.dimdwarf.api.internal.EntityReference;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -19,11 +20,11 @@ import java.io.Serializable;
 public class EntityReferenceImpl<T> implements EntityReference<T>, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final ObjectIdMigration id;
+    private final EntityId id;
     @Nullable private transient T entity;
     @Nullable private transient EntityManager entityManager;
 
-    public EntityReferenceImpl(ObjectIdMigration id, T entity) {
+    public EntityReferenceImpl(EntityId id, T entity) {
         assert id != null;
         assert entity != null;
         this.id = id;
@@ -46,7 +47,7 @@ public class EntityReferenceImpl<T> implements EntityReference<T>, Serializable 
         return entity;
     }
 
-    public ObjectIdMigration getEntityId() {
+    public EntityId getEntityId() {
         return id;
     }
 

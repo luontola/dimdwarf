@@ -4,16 +4,17 @@
 
 package net.orfjackal.dimdwarf.entities;
 
-import net.orfjackal.dimdwarf.api.internal.*;
+import net.orfjackal.dimdwarf.api.EntityId;
+import net.orfjackal.dimdwarf.api.internal.EntityObject;
 import net.orfjackal.dimdwarf.db.IterableKeys;
 
 /**
  * @author Esko Luontola
  * @since 31.8.2008
  */
-public interface EntityManager extends IterableKeys<ObjectIdMigration> {
+public interface EntityManager extends IterableKeys<EntityId> {
 
-    ObjectIdMigration getEntityId(EntityObject entity);
+    EntityId getEntityId(EntityObject entity);
 
-    EntityObject getEntityById(ObjectIdMigration id);
+    EntityObject getEntityById(EntityId id);
 }

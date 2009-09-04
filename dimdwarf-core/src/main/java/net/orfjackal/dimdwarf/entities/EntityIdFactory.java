@@ -4,7 +4,7 @@
 
 package net.orfjackal.dimdwarf.entities;
 
-import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
+import net.orfjackal.dimdwarf.api.EntityId;
 
 /**
  * @author Esko Luontola
@@ -12,5 +12,5 @@ import net.orfjackal.dimdwarf.api.internal.ObjectIdMigration;
  */
 public interface EntityIdFactory {
 
-    ObjectIdMigration newId();
+    EntityId newId();
 }
