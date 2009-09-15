@@ -1484,3 +1484,24 @@ The database could then be queried like:
 Some SQL-ish syntax might also be used, if there exists a handy library for generating queries with it. The queries might also be done in a continuation style, so that the system will launch a task when it has finished collecting the query results, in case executing the query takes a long time.
 
 Or, we might as well use a regular SQL database to hold the indexes. They are anyways good at it, so we don't need to reimplement the wheel, unless we absolutely want to have very low latency queries.
+
+
+>> 16.9.2009
+
+	NEED FOR AN EXTERNAL RELATIONAL DATABASE
+
+http://www.projectdarkstar.com/forum/?topic=1179.msg8261#msg8261
+Jeff:
+""
+I've been talking with some PDS users, both recent and past, and I've come to the conclusion that it would be *very* userful to be able to externalize the PDS data store to an external RDBMS.  (And it would be then even better if you could edit it and suck it back in.)
+""
+
+http://www.projectdarkstar.com/forum/?topic=1189.msg8267#msg8267
+Jeff:
+""
+The first one Im going to build is the externalizer, which is a tool that will take serialized Java data and create an RDBMS database out of it for data mining.
+
+If i get that done the second will be a tool to do the reverse, so you can edit and reimport that data.
+
+The last is something Im already building at work that I hope they will let me release, which is a sort of "merge" tool for migrating data to a new codebase in case of serialization in compatible changes.
+""
