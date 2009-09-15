@@ -1432,3 +1432,55 @@ Below are examples of Darkstar failing under load. Try to test similar condition
 http://www.projectdarkstar.com/component/option,com_smf/Itemid,120/topic,1159.15
 http://captainmisterhagan.blogspot.com/2009/09/first-version-bench.html
 
+
+>> 15.9.2009
+
+	RELATIONAL-ISH DATABASE / INDEXING
+
+http://www.projectdarkstar.com/forum/?topic=1179.msg8249#msg8249
+Tim B:
+""
+This is interesting stuff, and a thread I'll definitely be keeping an eye on as we will need the RDBMs stuff at some point ourselves. The current plan is the losely-coupled SQL database and a service to make calls to it but I'm open to alternatives.
+
+Something we have developed though is IndexingMaps - these act somewhat like a table with indexes in an RDBMs in that you can add objects into the indexing maps and then access them through any number of single-value or multi-value indexes. It also copes with unique constraints and changes to values.
+
+I realeased a very early version a few months ago but didn't see much interest so I've not released the more recent (and much more fully featured) versions. If it sounds useful I can look to releasing the latest version sometime.
+""
+
+Idea for Dimdwarf:
+
+Entities may implement an interface which returns a map of its properties. The database will index the values in the property map, so that it would be possible to write queries against them.
+
+public interface Indexable {
+    Map<String,Object> indexedProperties();
+}
+
+Always when an entity is stored into the database, the system would call that method and update the database indexes with the current values.
+
+The method would return a Map<String,Object> and if it would contain values of unsupported type, the system would just ignore them and log a warning. All values must be Comparable and Serializable (preferrably immutable value objects), so that the system could store the indexes in a SortedMap. For each entity type, there would be different indexes, so that the properties of class Player will not conflict those of class GameRoom.
+
+indexedProperties() for some Player object would return for example:
+
+    "username"    -> "joe"
+    "registered"  -> new org.joda.time.LocalDate(2009, 9, 15)
+    "playerLevel" -> 5
+
+The database could then be queried like:
+
+    Query q = Query.find(Player.class).with("username").equalTo("joe");
+    Player found = database.queryOne(q);
+    
+    Query q = Query.find(Player.class)
+        .with("registered").moreThan(new LocalDate(2009, 9, 1))
+        .with("playerLevel").lessThan(10);
+    List<Player> found = database.query(q);
+
+    Query q = Query.find(Player.class)
+        .with("registered").between(
+            new LocalDate(2009, 9, 1),
+            new LocalDate(2009, 9, 31));
+    List<Player> found = database.query(q);
+
+Some SQL-ish syntax might also be used, if there exists a handy library for generating queries with it. The queries might also be done in a continuation style, so that the system will launch a task when it has finished collecting the query results, in case executing the query takes a long time.
+
+Or, we might as well use a regular SQL database to hold the indexes. They are anyways good at it, so we don't need to reimplement the wheel, unless we absolutely want to have very low latency queries.
