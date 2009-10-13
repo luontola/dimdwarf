@@ -1505,3 +1505,19 @@ If i get that done the second will be a tool to do the reverse, so you can edit 
 
 The last is something Im already building at work that I hope they will let me release, which is a sort of "merge" tool for migrating data to a new codebase in case of serialization in compatible changes.
 ""
+
+
+>> 14.10.2009
+
+	AFFINITY GROUPS / COMMUNITY DETECTION
+
+The paper "Near linear time algorithm to detect community structures in large-scale networks" by Raghavan, Albert and Kumara (2007) describes a Label Propagation Algorithm (LPA) which could work for co-locating related tasks on the same server.
+http://www.projectdarkstar.com/forum/?topic=1260.0
+http://arxiv.org/abs/0709.2938
+
+Darkstar uses each Identity as a node for the LPA algorithm. There are many possible interpretations for the edges, with the first one being number of common object accesses between two identities. The edges are weighted, instead of having multiple edges between two nodes. The number of edges should be minimized, because that the algorithm runtime is proportional to the number of edges.
+http://www.projectdarkstar.com/forum/?topic=1260.msg8645#msg8645
+
+Make it possible for one client session to launch tasks under a different identity. Not like with RunWithNewIdentity, which always creates a new identity, but make it possible to explicitly specify the identity under which the task is run. Maybe make it possible to use Provider<Identity> to generate more identities, and then pass it as a parameter to the task scheduler.
+http://www.projectdarkstar.com/forum/?topic=1260.msg8648#msg8648
+http://www.projectdarkstar.com/forum/?topic=1260.msg8657#msg8657
