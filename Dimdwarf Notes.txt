@@ -1524,3 +1524,22 @@ http://www.projectdarkstar.com/forum/?topic=1260.msg8657#msg8657
 
 Darkstar decided to not expose the identities to the application programmer, in order to make the API more simple and to make it harder to mess up the identity assignments. With Dimwarf, it might be best to use explicit identity at the worker-controller message layer, but to hide them at the public API layer. It would be possible to have subinterfaces of the public API interfaces, which would expose low-level operations.
 http://www.projectdarkstar.com/forum/?topic=1260.msg8668#msg8668
+
+
+>> 15.10.2009
+
+	GENERIC WORKER ABSTRACTION (Architecture Astronautism?)
+
+An idea about how to combine under one abstraction the task workers and the workers of other services (directory, GC, affinity groups).
+
+In the case of task workers, each backend node runs a task service, which controls a variable number of tasks. The task workers are reported by default as "CPU bound", but some of them may also do blocking I/O (they are flagged "slow"), and they can be blocked when reading a non-cached object. So a task worker may temporarily be labeled as "blocked" or "I/O bound".
+
+Worker services can register to the controller. A worker service has a message handler inside the controller. A worker service can say how many workers it needs, and the controller will create them for it.
+
+A worker service should tell the controller, that how much resources one worker takes (e.g. CPU, memory, I/O), which the controller and load balancer can take into account, so that each node has a suitable amount of work. The resource reservation and "boundness" of an individual worker can be changed dynamically.
+
+Some of the worker services need to be run on all nodes, some of them only on one node, and the number of some varies depending on the cluster load. Task service is needed on all nodes. GC and directory nodes are needed on a couple of nodes, to distribute their load. Cluster-wide decision-making service should maybe be on only one node.
+
+A cluster-wide decision-making service should decide that which services are activated on which nodes. It should do this by taking into account server load, service requirements, redundancy and other factors.
+
+The service architecture should be designed so, that the individual services won't need to know that on which node a particular service is located. It might be necessary for every service to have a service-stub/-gateway on every node where that service is not locally running, so that it could provide an API for all other services to call (maybe preferably message-passing API, not RPC API), and would redirect the requests to the right node. For example, it will be important to redirect directory queries to the node that is responsible for tracking the location of the queried entity.
