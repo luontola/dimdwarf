@@ -1521,3 +1521,6 @@ http://www.projectdarkstar.com/forum/?topic=1260.msg8645#msg8645
 Make it possible for one client session to launch tasks under a different identity. Not like with RunWithNewIdentity, which always creates a new identity, but make it possible to explicitly specify the identity under which the task is run. Maybe make it possible to use Provider<Identity> to generate more identities, and then pass it as a parameter to the task scheduler.
 http://www.projectdarkstar.com/forum/?topic=1260.msg8648#msg8648
 http://www.projectdarkstar.com/forum/?topic=1260.msg8657#msg8657
+
+Darkstar decided to not expose the identities to the application programmer, in order to make the API more simple and to make it harder to mess up the identity assignments. With Dimwarf, it might be best to use explicit identity at the worker-controller message layer, but to hide them at the public API layer. It would be possible to have subinterfaces of the public API interfaces, which would expose low-level operations.
+http://www.projectdarkstar.com/forum/?topic=1260.msg8668#msg8668
