@@ -1543,3 +1543,12 @@ Some of the worker services need to be run on all nodes, some of them only on on
 A cluster-wide decision-making service should decide that which services are activated on which nodes. It should do this by taking into account server load, service requirements, redundancy and other factors.
 
 The service architecture should be designed so, that the individual services won't need to know that on which node a particular service is located. It might be necessary for every service to have a service-stub/-gateway on every node where that service is not locally running, so that it could provide an API for all other services to call (maybe preferably message-passing API, not RPC API), and would redirect the requests to the right node. For example, it will be important to redirect directory queries to the node that is responsible for tracking the location of the queried entity.
+
+
+>> 26.10.2009
+
+	MEASURING LOAD
+
+How the UNIX load averages are calculated - maybe something similar would be useful for Dimdwarf's load balancing:
+http://www.teamquest.com/resources/gunther/display/5/
+http://www.teamquest.com/resources/gunther/display/7/
