@@ -1552,3 +1552,12 @@ The service architecture should be designed so, that the individual services won
 How the UNIX load averages are calculated - maybe something similar would be useful for Dimdwarf's load balancing:
 http://www.teamquest.com/resources/gunther/display/5/
 http://www.teamquest.com/resources/gunther/display/7/
+
+
+>> 30.10.2009
+
+	PROFILER USE CASES
+
+Use these when designing the profiler for Dimdwarf:
+http://www.projectdarkstar.com/forum/?topic=1299.0
+http://www.projectdarkstar.com/forum/?topic=1299.msg8860#msg8860
