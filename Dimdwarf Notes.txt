@@ -1561,3 +1561,19 @@ http://www.teamquest.com/resources/gunther/display/7/
 Use these when designing the profiler for Dimdwarf:
 http://www.projectdarkstar.com/forum/?topic=1299.0
 http://www.projectdarkstar.com/forum/?topic=1299.msg8860#msg8860
+
+
+http://www.projectdarkstar.com/forum/?topic=1299.msg8905#msg8905
+Tim B:
+""
+Is there any way to see where the system is spending its time?
+
+i.e. how much time is:
+
+Database access
+Deserialization
+Processing Tasks ("real work")
+Network comms
+etc.
+""
+
