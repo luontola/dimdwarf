@@ -1577,3 +1577,24 @@ Network comms
 etc.
 ""
 
+
+>> 3.11.2009
+
+	DATABASE BACKEND
+
+Evaluating MongoDB for the persisted data store is worth considering. It is said to provide good write/update performance (at the expense of durability http://www.mongodb.org/display/DOCS/Durability+and+Repair) and it is supposed to scale on multiple servers (http://www.mongodb.org/display/DOCS/Sharding).
+
+
+http://groups.google.com/group/nosql-discussion/browse_thread/thread/558affb3c7013165/736ce4b26cea290c?hl=en
+
+Dwight Merriman:
+""
+wow, that is a good one, I had not considered games. 
+i would definitely investigate mongodb there, has good write/update 
+performance which seems important there 
+""
+
+Kristina Chodorow:
+""
+In fact, EA is already using MongoDB for caching game data.
+""
