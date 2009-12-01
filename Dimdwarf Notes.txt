@@ -1598,3 +1598,28 @@ Kristina Chodorow:
 ""
 In fact, EA is already using MongoDB for caching game data.
 ""
+
+
+>> 1.12.2009
+
+	CACHE COHERENCE
+
+Using the MESI protocol (or similar) might be smart.
+
+	http://en.wikipedia.org/wiki/MESI_protocol
+
+Investigate the known cache coherece protocols:
+
+	http://en.wikipedia.org/wiki/Cache_coherence
+	http://en.wikipedia.org/wiki/Memory_coherence
+
+Choose a known consistency model:
+
+	http://en.wikipedia.org/wiki/Consistency_model
+
+Given MESI, the Dimdwarf terminology would change as follows:
+
+	master copy -> exclusive copy, modified copy
+	replica copy -> shared copy
+
+When sending other server nodes a message that a copy has been invalidated, it should contain a timestamp of the write, because the system uses snapshot isolation and it might still be possible to read old revisions.
