@@ -1623,3 +1623,18 @@ Given MESI, the Dimdwarf terminology would change as follows:
 	replica copy -> shared copy
 
 When sending other server nodes a message that a copy has been invalidated, it should contain a timestamp of the write, because the system uses snapshot isolation and it might still be possible to read old revisions.
+
+
+>> 10.1.2010
+
+	PERFORMANCE TUNING AND PROFILING
+
+When the multi-node works, it will be necessary to find out what becomes the next bottleneck to scaling. A profiler will be needed, to find out what takes the longest time in serving a request end-to-end.
+
+If collecting the profiling data does not affect the performance of the whole system, then the profiling can be fully enabled during stress testing. Otherwise the profiling would need to be enabled only for short whiles (so that the data can be collected in-memory) or for only some tasks.
+
+It might make sense for messages to have a "profile bit", which is originally set on messages from a chosen client, and always when processing profiled messages causes more messages to be set, those also have transitively the "profile bit" set. When a node receives or sends a profiled message, it is timestamped (in nanoseconds) and saved for the profiler to read later. The data could be used to give detailed information on where the time was spent during the processing of a particular message from a client (maybe shown similarly to Firebug http://getfirebug.com/net.html).
+
+Since accurate time (nanoseconds) is possible only within one node, the system should estimate node-to-node latencies. From a request-response pair can be calculated the total network latency, by subtracting the server's process time from the client's wait time, which then can be split between the send and receive. The system should also measure how long the message was in a node's controller message queue, which means that the profiled message should be logged in the network layer before adding it to the queue, and right after getting it from the queue, and also when the processing of it has finished. Messages to other nodes and to workers are likewise logged at the edge of the network layer or message queue. The state of the workers should be apparent from the logs, so it can be seen when the task is running or blocked.
+
+It will also be necessary to have per-node measurements about things such as network usage (total, per connection), memory usage (JVM total, caches, database entries), disk IO, CPU load (controller message queue size, running tasks, blocked tasks, JVM statistics). The system could use some of these measurements also for load balancing. They can be used during stress testing to find the bottlenecks, and during daily maintenance to monitor system usage and need for upgrades.
