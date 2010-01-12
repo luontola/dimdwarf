@@ -1638,3 +1638,50 @@ It might make sense for messages to have a "profile bit", which is originally se
 Since accurate time (nanoseconds) is possible only within one node, the system should estimate node-to-node latencies. From a request-response pair can be calculated the total network latency, by subtracting the server's process time from the client's wait time, which then can be split between the send and receive. The system should also measure how long the message was in a node's controller message queue, which means that the profiled message should be logged in the network layer before adding it to the queue, and right after getting it from the queue, and also when the processing of it has finished. Messages to other nodes and to workers are likewise logged at the edge of the network layer or message queue. The state of the workers should be apparent from the logs, so it can be seen when the task is running or blocked.
 
 It will also be necessary to have per-node measurements about things such as network usage (total, per connection), memory usage (JVM total, caches, database entries), disk IO, CPU load (controller message queue size, running tasks, blocked tasks, JVM statistics). The system could use some of these measurements also for load balancing. They can be used during stress testing to find the bottlenecks, and during daily maintenance to monitor system usage and need for upgrades.
+
+
+>> 12.1.2010
+
+	LOAD BALANCING
+
+""
+Subject:
+Re: [darkstar-dev] Code review: Phase 3 node health
+From:
+"Owen F. Kellett" <Owen.Kellett@Sun.COM>
+Date:
+Tue, 12 Jan 2010 15:40:24 -0500
+To:
+dev@games-darkstar.dev.java.net
+
+Hi Keith,
+
+I've looked through your changes and have included comments inline below.  I also have a few general comments/questions:
+
+1. I think using a high water mark based on the number of client sessions logged in is a reasonable metric to have available, but should not be our primary source of information in determining a node's health.  In fact, I would argue that it should be turned off by default.  As we saw with our Austin demo, the number of connected sessions is a crude metric and represents only a portion of the load on a node.  Not all clients will necessarily exhibit the same behavior, and there is also the possibility of system identities and NPC tasks that could skew the load.  For a first pass set of criteria in determining a node's health, I would suggest these possible alternatives:
+
+A. Use the number of identities assigned to a node rather than the number of connected client sessions.  This will include non session identities and give a more accurate picture.  This would likely be implemented in the NodeMappingService.
+B. Monitor the transaction scheduler's queue size.  If the queue goes above a certain "high water mark" for a specified period of time, the node becomes unhealthy.
+C. Monitor the length of time that it takes to service tasks after they've been put on the queue (task latency).  High latencies translate to an unhealthy node.  This would probably be similar to just monitoring the queue length.
+
+I think option B is actually the best one to try first.
+
+
+2. There's a set of conditions that I think could be handled but is currently not by this implementation.  Specifically, if every node transitions into a YELLOW or ORANGE state, then the GroupCoordinator is disabled and redistribution based on affinity groups ceases until one of the nodes becomes GREEN again.  However, it's possible (even likely) that conditions could be improved by redistributing some of the identities based on affinity groups even though, in theory, none of the nodes should be accepting new identities.  Thinking about this, I would consider these ideas:
+
+A. It is probably preferable to add an identity to the target node of its affinity group, even if that node is YELLOW, but perhaps not if it's ORANGE.
+B. Perhaps a better way of putting it is that relocation based on affinity groups takes priority over relocation based on node health.
+
+I don't have any concrete suggestions for this observation at the moment...
+
+
+Keith B Thompson wrote:
+> Hi,
+>
+> This is a request for a code review for the next set of node health changes. These changes connect the node health mechanism with the client relocation function. This will cause identities, including connected clients to be relocated to another node if the node that they are on becomes unhealthy.
+>
+> This also connects the affinity group sub-system to the above and if affinity groups are found, groups of identities will be moved together instead of individuals. Also, identities within groups will be collocated if possible. The default, for now, is that the group sub-system is disabled, even when in multi-node.
+>
+> Lastly, the client session service can now set its health based on the number of client logins. A property and JMX attribute has been added to set a login high water level at which health changes will take place.
+>
+""
