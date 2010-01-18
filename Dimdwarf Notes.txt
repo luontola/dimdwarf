@@ -1685,3 +1685,11 @@ Keith B Thompson wrote:
 > Lastly, the client session service can now set its health based on the number of client logins. A property and JMX attribute has been added to set a login high water level at which health changes will take place.
 >
 ""
+
+
+>> 18.1.2010
+
+	PERFORMANCE TUNING AND PROFILING
+
+Have a look at how modern CPUs work (their performance is limited by cache misses) and think about how to apply their techniques in a Dimdwarf cluster.
+http://www.infoq.com/presentations/click-crash-course-modern-hardware
