@@ -1693,3 +1693,25 @@ Keith B Thompson wrote:
 
 Have a look at how modern CPUs work (their performance is limited by cache misses) and think about how to apply their techniques in a Dimdwarf cluster.
 http://www.infoq.com/presentations/click-crash-course-modern-hardware
+
+
+>> 2.2.2010
+
+	CLOUD MANAGEMENT
+
+It might be good to investigate Cloud Foundry, Hyperic HQ and such (http://www.infoq.com/presentations/SpringSource-Cloud-Computing) to manage servers in the cloud/cluster. Either integrate with them, or be inspired by them.
+
+Typical tasks for the cloud management system to do:
+- monitoring and management:
+	- server instance terminates (fix: start new server)
+	- server instance unresponsive (fix: restart server)
+	- process dies (fix: start process)
+	- app unresponsive (fix: restart process)
+	- app servers idle/overloaded (fix: add or remove servers/apps)
+- autoscale: add or remove servers within given min and max limits, to achieve required high-availability and to limit costs
+	- increase/decrease on demand
+	- throw away degraded instances
+- deploy apps on servers
+- choose the size and type of servers
+- actions: launch new deployment, view current deployments, show log
+- alert administrators on problems
