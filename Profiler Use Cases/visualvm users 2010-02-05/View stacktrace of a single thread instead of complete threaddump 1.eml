@@ -1,0 +1,181 @@
+Delivered-To: esko.luontola@gmail.com
+Received: by 10.216.30.194 with SMTP id k44cs65202wea;
+        Fri, 5 Feb 2010 07:51:54 -0800 (PST)
+Received: by 10.140.83.37 with SMTP id g37mr819570rvb.75.1265385112224;
+        Fri, 05 Feb 2010 07:51:52 -0800 (PST)
+Return-Path: <users-return-593-esko.luontola=gmail.com@visualvm.dev.java.net>
+Received: from dev.java.net (s015.sjc.collab.net [208.87.9.178])
+        by mx.google.com with SMTP id 29si3153609pzk.85.2010.02.05.07.51.50;
+        Fri, 05 Feb 2010 07:51:51 -0800 (PST)
+Received-SPF: neutral (google.com: 208.87.9.178 is neither permitted nor denied by domain of users-return-593-esko.luontola=gmail.com@visualvm.dev.java.net) client-ip=208.87.9.178;
+Authentication-Results: mx.google.com; spf=neutral (google.com: 208.87.9.178 is neither permitted nor denied by domain of users-return-593-esko.luontola=gmail.com@visualvm.dev.java.net) smtp.mail=users-return-593-esko.luontola=gmail.com@visualvm.dev.java.net; dkim=hardfail (test mode) header.i=@gmail.com
+Received: (qmail 27033 invoked by uid 5000); 5 Feb 2010 15:51:49 -0000
+Mailing-List: contact users-help@visualvm.dev.java.net; run by ezmlm
+Precedence: bulk
+X-No-Archive: yes
+list-help: <mailto:users-help@visualvm.dev.java.net>
+list-unsubscribe: <mailto:users-unsubscribe@visualvm.dev.java.net>
+list-post: <mailto:users@visualvm.dev.java.net>
+Reply-To: users@visualvm.dev.java.net
+Delivered-To: mailing list users@visualvm.dev.java.net
+Received: (qmail 27015 invoked from network); 5 Feb 2010 15:51:49 -0000
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: AvQBALrMa0vRVdvZkGdsb2JhbACROYlbPAEBAQEJCQwHEwOsFYFKhROIcQEBAwWCNYIYBA
+X-IronPort-AV: E=Sophos;i="4.49,413,1262592000"; 
+   d="scan'208";a="36221552"
+X-IRONPORT: SCANNED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:in-reply-to:references
+         :date:message-id:subject:from:to:content-type;
+        bh=j8HAiHIO+PPQguJp/5+PiIc4mxQBVlWb0eQNiZjlP94=;
+        b=wee9kVr9Mz144/anwkvVNGHzDsLCtpVvOVpXWmJuJiIU5QS6CPBZr3+Zr7jamne5wM
+         rhuRbvyRfBnoknrti48d1SlZX4/A4YlGqk+YIsCWhyz2dTNiplcWBO7BatdK2wNCBvpi
+         dium8NgOZIdG/bGA1v4vXMI/s3ChlA4ZeWbDw=
+DomainKey-Signature: a=rsa-sha1; c=nofws;
+        d=gmail.com; s=gamma;
+        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+         :content-type;
+        b=pmi3c5EmXFnjEdsUBS+1g0aG6B4ZZ7whScgS+2J6Nppcvr5hb//w8un5zVXffeyMQn
+         DLo+E8oXaLMjL9q/lW0hP5ivQwF39xhRNE9Zb/2xyPgon9y3jVUjohHupAMVv4mdCxXp
+         de9J0orottRUs5hCjMWfJruzi8j24PP3hhe+k=
+MIME-Version: 1.0
+In-Reply-To: <1BF77E10-1987-4BBF-927C-D467869A927E@sun.com>
+References: <b2af696d1002040759l64b4e0cfpdf6c7033c4dc9@mail.gmail.com>
+	 <4B6B29C0.1020903@sun.com>
+	 <b2af696d1002042332i63bf1d2alfaa293c5ee522c68@mail.gmail.com>
+	 <1BF77E10-1987-4BBF-927C-D467869A927E@sun.com>
+Date: Fri, 5 Feb 2010 16:51:45 +0100
+Message-ID: <b2af696d1002050751g2ffc1e0ega3fc9e54786459c2@mail.gmail.com>
+From: Jan Bols <guterfluss@gmail.com>
+To: users@visualvm.dev.java.net
+Content-Type: multipart/alternative; boundary=0015174be8bcb71bf3047edc6d30
+Subject:  Re: View stacktrace of a single thread instead of complete threaddump
+
+--0015174be8bcb71bf3047edc6d30
+Content-Type: text/plain; charset=ISO-8859-1
+
+Hi Tomas,
+
+It gives me a fast realtime view of what a thread is doing. Now you first
+create the tread dump and inspect it afterwards.
+
+A lot of times, I want to check the evolution of a single thread. Meaning, I
+want to quickly inspect what it's doing now. 3 seconds later I want to
+inspect it again f.e. to see if a blocking thread is still blocked. Then
+check another thread f.e. to see why it's blocking the first one. A few
+seconds later check that same thread again, etc...
+
+To achieve the same result would require me to create a thread dump now.
+Find the thread I'm looking for in TDA. Create another thread dump. Lookup
+the same thread again to see if anything changed. Create another thread
+dump. etc...
+
+The application I'm currently working on, contains about 700 threads while
+I'm often only interested in 1 or 2 of them. It just takes too long to
+create a full thread dump of the entire application and inspect it later.
+Jconsole however allows me to do inspect this in realtime.
+
+I hope this makes sense to you.
+Best regards
+Jan
+
+
+
+On Fri, Feb 5, 2010 at 8:47 AM, Tomas Hurka <Tomas.Hurka@sun.com> wrote:
+
+> Hi Jan,
+>
+>
+> On 5 Feb 2010, at 08:32, Jan Bols wrote:
+>
+>  Ok Jiri,
+>> thanks. I'll add a feature request for this.
+>>
+> Can you please describe in more details, why do you need this feature? I
+> have to say that I did not find it very useful so see thread dump for just
+> one thread in JConsole and I prefer to have thread dumps for whole JVM. This
+> give you complete picture of what is going on. As Jirka already said, TDA
+> plugin can display thread dump in a structured way, where you can see
+> master-detail view of thread and their thread dumps.
+>
+> Bye,
+> --
+> Tomas Hurka   <mailto:tomas.hurka@sun.com>
+> NetBeans Profiler http://profiler.netbeans.org
+> VisualVM http://visualvm.dev.java.net
+> Software Engineer, Developer Platforms Group
+> Sun Microsystems, Praha Czech Republic
+>
+>
+> ---------------------------------------------------------------------
+> To unsubscribe, e-mail: users-unsubscribe@visualvm.dev.java.net
+> For additional commands, e-mail: users-help@visualvm.dev.java.net
+>
+>
+
+--0015174be8bcb71bf3047edc6d30
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div>Hi Tomas,<br></div><div><br></div><div>It gives me a fast realtime vie=
+w of what a thread is doing. Now you first create the tread dump and inspec=
+t it afterwards. </div><div><br></div><div>A lot of times, I want to check =
+the evolution of a single thread. Meaning, I want to quickly inspect what i=
+t&#39;s doing now. 3 seconds later I want to inspect it again f.e. to see i=
+f a blocking thread is still blocked. Then check another thread f.e. to see=
+ why it&#39;s blocking the first one. A few seconds later check that same t=
+hread again, etc...=A0</div>
+<div><br></div><div>To achieve the same result would require me to create a=
+ thread dump now. Find the thread I&#39;m looking for in TDA. Create anothe=
+r thread dump. Lookup the same thread again to see if anything changed. Cre=
+ate another thread dump. etc...</div>
+<div><br></div><div>The application I&#39;m currently working on, contains =
+about 700 threads while I&#39;m often only interested in 1 or 2 of them. It=
+ just takes too long to create a full thread dump of the entire application=
+ and inspect it later. Jconsole however allows me to do inspect this in rea=
+ltime.=A0<br>
+</div><div><br></div><div>I hope this makes sense to you.</div><div>Best re=
+gards</div><div>Jan</div><div><br></div><div><br></div><br><div class=3D"gm=
+ail_quote">On Fri, Feb 5, 2010 at 8:47 AM, Tomas Hurka <span dir=3D"ltr">&l=
+t;<a href=3D"mailto:Tomas.Hurka@sun.com">Tomas.Hurka@sun.com</a>&gt;</span>=
+ wrote:<br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex;">Hi Jan,<div class=3D"im"><br>
+<br>
+On 5 Feb 2010, at 08:32, Jan Bols wrote:<br>
+<br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">
+Ok Jiri,<br>
+thanks. I&#39;ll add a feature request for this.<br>
+</blockquote></div>
+Can you please describe in more details, why do you need this feature? I ha=
+ve to say that I did not find it very useful so see thread dump for just on=
+e thread in JConsole and I prefer to have thread dumps for whole JVM. This =
+give you complete picture of what is going on. As Jirka already said, TDA p=
+lugin can display thread dump in a structured way, where you can see master=
+-detail view of thread and their thread dumps.<br>
+
+<br>
+Bye,<br>
+--<br>
+Tomas Hurka =A0 &lt;mailto:<a href=3D"mailto:tomas.hurka@sun.com" target=3D=
+"_blank">tomas.hurka@sun.com</a>&gt;<br>
+NetBeans Profiler <a href=3D"http://profiler.netbeans.org" target=3D"_blank=
+">http://profiler.netbeans.org</a><br>
+VisualVM <a href=3D"http://visualvm.dev.java.net" target=3D"_blank">http://=
+visualvm.dev.java.net</a><br>
+Software Engineer, Developer Platforms Group<br>
+Sun Microsystems, Praha Czech Republic<br>
+<br>
+<br>
+---------------------------------------------------------------------<br>
+To unsubscribe, e-mail: <a href=3D"mailto:users-unsubscribe@visualvm.dev.ja=
+va.net" target=3D"_blank">users-unsubscribe@visualvm.dev.java.net</a><br>
+For additional commands, e-mail: <a href=3D"mailto:users-help@visualvm.dev.=
+java.net" target=3D"_blank">users-help@visualvm.dev.java.net</a><br>
+<br>
+</blockquote></div><br>
+
+--0015174be8bcb71bf3047edc6d30--
