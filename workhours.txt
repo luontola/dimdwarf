@@ -133,7 +133,8 @@ TX	Transactions
 17.8.2009 22:41-23:27	1h	MISC	* Project refactoring: upgraded dependencies, use Guice 2.0 features
 17.8.2009 23:27-24:00	0,5h	CTX	# Thread context: extracted reusable ThreadScope from TaskScope
 18.8.2009 00:00-00:23	0,5h	CTX	# Thread context: extracted reusable ThreadScope from TaskScope
-23.1.2010 15:15-15:44	0,5h	 MISC	* Project refactoring: updated dependencies, tried javax.inject
+23.1.2010 15:15-15:44	0,5h	MISC	* Project refactoring: updated dependencies, tried javax.inject
+11.2.2010 14:15-15:16	1h	MISC	* Generate a list of authors based on the version history
 
 
 NEXT:
