@@ -1742,11 +1742,18 @@ What are the practical implications for different CAP systems if Y and Z receive
 - CP: In a partition-tolerant but not available system, Z would be allowed to process its request because it is part of the quorum group (X’s lock will be broken). Y’s request would be blocked because it is not part of the quorum group.
 - AP: In a system that is both available and partition-tolerant, both requests would be allowed to progress. Y would return current data as possibly modified by X, while Z would return possibly stale data. Consistency is obviously sacrificed in this case. Note that maintaining consistency is possible in the other two kinds of systems (which is not to say that it’s easy).
 ""
-""
-Just keep reminding yourself that “availability” means that nodes remain available and “partition tolerance” means that requests survive partitions, if it helps.
-""
 
 It's still a bit unclear that where Dimdwarf HA will place itself in the CAP theorem. If the failed node's backup node is non-quorum, then the system will wait for it to come up (A, non-P), but if the backup node is quorum, then the system will kill the failed node (P, non-A). However, the partitioned non-quorum nodes will continue to process tasks normally, and after reconnecting they might find out that they were killed by the quorum. The clients can see modifications which can be lost if the node is killed, so could this mean that Consistency is sacrificed and Dimdwarf HA is AP?
+
+
+http://pl.atyp.us/wordpress/?p=2521#comment-151092
+""
+Just keep reminding yourself that “availability” means that nodes remain available and “partition tolerance” means that requests survive partitions, if it helps.
+
+Back on topic, I don’t think availability and partition tolerance are the same even from a black-box perspective. In a non-available system, the server I’m using – or perhaps the one I’m running on – is completely non-functional. I get a clear and immediate indication that Stuff Is Broke. In a non-partition-tolerant system, by contrast, some and quite likely most requests will still succeed until one hangs because it needs a lock on the other side of a partition.
+""
+
+Based on this comment (by the author of the same article), Dimdwarf HA would appear to be like CA.
 
 
 http://camelcase.blogspot.com/2007/08/cap-theorem.html
