@@ -1755,6 +1755,32 @@ Back on topic, I don’t think availability and partition tolerance are the same
 
 Based on this comment (by the author of the same article), Dimdwarf HA would appear to be like CA.
 
+The following comments contain discussion claiming that the article did not get the terms right. It's better to read the original papers...
+http://pl.atyp.us/wordpress/?p=2521#comment-159861
+http://pl.atyp.us/wordpress/?p=2521#comment-159867
+http://pl.atyp.us/wordpress/?p=2521#comment-159901
+http://pl.atyp.us/wordpress/?p=2521#comment-159915
+""
+> It is impossible to have a “consistent” and “available” distributed system, unless you can guarantee there will be no network partitions. If you try, and there is a network partition – the result will be the potential for either inconsistency, lack of availability, or both depending on how the system is designed.
+
+I also think this is a very important point, which is why I’ll say again: it is entirely possible to have a CA system, even if partitions are likely. It’s just not very desirable in that case, but “possible” and “desirable” are two different things and CAP addresses only the first. Being CA, such a system will respond to partitions in a well defined way – some requests will succeed, others will be allowed to start but will not complete because a resource they depend upon is unavailable. The combination of requirements that would make such a system seem reasonable (high consistency, high immediacy for some requests but not for indistinguishable others, low data coupling to avoid wait cascades) seems so unlikely that I can scarcely imagine it being useful, but it’s still possible. You can turn such a system into CP or AP by various means, but then it’s a different system. Again, CAP says that it could remain CA, even if neither you nor I can think of why we’d want it to.
+
+In that context, you might find my post on the TAG Conjecture <http://pl.atyp.us/wordpress/?p=2752> – from this morning, before you commented – interesting. If partitions are unlikely (other than the degenerate case of node failure which is explicitly excluded by the “non-failing node” qualification of availability), then there’s no reason to give up C or A. That’s why CA systems, including not just databases but also filesystems and other kinds of things, are more common even than CP or AP, but that’s not really what CAP is about. It’s only when partitions are likely that tradeoffs between C and A (in CAP, or T and A in TAG) make sense.
+""
+
+http://pl.atyp.us/wordpress/?p=2752
+""
+Think WAN, not LAN. Far, not near. “Global” does not include distributed systems where latency is low, bandwidth is free, and partitions are rare or transient or both. (We really need two different terms instead of using “distributed” for both, but that’s a rant for another time.) At risk of sounding elitist, I’ll say that distribution within a site is an operational rather than algorithmic problem, or tactical vs. strategic. It’s not really what CAP or TAG are about. So, what tradeoffs does TAG allow?
+
+- First up is TA – Timely Agreement. Everyone gets quick answers, and they’re the same answers for everyone. This is what a well designed non-Global system is likely to have. It’s also what most people who claim to have refuted CAP turn out to have, because they’re not really thinking about the world that CAP describes.
+
+- Second is AG, or perhaps GA – Global Agreement. You get consistency, so long as you don’t mind waiting. This is where most people will end up when they just try to run a TA system across sites, without thinking about CAP and such. Locks and timeouts can be made to work in a local environment, but completely fail in a global one. Other approaches such as MVCC offer even better concurrency and fault behavior, but – at least in the forms that would be ideal for local environments – tend to fail at global scale too. Thus, people who just add G often unintentionally lose T in the process.
+
+- Last is TG – Timely and Global. You get quick answers, no matter where you are or whether partitions exist, but to do that you have to weaken agreement (consistency). Systems in this space tend to be characterized less by at-the-time synchronization, in any form, as asynchronous queues with after-the-fact repair and conflict resolution.
+""
+
+This and the above comments reinforce the impression, that Dimdwarf HA is CA, because it is not meant for WAN-distribution, but requires a low-latency LAN.
+
 
 http://camelcase.blogspot.com/2007/08/cap-theorem.html
 ""
