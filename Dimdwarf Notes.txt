@@ -1725,3 +1725,73 @@ Go reports its performance benchmarks nicely with CI, to avoid performance regre
 
 http://godashboard.appspot.com/
 http://godashboard.appspot.com/benchmarks
+
+
+>> 17.3.2010
+
+	CAP THEOREM
+
+http://pl.atyp.us/wordpress/?p=2521
+""
+- Availability is sacrificed if certain *nodes* are forced to wait for unbounded time because of a failure. This includes the common approach of forcing non-quorum nodes down, which Brewer alludes to.
+- Partition tolerance is sacrificed if certain *requests* are forced to wait for unbounded time because of a failure. This is most often the case when a node holding a lock cannot be reached, and quorum loss is not used to break the lock.
+""
+""
+What are the practical implications for different CAP systems if Y and Z receive requests for the resource?
+- CA: In an available but not partition-tolerant system, Y would be allowed to process its request because it can reach X to obtain the lock. Z’s request would be blocked because X is unreachable.
+- CP: In a partition-tolerant but not available system, Z would be allowed to process its request because it is part of the quorum group (X’s lock will be broken). Y’s request would be blocked because it is not part of the quorum group.
+- AP: In a system that is both available and partition-tolerant, both requests would be allowed to progress. Y would return current data as possibly modified by X, while Z would return possibly stale data. Consistency is obviously sacrificed in this case. Note that maintaining consistency is possible in the other two kinds of systems (which is not to say that it’s easy).
+""
+""
+Just keep reminding yourself that “availability” means that nodes remain available and “partition tolerance” means that requests survive partitions, if it helps.
+""
+
+It's still a bit unclear that where Dimdwarf HA will place itself in the CAP theorem. If the failed node's backup node is non-quorum, then the system will wait for it to come up (A, non-P), but if the backup node is quorum, then the system will kill the failed node (P, non-A). However, the partitioned non-quorum nodes will continue to process tasks normally, and after reconnecting they might find out that they were killed by the quorum. The clients can see modifications which can be lost if the node is killed, so could this mean that Consistency is sacrificed and Dimdwarf HA is AP?
+
+
+http://camelcase.blogspot.com/2007/08/cap-theorem.html
+""
+- Strong *C*onsistency: all clients see the same view, even in presence of updates
+- High *A*vailability: all clients can find some replica of the data, even in the presence of failures
+- *P*artition-tolerance: the system properties hold even when the system is partitioned
+""
+
+Based on this, Dimdwarf HA would appear to be like CA or CP.
+
+
+http://www.cs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf
+""
+CA: Forfeit Partitions
+
+Examples
+- Single-site databases
+- Cluster databases
+- LDAP
+- xFS file system
+Traits
+- 2-phase commit
+- cache validation protocols
+
+CP: Forfeit Availability
+
+Examples
+- Distributed databases
+- Distributed locking
+- Majority protocols
+Traits
+- Pessimistic locking
+- Make minority partitions unavailable
+
+AP: Forfeit Consistency
+
+Examples
+- Coda
+- Web cachinge
+- DNS
+Traits
+- expirations/leases
+- conflict resolution
+- optimistic
+""
+
+Based on this, Dimdwarf HA would appear to be like CP.
