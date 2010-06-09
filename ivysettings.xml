@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<settings defaultResolver="local-maven2">
+  <property name="local-maven2-pattern" value="file:${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].[ext]" override="false" />
+  <resolvers>
+    <url name="local-maven2" m2compatible="true">
+      <artifact pattern="${local-maven2-pattern}"/>
+    </url>
+  </resolvers>
+</settings>
