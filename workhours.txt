@@ -6,6 +6,7 @@ ENT	Entities
 GC	Garbage collection
 MISC	Miscellaneous tasks and refactorings
 TASK	Task scheduling
+TEST	Testing infrastructure, non-unit tests
 TREF	Transparent references
 TX	Transactions
 
@@ -135,21 +136,26 @@ TX	Transactions
 18.8.2009 00:00-00:23	0,5h	CTX	# Thread context: extracted reusable ThreadScope from TaskScope
 23.1.2010 15:15-15:44	0,5h	MISC	* Project refactoring: updated dependencies, tried javax.inject
 11.2.2010 14:15-15:16	1h	MISC	* Generate a list of authors based on the version history
+13.5.2010 20:05-23:02	3h	MISC	* Project refactoring: name interfaces after roles, avoid *Impl, remove @author and @since, switch to Apache License 2.0
+14.5.2010 00:35-01:54	1,5h	TEST	End-to-end testing infrastructure
+14.5.2010 02:25-03:29	1h	TEST	End-to-end testing infrastructure
+9.6.2010 20:43-00:35	4h	TEST	End-to-end testing infrastructure
 
 
 NEXT:
-	- refactor: split dimdwarf-core, prepare separate master and worker modules:
-		* dimdwarf-domain = message queue, messages
-		* dimdwarf-master = db, scheduler, gc, networking
-		* dimwdarf-worker = context, tx, entities, serial
-	- prepare to use Scala and Specs (1.6.0-SNAPSHOT)
+	- prepare to use Scala and Specs
 	- new architecture:
+		- end-to-end acceptance tests
 		- message queue
 		- database
 		- task scheduling
 		- garbage collection (old implementation tagged "old-gc-impl" for reference)
 		- message channels
 		- client sessions
+	- refactor: split dimdwarf-core, prepare separate master and worker modules:
+		* dimdwarf-domain = message queue, messages
+		* dimdwarf-master = db, scheduler, gc, networking
+		* dimwdarf-worker = context, tx, entities, serial
 
 MILESTONES:
 - Single node, in-memory database, fully capable of running applications.
