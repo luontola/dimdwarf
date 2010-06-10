@@ -1,10 +1,12 @@
 AOP	AOP and bytecode manipulation
 CTX	Contexts and scopes
 DB	Database
+DEP	Deployment and startup
 DOC	Documentation
 ENT	Entities
 GC	Garbage collection
 MISC	Miscellaneous tasks and refactorings
+NET	Networking
 TASK	Task scheduling
 TEST	Testing infrastructure, non-unit tests
 TREF	Transparent references
@@ -140,9 +142,21 @@ TX	Transactions
 14.5.2010 00:35-01:54	1,5h	TEST	End-to-end testing infrastructure
 14.5.2010 02:25-03:29	1h	TEST	End-to-end testing infrastructure
 9.6.2010 20:43-00:35	4h	TEST	End-to-end testing infrastructure
+10.6.2010 19:09-21:26	2h	DEP	Launching the server
+10.6.2010 22:18-00:00	2h	DEP	Launching the server
+11.6.2010 00:00-01:12	1h	NET	Skeleton for SimpleSgsProtocol
 
 
 NEXT:
+	- walking skeleton, infrastructure
+		- tests for SimpleSgsProtocolIoHandler
+		- creting the Guice Injector
+		- parsing command line arguments
+		- loading the deployed application
+		- AOP using a classloader instead of agent?
+		- /lib/boot for bootstrap libraries? (such as agent)
+		- tests for using the agent, if its useful for app development?
+		- deployment tests? http://xpday4.xpday.org/slides/AgileDeployment.pdf
 	- prepare to use Scala and Specs
 	- new architecture:
 		- end-to-end acceptance tests
