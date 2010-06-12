@@ -145,6 +145,7 @@ TX	Transactions
 10.6.2010 19:09-21:26	2h	DEP	Launching the server
 10.6.2010 22:18-00:00	2h	DEP	Launching the server
 11.6.2010 00:00-01:12	1h	NET	Skeleton for SimpleSgsProtocol
+12.6.2010 13:06-14:26	1,5h	MISC	* Scripts for manual CI
 
 
 NEXT:
