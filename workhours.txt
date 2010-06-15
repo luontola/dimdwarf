@@ -150,6 +150,7 @@ TX	Transactions
 15.6.2010 01:39-02:27	2h	DEP	Separated bootstrap libraries from others, made agent.jar self-contained
 15.6.2010 19:11-21:33	2,5h	TEST	End-to-end tests: wait for the server to start before trying to connect to it
 15.6.2010 21:33-22:37	1h	NET	Use MINA's ProtocolCodec
+15.6.2010 23:17-23:55	0,5h	TEST	Fixed the high latency in StreamWatcher caused by the use of a regular PipedOutputStream
 
 
 NEXT:
