@@ -149,11 +149,14 @@ TX	Transactions
 12.6.2010 21:06-22:09	1h	DOC	Documentation for CI script and launcher module
 15.6.2010 01:39-02:27	2h	DEP	Separated bootstrap libraries from others, made agent.jar self-contained
 15.6.2010 19:11-21:33	2,5h	TEST	End-to-end tests: wait for the server to start before trying to connect to it
+15.6.2010 21:33-22:37	1h	NET	Use MINA's ProtocolCodec
 
 
 NEXT:
 	- walking skeleton, infrastructure
-		- tests for SimpleSgsProtocolIoHandler / the thing in MINA which converts bytes to messages
+!!!		- encoding and decoding of SimpleSgsProtocol messages
+			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
+			- compatibility with com.sun.sgs.client.simple.SimpleClient should be covered by end-to-end tests to be sure (also it uses MessageBuffer)
 		- creting the Guice Injector
 		- parsing command line arguments
 		- loading the deployed application
