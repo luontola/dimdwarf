@@ -147,11 +147,13 @@ TX	Transactions
 11.6.2010 00:00-01:12	1h	NET	Skeleton for SimpleSgsProtocol
 12.6.2010 13:06-14:26	1,5h	MISC	* Scripts for manual CI
 12.6.2010 21:06-22:09	1h	DOC	Documentation for CI script and launcher module
+15.6.2010 01:39-02:27	2h	DEP	Separated bootstrap libraries from others, made agent.jar self-contained
+15.6.2010 19:11-21:33	2,5h	TEST	End-to-end tests: wait for the server to start before trying to connect to it
 
 
 NEXT:
 	- walking skeleton, infrastructure
-		- tests for SimpleSgsProtocolIoHandler
+		- tests for SimpleSgsProtocolIoHandler / the thing in MINA which converts bytes to messages
 		- creting the Guice Injector
 		- parsing command line arguments
 		- loading the deployed application
