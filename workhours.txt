@@ -152,16 +152,11 @@ TX	Transactions
 15.6.2010 21:33-22:37	1h	NET	Use MINA's ProtocolCodec
 15.6.2010 23:17-23:55	0,5h	TEST	Fixed the high latency in StreamWatcher caused by the use of a regular PipedOutputStream
 18.6.2010 00:27-01:50	1,5h	MISC	Startup performance measurements, improved end-to-end tests, improved main class, improved build scripts
+20.6.2010 09:51-10:38	1h	MISC	Reorganized project structure - separate dist modules from core libraries
 
 
 NEXT:
 	- walking skeleton, infrastructure
-		- reorganize support modules:
-			dimdwarf-agent    -> dist/agent
-			dimdwarf-launcher -> dist/launcher
-			dimdwarf-dist     -> dist/dimdwarf
-			dimdwarf-parent   -> parent
-		- refer to own modules with ${version} instead of dependencyManagement (?)
 !!!		- encoding and decoding of SimpleSgsProtocol messages
 			- add Scala support, to implement protocol messages as case classes
 			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
