@@ -1828,3 +1828,13 @@ Traits
 ""
 
 Based on this, Dimdwarf HA would appear to be like CP.
+
+
+>> 16.7.2010
+
+	COMPATIBILITY LAYERS
+
+dimmed-reddwarf   = for running RedDwarf apps on Dimdwarf server
+reddened-dimdwarf = for running Dimdwarf apps on RedDwarf server (requires GC)
+
+Technology Compatibility Kit (TCK) should be created for the application APIs, so that it would be easy to make sure that the compatibility layer - and any alternative implementation of the same API - works the same way as the original reference implementation.
