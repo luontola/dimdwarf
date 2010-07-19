@@ -154,6 +154,7 @@ TX	Transactions
 18.6.2010 00:27-01:50	1,5h	MISC	Startup performance measurements, improved end-to-end tests, improved main class, improved build scripts
 20.6.2010 09:51-10:38	1h	MISC	Reorganized project structure - separate dist modules from core libraries
 19.7.2010 14:44-16:25	1,5h	ENT	# Serialization refactoring: simplified ObjectSerializer
+19.7.2010 23:37-00:07	0,5h	ENT	# Serialization refactoring: simplified serialization filters
 
 
 NEXT:
