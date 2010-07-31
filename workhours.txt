@@ -155,6 +155,8 @@ TX	Transactions
 20.6.2010 09:51-10:38	1h	MISC	Reorganized project structure - separate dist modules from core libraries
 19.7.2010 14:44-16:25	1,5h	ENT	# Serialization refactoring: simplified ObjectSerializer
 19.7.2010 23:37-00:07	0,5h	ENT	# Serialization refactoring: simplified serialization filters
+29.7.2010 16:40-17:42	1h	TEST	# Refactored ServerRunner by extracting ProcessRunner
+31.7.2010 23:46-01:03	1h	MISC	* Added Scala support to the project
 
 
 NEXT:
@@ -166,10 +168,21 @@ NEXT:
 		- creting the Guice Injector
 		- parsing command line arguments
 		- loading the deployed application
+		- compare MINA and Netty by implementing parts of SGS protocol both and doing a performance benchmark
+			- session messages: multiple clients sending "ping" messages (measure latency and throughput, min/max/avg)
 		- AOP using a classloader instead of agent?
 		- /lib/boot for bootstrap libraries? (such as agent)
 		- tests for using the agent, if it is useful for app development?
 		- deployment tests? http://xpday4.xpday.org/slides/AgileDeployment.pdf
+		- optimizations:
+			- AOP: if the class is not an entity, it does not need to be transformed, so abort the transformation with an exception and use the original bytes
+			- ClassLoading: on JDK7, classloading can be parallelized. detect if the ClassLoader.registerAsParallelCapable method exists and enable the optimization
+			- tests for measuring optimization effectiveness:
+				- system properties for enabling/disabling optimizations (dimdwarf.enableAop=true, dimdwarf.parallelizeClassLoading=true)
+				- detect JDK6/JDK7 in the tests if the optimization works only on one platform, otherwise silently skip the test
+				- test: enabling AOP should not slow down startup much
+				- test/JDK6: enabling parallelizeClassLoading should not affect startup speed (should not make it 10% worse, as expected)
+				- test/JDK7: enabling parallelizeClassLoading should improve startup speed (about 50% faster)
 	- prepare to use Scala and Specs
 	- new architecture:
 		- end-to-end acceptance tests
@@ -183,7 +196,7 @@ NEXT:
 		* dimdwarf-core = blob, message queue, interfaces between master and worker
 		* dimdwarf-master = db, scheduler, gc, networking, messages
 		* dimwdarf-worker = context, tx, entities, serial
-		* dimdwarf-server (?) = starting up the server, application deployment
+		* dimdwarf-server (?) = starting up the server, application deployment, exit hook on a socket, exiting the server (with System.exit() - it will call shutdown hooks, maybe needed for log flushing (altough apparently Lockback always flushes immediately http://logback.qos.ch/manual/appenders.html#OutputStreamAppender) - on the other hand Runtime.halt() will not call shutdown hooks)
 	- misc:
 		- api.unsafe package with stuff like manually creating EntityIds and reading the database with them
 		- dimwdarf-api-tck for making sure that alternative Dimdwarf implementations work the same way
