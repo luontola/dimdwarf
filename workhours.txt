@@ -1,4 +1,5 @@
 AOP	AOP and bytecode manipulation
+CTRL	Controller
 CTX	Contexts and scopes
 DB	Database
 DEP	Deployment and startup
@@ -6,6 +7,7 @@ DOC	Documentation
 ENT	Entities
 GC	Garbage collection
 MISC	Miscellaneous tasks and refactorings
+MGMT	Project management
 NET	Networking
 TASK	Task scheduling
 TEST	Testing infrastructure, non-unit tests
@@ -157,7 +159,14 @@ TX	Transactions
 19.7.2010 23:37-00:07	0,5h	ENT	# Serialization refactoring: simplified serialization filters
 29.7.2010 16:40-17:42	1h	TEST	# Refactored ServerRunner by extracting ProcessRunner
 31.7.2010 23:46-01:03	1h	MISC	* Added Scala support to the project
+4.8.2010 13:42-15:23	1,5h	NET	Tests for SimpleSgsProtocol
+5.8.2010 14:23-16:32	2h	CTRL	Message queue, skeleton for Controller and Bootstrapper
+15.8.2010 16:07-18:09	2h	CTRL	Services, extracted authenticator to be its own service
+17.8.2010 21:31-23:34	2h	CTRL	Registering services
+19.8.2010 15:30-17:00	1,5h	MGMT	Discussing about Dimdwarf with Jussi
+19.8.2010 20:30-22:06	1,5h	DOC	Created wiki, documented development environment, moved documentation from web site to wiki
 
+TODO comments in Controller: make the controller and services generic, registering services, decouple services
 
 NEXT:
 	- walking skeleton, infrastructure
