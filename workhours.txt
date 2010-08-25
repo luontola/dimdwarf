@@ -165,8 +165,16 @@ TX	Transactions
 17.8.2010 21:31-23:34	2h	CTRL	Registering services
 19.8.2010 15:30-17:00	1,5h	MGMT	Discussing about Dimdwarf with Jussi
 19.8.2010 20:30-22:06	1,5h	DOC	Created wiki, documented development environment, moved documentation from web site to wiki
+20.8.2010 15:22-17:58	2,5h	CTRL	Registering services/controllers
+22.8.2010 19:34-21:34	2h	CTRL	Registering services/controllers, Guice integration
+25.8.2010 17:07-22:10	5h	CTRL	Registering services/controllers, Guice integration
 
-TODO comments in Controller: make the controller and services generic, registering services, decouple services
+TODO:
+- add missing tests to InstallingServicesSpec
+- organize service wiring and startup:
+	- refactor ServerStarter to use ServiceModules
+	- create a service module for authenticator
+	- extract service startup to its own class (extract from InstallingServicesSpec)
 
 NEXT:
 	- walking skeleton, infrastructure
