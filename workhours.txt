@@ -168,18 +168,17 @@ TX	Transactions
 20.8.2010 15:22-17:58	2,5h	CTRL	Registering services/controllers
 22.8.2010 19:34-21:34	2h	CTRL	Registering services/controllers, Guice integration
 25.8.2010 17:07-22:10	5h	CTRL	Registering services/controllers, Guice integration
+26.8.2010 18:57-01:35	6h	CTRL	Starting services, service modules for authenticator and networking, debugging a problem with Guice injection
+27.8.2010 11:33-14:55	3h	CTRL	Debugging a problem with Guice injection, fixed direct controller dependencies, refactored services
+30.8.2010 14:34-15:02	0,5h	CTRL	Pass parameters to the network module
+30.8.2010 15:19-17:25	1,5h	NET	Unit tests for networking
 
 TODO:
-- add missing tests to InstallingServicesSpec
-- organize service wiring and startup:
-	- refactor ServerStarter to use ServiceModules
-	- create a service module for authenticator
-	- extract service startup to its own class (extract from InstallingServicesSpec)
+- make next end-to-end test pass
 
 NEXT:
 	- walking skeleton, infrastructure
 !!!		- encoding and decoding of SimpleSgsProtocol messages
-			- add Scala support, to implement protocol messages as case classes
 			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
 			- compatibility with com.sun.sgs.client.simple.SimpleClient should be covered by end-to-end tests to be sure (also it uses MessageBuffer)
 		- creting the Guice Injector
