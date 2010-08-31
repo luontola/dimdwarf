@@ -1,4 +1,5 @@
 AOP	AOP and bytecode manipulation
+AUTH	Authentication
 CTRL	Controller
 CTX	Contexts and scopes
 DB	Database
@@ -19,6 +20,7 @@ TX	Transactions
 
 17.8.2008 19:52-24:00	4h	TX	Transactions
 18.8.2008 00:00-0:32	0,5h	TX	Transactions
+	-- Done: Transaction coordinator
 
 18.8.2008 00:32-02:35	2h	DB	Database: blob
 18.8.2008 14:56-17:30	2,5h	DB	Database: in-memory database
@@ -30,6 +32,7 @@ TX	Transactions
 21.8.2008 13:59-15:25	1,5h	DB	Database: in-memory database
 24.8.2008 22:57-24:00	1h	DB	Database: in-memory database
 25.8.2008 00:00-01:24	1,5h	DB	Database: in-memory database
+	-- Done: In-memory database (transactional)
 
 25.8.2008 16:16-16:56	0,5h	ENT	Entities: creating references
 31.8.2008 13:47-14:10	0,5h	MISC	* Project refactoring: renamed a module, updated copyrights
@@ -37,22 +40,27 @@ TX	Transactions
 1.9.2008 13:58-14:19	0,5h	MISC	* Project refactoring: documented the thread-safeness of classes
 1.9.2008 14:19-16:39	2h	ENT	Entities: entity storage, serialization
 4.9.2008 19:22-21:49	2,5h	ENT	Entities: serialization
+	-- Done: Entities and entity references
 
 4.9.2008 21:49-22:38	1h	TREF	Transparent references: convert JUnit tests to JDave specs
 5.9.2008 02:09-02:35	0,5h	MISC	* Minor refactoring, documented the thread-safeness of classes
 5.9.2008 15:33-16:22	1h	CTX	Thread context
 5.9.2008 16:22-19:51	3,5h	TREF	Transparent references: convert JUnit tests to JDave specs
+	-- Done: Transparent references (from darkstar-exp)
 
 9.9.2008 15:09-16:43	1,5h	AOP	Bytecode instrumentation: utilities
 9.9.2008 16:43-18:21	1,5h	TREF	Transparent references: generate equals and hashCode methods, tref proxy with concrete superclass
 9.9.2008 18:21-19:18	1h	AOP	Bytecode instrumentation: java.lang.instrument agent
 9.9.2008 21:44-23:47	2h	TREF	Transparent references: tag entities with annotations
+	-- Done: Bytecode instrumentation at runtime
+	-- Done: Transparent reference improvements
 
 9.9.2008 23:47-24:00	0h	MISC	* Project refactoring: reordered packages to limit public API
 10.9.2008 00:00-00:54	1h	MISC	* Project refactoring: reordered packages to limit public API
 
 11.9.2008 18:20-19:58	1,5h	DB	Database: multiple database tables
 11.9.2008 21:00-23:17	2,5h	DB	Database: multiple database tables
+	-- Done: Multiple database tables
 
 11.9.2008 23:17-24:00	0,5h	MISC	* Project refactoring: reordered packages, removed Entities.getId() from public API, broke Context's dependencies
 12.9.2008 00:00-00:19	0,5h	MISC	* Project refactoring: reordered packages, removed Entities.getId() from public API, broke Context's dependencies
@@ -60,10 +68,12 @@ TX	Transactions
 12.9.2008 16:14-18:14	2h	DB	Iterating database keys
 12.9.2008 18:14-20:23	2h	ENT	Entity bindings, iterating bindings
 12.9.2008 20:35-22:57	2,5h	ENT	Entity bindings, accessing entities by ID, iterating entities
+	-- Done: Entity bindings, iterating bindings and entities
 
 13.9.2008 20:00-21:10	1h	CTX	Task scope
 13.9.2008 21:10-24:00	3h	TASK	Running tasks, Guice integration
 14.9.2008 00:00-01:02	1h	TASK	Running tasks, Guice integration
+	-- Done: Running tasks, Guice integration
 
 14.9.2008 (at times)	1h	MISC	* Project refactoring: improved naming and readability
 
@@ -102,6 +112,7 @@ TX	Transactions
 27.11.2008 00:00-01:54	2h	TASK	Task scheduling: TaskThreadPool
 27.11.2008 21:05-24:00	3h	TASK	Task scheduling: await until all running tasks have ended (TaskThreadPool), fixed concurrency bugs in tests, refactored tests
 28.11.2008 00:00-03:04	3h	TASK	Task scheduling: integration testing, task scheduling modules, finding and fixing concurrency bugs, made tests more robust
+	-- Done: Task scheduling (transactional)
 
 29.11.2008 21:25-24:00	2,5h	GC	Garbage collecting: MockGraph, ConcurrentMarkSweepCollector
 30.11.2008 00:00-01:07	1h	GC	Garbage collecting: ConcurrentMarkSweepCollector
@@ -121,10 +132,14 @@ TX	Transactions
 13.12.2008 19:50-21:41	2h	TASK	Task scheduling improvements: retry limits for failing tasks, only transaction conflict exceptions may cause retry (refactored GroupLock)
 13.12.2008 21:41-23:14	1,5h	GC	Garbage collecting: run GC without producing garbage
 14.12.2008 13:26-13:52	0,5h	GC	Garbage collecting: got rid of DatabaseTableWithMetadata.getMetaTable
+	-- Done: Database garbage collection
+
 18.12.2008 16:13-16:56	0,5h	MISC	* Project refactoring: separeted dimdwarf-api-internal to its own module (for Darkstar integration), reduced dependencies to EntityObject
 24.12.2008 17:39-18:26	1h	MISC	* Project refactoring: made AOP agent more configurable for Darkstar integration
 27.12.2008 16:40-18:40	2h	ENT	Entity improvements: generate equals/hashCode only for annotated entity classes, do not update unmodified entities to database
 27.12.2008 18:40-21:05	2,5h	ENT	Entity improvements: do not require entities using concrete-baseclass-proxies to have an accessible default constructor
+	-- Done: Entity improvements
+
 27.12.2008 21:05-23:40	2,5h	MISC	* Project refactoring: switching over to Git
 18.1.2009 18:10-19:38	1,5h	TASK	Task scheduling improvements: single-threaded execution mode for repeatedly failing tasks
 18.1.2009 19:38-20:05	0,5h	MISC	* Project refactoring: updated license and copyright statements
@@ -141,12 +156,17 @@ TX	Transactions
 23.1.2010 15:15-15:44	0,5h	MISC	* Project refactoring: updated dependencies, tried javax.inject
 11.2.2010 14:15-15:16	1h	MISC	* Generate a list of authors based on the version history
 13.5.2010 20:05-23:02	3h	MISC	* Project refactoring: name interfaces after roles, avoid *Impl, remove @author and @since, switch to Apache License 2.0
+
 14.5.2010 00:35-01:54	1,5h	TEST	End-to-end testing infrastructure
 14.5.2010 02:25-03:29	1h	TEST	End-to-end testing infrastructure
 9.6.2010 20:43-00:35	4h	TEST	End-to-end testing infrastructure
+	-- Done: End-to-end testing infrastructure
+
 10.6.2010 19:09-21:26	2h	DEP	Launching the server
 10.6.2010 22:18-00:00	2h	DEP	Launching the server
 11.6.2010 00:00-01:12	1h	NET	Skeleton for SimpleSgsProtocol
+	-- Done: Walking skeleton
+
 12.6.2010 13:06-14:26	1,5h	MISC	* Scripts for manual CI
 12.6.2010 21:06-22:09	1h	DOC	Documentation for CI script and launcher module
 15.6.2010 01:39-02:27	2h	DEP	Separated bootstrap libraries from others, made agent.jar self-contained
@@ -160,6 +180,7 @@ TX	Transactions
 29.7.2010 16:40-17:42	1h	TEST	# Refactored ServerRunner by extracting ProcessRunner
 31.7.2010 23:46-01:03	1h	MISC	* Added Scala support to the project
 4.8.2010 13:42-15:23	1,5h	NET	Tests for SimpleSgsProtocol
+
 5.8.2010 14:23-16:32	2h	CTRL	Message queue, skeleton for Controller and Bootstrapper
 15.8.2010 16:07-18:09	2h	CTRL	Services, extracted authenticator to be its own service
 17.8.2010 21:31-23:34	2h	CTRL	Registering services
@@ -171,10 +192,18 @@ TX	Transactions
 26.8.2010 18:57-01:35	6h	CTRL	Starting services, service modules for authenticator and networking, debugging a problem with Guice injection
 27.8.2010 11:33-14:55	3h	CTRL	Debugging a problem with Guice injection, fixed direct controller dependencies, refactored services
 30.8.2010 14:34-15:02	0,5h	CTRL	Pass parameters to the network module
+	-- Done: Infrastructure for controllers and services
+
 30.8.2010 15:19-17:25	1,5h	NET	Unit tests for networking
+31.8.2010 20:22-00:12	4h	AUTH	Checking credentials, loading the application module
+	-- Done: Authentication (pluggable)
 
 TODO:
-- make next end-to-end test pass
+- next end-to-end test: logging out
+- extract application module loading from net.orfjackal.dimdwarf.server.Main
+- next end-to-end test: session messages
+- write an end-to-end-test: more than one client
+- implement encoding and decoding of all SimpleSgsProtocol messages properly
 
 NEXT:
 	- walking skeleton, infrastructure
