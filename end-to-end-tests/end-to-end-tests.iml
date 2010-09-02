@@ -58,6 +58,15 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.scala-lang:scala-compiler:2.8.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.8.5" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.easymock:easymock:3.0" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/target/test-classes" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
