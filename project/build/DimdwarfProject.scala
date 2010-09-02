@@ -33,7 +33,7 @@ class DimdwarfProject(info: ProjectInfo) extends DimdwarfParentProject(info) {
 }
 
 trait BasicDimdwarfProject extends BasicDependencyProject {
-  val mavenLocal = "Local Maven Repository" at "file://" + (Path.userHome / ".m2" / "repository").absolutePath
+  val mavenLocal = "Local Maven Repository" at (Path.userHome / ".m2" / "repository").asURL.toString
 }
 
 abstract class DimdwarfParentProject(info: ProjectInfo) extends ParentProject(info) with BasicDimdwarfProject
