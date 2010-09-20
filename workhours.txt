@@ -198,12 +198,18 @@ TX	Transactions
 31.8.2010 20:22-00:12	4h	AUTH	Checking credentials, loading the application module
 	-- Done: Authentication (pluggable)
 
+2.9.2010 22:08-23:32	1,5h	MISC	Experimented building the project with sbt
+16.9.2010 02:40-03:22	0,5h	MISC	Made dependencies of dist modules non-transitive and other Maven tweaks
+20.9.2010 15:18-16:12	1h	MISC	Renamed services to actors
+
+
 TODO:
 - next end-to-end test: logging out
-- extract application module loading from net.orfjackal.dimdwarf.server.Main
+- extract application module loading from net.orfjackal.dimdwarf.server.Main, write tests for it
 - next end-to-end test: session messages
-- write an end-to-end-test: more than one client
+- write an end-to-end-test: more than one client (clients can send each other messages?)
 - implement encoding and decoding of all SimpleSgsProtocol messages properly
+- additional checks for controller callbacks: can be executed only in the thread where it was created
 
 NEXT:
 	- walking skeleton, infrastructure
