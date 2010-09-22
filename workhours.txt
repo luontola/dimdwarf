@@ -201,17 +201,19 @@ TX	Transactions
 2.9.2010 22:08-23:32	1,5h	MISC	Experimented building the project with sbt
 16.9.2010 02:40-03:22	0,5h	MISC	Made dependencies of dist modules non-transitive and other Maven tweaks
 20.9.2010 15:18-16:12	1h	MISC	Renamed services to actors
+22.9.2010 17:31-19:17	1,5h	NET	Logging out clients
 
 
-TODO:
-- next end-to-end test: logging out
+NEXT:
+- async util class for noticing if a client got not message within a timeout (use in NetworkSpec, test by commenting out encoding messages)
 - extract application module loading from net.orfjackal.dimdwarf.server.Main, write tests for it
-- next end-to-end test: session messages
-- write an end-to-end-test: more than one client (clients can send each other messages?)
+- next end-to-end-test: more than one client (without sending messages, only logging out)
+- next end-to-end test: session messages roundtrip
+- next end-to-end test: clients can send each other messages
 - implement encoding and decoding of all SimpleSgsProtocol messages properly
 - additional checks for controller callbacks: can be executed only in the thread where it was created
 
-NEXT:
+ROADMAP:
 	- walking skeleton, infrastructure
 !!!		- encoding and decoding of SimpleSgsProtocol messages
 			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
@@ -219,7 +221,7 @@ NEXT:
 		- creting the Guice Injector
 		- parsing command line arguments
 		- loading the deployed application
-		- compare MINA and Netty by implementing parts of SGS protocol both and doing a performance benchmark
+		- compare MINA and Netty by implementing parts of SGS protocol both and doing a performance benchmark (?)
 			- session messages: multiple clients sending "ping" messages (measure latency and throughput, min/max/avg)
 		- AOP using a classloader instead of agent?
 		- /lib/boot for bootstrap libraries? (such as agent)
@@ -234,10 +236,9 @@ NEXT:
 				- test: enabling AOP should not slow down startup much
 				- test/JDK6: enabling parallelizeClassLoading should not affect startup speed (should not make it 10% worse, as expected)
 				- test/JDK7: enabling parallelizeClassLoading should improve startup speed (about 50% faster)
-	- prepare to use Scala and Specs
 	- new architecture:
-		- end-to-end acceptance tests
-		- message queue
+		OK - end-to-end acceptance tests
+		OK - message queue
 		- database
 		- task scheduling
 		- garbage collection (old implementation tagged "old-gc-impl" for reference)
@@ -255,6 +256,13 @@ NEXT:
 		- startup speed might improve if third-party libraries would not be AOP processed
 			Benchmark the system so that all third-party libraries are in /lib/boot
 			Maybe rename /lib -> /lib/app-libs (only AOP'd worker module and common libraries) and /lib/boot -> /lib
+	- name:
+		- Dimdwarf is hard to pronounce, the reference to Darkstar is not important
+		- Proposals:
+			- Tuiki (FI, http://en.wiktionary.org/wiki/tuiki)
+				(minor name conflict: http://code.google.com/p/tuiki/ which is inactive since 2007, alpha 0.1)
+			- Hoshi*, *hoshi (JP, http://en.wiktionary.org/wiki/hoshi)
+				(too common base word, must be combined with something)
 
 MILESTONES:
 - Single node, in-memory database, capable of running applications for development.
