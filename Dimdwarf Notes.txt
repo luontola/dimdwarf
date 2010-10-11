@@ -1851,3 +1851,48 @@ A – Associative
 C – Commutative
 I – Idempotent
 D - Distributed
+
+
+>> 11.10.2010
+
+	MANAGEMENT HOOKS
+
+On each node, open a management port, through which the end-to-end tests and management tools can monitor (and control) the server state.
+
+http://www.addsimplicity.com/adding_simplicity_an_engi/2010/10/learning-from-others.html
+""
+Lesson 1 - Instrument Everything
+
+If you do something or use something, log metrics about it. You have entities, components, services, and data stores. Your system is sent requests and events. Every request and event should be instrumented with timings, resources they use, and any metrics on any interesting volumes of work they do (render page, compute a graph, etc). The simplest rule that I follow is that if involves an interaction outside your process or the consumption of a precious resource (e.g. memory, files, sockets), there should be logs generated to track it.
+""
+
+Some ideas of things to monitor (per node and globally):
+- queue depths: per actor, message queues
+- queue depths: tasks waiting to be processed (if many queues due to task dependencies, give also max/avg values)
+- latency: per actor, processing one message
+- latency: per client, from receiving a request to commiting it
+- latency: per task type, executing the task
+- number of connected clients
+- number of entities in database
+- size of database in bytes
+- events of garbage collector activity
+- events of clients connecting/disconnecting
+- number of tasks executed
+- number/percentage of tasks retried
+- number of tasks with fatal errors
+- node uptime
+- wall time
+- application time
+
+
+	JMX
+
+Integration with existing tools might be eased by using JMX:
+http://download.oracle.com/javase/tutorial/jmx/index.html
+http://java-source.net/open-source/jmx
+
+Using JMX (from end-to-end tests) with a custom JMX client:
+http://download.oracle.com/javase/tutorial/jmx/remote/custom.html
+
+JMX authentication:
+http://blogs.sun.com/lmalventosa/entry/jmx_authentication_authorization
