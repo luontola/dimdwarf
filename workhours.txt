@@ -202,16 +202,39 @@ TX	Transactions
 16.9.2010 02:40-03:22	0,5h	MISC	Made dependencies of dist modules non-transitive and other Maven tweaks
 20.9.2010 15:18-16:12	1h	MISC	Renamed services to actors
 22.9.2010 17:31-19:17	1,5h	NET	Logging out clients
+28.9.2010 19:55-21:15	1h	MISC	Asynchronous testing tools
+28.9.2010 21:47-23:04	1h	MISC	Asynchronous testing tools
+30.9.2010 14:57-15:25	0,5h	MISC	Upgraded to Hamcrest 1.2
+30.9.2010 17:17-17:48	0,5h	MISC	Upgraded to Hamcrest 1.2
+10.10.2010 01:13-02:16	1h	MISC	Upgraded to Maven 3.0, refactored POMs
 
 
 NEXT:
-- async util class for noticing if a client got not message within a timeout (use in NetworkSpec, test by commenting out encoding messages)
+!1 - async util class for noticing if a client got not message within a timeout (use in NetworkSpec, test by commenting out encoding messages)
+- duplication in test responsibilities:
+!2	- NetworkSpec could rely on the SimpleSgsProtocolEncoder/Decoder instead of using SimpleSgsProtocolReferenceMessages, which now results in testing the SimpleSgsProtocol implementation twice
+		- instead of Socket, use NioSocketConnector
+			http://mina.apache.org/tutorial-on-protocolcodecfilter-for-mina-2x.html
+		- would make it easier to probe for messages, because MINA makes receiving messages event-driven
+		- MINA's client library will anyways be needed later, with server-to-server communication, so working with it now is informative
+	- move SimpleSgsProtocol related classes to a decoupled package
+	- NetworkSpec is testing two things, maybe split them to different test classes:
+		- integration with MINA library
+		- logic of how to handle client messages
+- org.apache.mina.core.buffer.AbstractIoBuffer#getHexDump might make it easier to compare IoBuffers in tests as strings, so that the error messages show the full content of the buffer
 - extract application module loading from net.orfjackal.dimdwarf.server.Main, write tests for it
 - next end-to-end-test: more than one client (without sending messages, only logging out)
 - next end-to-end test: session messages roundtrip
 - next end-to-end test: clients can send each other messages
 - implement encoding and decoding of all SimpleSgsProtocol messages properly
+	- hardcoded or declarative?
+	- if declarative; using polymorphism or bytecode generation?
+	- messages which contain strings are not sent often, so org.apache.mina.core.buffer.IoBuffer#setAutoExpand can be used when message contains strings (otherwise leaving it off can save a couple CPU cycles)
 - additional checks for controller callbacks: can be executed only in the thread where it was created
+- proofing the network layer:
+	- what if client reports a larger message size (first 2 bytes) than the payload really is?
+	- what if login request is not the first message?
+	- other messages which are not allowed ever? not allowed in current state? 
 
 ROADMAP:
 	- walking skeleton, infrastructure
@@ -256,13 +279,8 @@ ROADMAP:
 		- startup speed might improve if third-party libraries would not be AOP processed
 			Benchmark the system so that all third-party libraries are in /lib/boot
 			Maybe rename /lib -> /lib/app-libs (only AOP'd worker module and common libraries) and /lib/boot -> /lib
-	- name:
-		- Dimdwarf is hard to pronounce, the reference to Darkstar is not important
-		- Proposals:
-			- Tuiki (FI, http://en.wiktionary.org/wiki/tuiki)
-				(minor name conflict: http://code.google.com/p/tuiki/ which is inactive since 2007, alpha 0.1)
-			- Hoshi*, *hoshi (JP, http://en.wiktionary.org/wiki/hoshi)
-				(too common base word, must be combined with something)
+		- try using Sonar (http://nemo.sonarsource.org/ http://www.sonarsource.org/)
+			- doesn't count coverage for classes in dimdwarf-aop (they are tested through dimdwarf-core) nor for classes which are only covered by end-to-end tests
 
 MILESTONES:
 - Single node, in-memory database, capable of running applications for development.
