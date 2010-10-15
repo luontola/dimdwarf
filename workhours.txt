@@ -207,7 +207,12 @@ TX	Transactions
 30.9.2010 14:57-15:25	0,5h	MISC	Upgraded to Hamcrest 1.2
 30.9.2010 17:17-17:48	0,5h	MISC	Upgraded to Hamcrest 1.2
 10.10.2010 01:13-02:16	1h	MISC	Upgraded to Maven 3.0, refactored POMs
+13.10.2010 15:05-16:40	1,5h	MISC	Asynchronous testing tools
+13.10.2010 20:10-20:53	0,5h	MISC	Asynchronous testing tools
+15.10.2010 16:20-17:58	1,5h	MISC	Asynchronous testing tools
 
+
+NEXT IN LET'S CODE: integrate ByteSink
 
 NEXT:
 !1 - async util class for noticing if a client got not message within a timeout (use in NetworkSpec, test by commenting out encoding messages)
