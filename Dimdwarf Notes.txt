@@ -1878,6 +1878,11 @@ Some ideas of things to monitor (per node and globally):
 - throughput: bytes read/written to other nodes
 - throughput: bytes read/written to in-memory database
 - throughput: bytes read/written to persisted database
+- cache misses: needs to read from local disk
+- cache misses: needs to read from another server node
+- cache misses: needs to write an object owned by another server node
+- object ownership swaps between server nodes
+- estimated working set size (see http://www.infoq.com/news/2010/10/4square_mongodb_outage)
 - number of connected clients
 - number of entities in database
 - size of database in bytes
@@ -1895,10 +1900,20 @@ Some ideas of things to monitor (per node and globally):
 
 Integration with existing tools might be eased by using JMX:
 http://download.oracle.com/javase/tutorial/jmx/index.html
+http://download.oracle.com/javase/6/docs/api/javax/management/MXBean.html
 http://java-source.net/open-source/jmx
+http://stackoverflow.com/questions/3488484/jms-and-jmx-tutorials
+http://stackoverflow.com/questions/313730/is-a-good-idea-to-enable-jmx-lambda-probe-on-a-production-server
+http://stackoverflow.com/questions/3283248/web-enabling-java-console-applications-jmx-beans
 
 Using JMX (from end-to-end tests) with a custom JMX client:
 http://download.oracle.com/javase/tutorial/jmx/remote/custom.html
 
 JMX authentication:
 http://blogs.sun.com/lmalventosa/entry/jmx_authentication_authorization
+
+The MBeans must be thread-safe.
+http://www.jroller.com/newm4n/entry/jmx_its_easy
+	"1) JMX does confer thread safety. If you have components which don't expect random threads to access them they might only work *most* of the time (but not in production say)"
+http://pveentjer.wordpress.com/2006/11/09/jmx-and-concurrency-problems/
+	"In this entry I try to explain that introducing Java Management Extensions (JMX) requires some additional care for concurrency control. If JMX is added without extra care, the system could be subject to all kinds of concurrency related problems like data races and visibility problems."
