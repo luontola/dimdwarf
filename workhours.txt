@@ -241,7 +241,7 @@ NEXT:
 	- what if login request is not the first message?
 	- other messages which are not allowed ever? not allowed in current state? 
 
-ROADMAP:
+TODO:
 	- walking skeleton, infrastructure
 !!!		- encoding and decoding of SimpleSgsProtocol messages
 			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
@@ -288,6 +288,41 @@ ROADMAP:
 			Maybe rename /lib -> /lib/app-libs (only AOP'd worker module and common libraries) and /lib/boot -> /lib
 		- try using Sonar (http://nemo.sonarsource.org/ http://www.sonarsource.org/)
 			- doesn't count coverage for classes in dimdwarf-aop (they are tested through dimdwarf-core) nor for classes which are only covered by end-to-end tests
+
+ROADMAP:
+
+test: many clients
+- network message envelopes
+- session management
+- JMX or simplest thing first?
+
+test: send and receive session messages
+- run tasks
+- client session listener
+- send session messages
+- commit transactions 
+
+test: stateful counter in session listener
+- entity integration
+- in-memory database
+
+delete old architecture
+
+rename to OneShard (if best name)
+
+continuation options:
+- channels
+- bindings (spike)
+- durable database, restartable
+- scheduled tasks
+- garbage collector
+- mock API
+- Darkstar API adapter
+- safeproof network layer
+- DI, persisted scopes (spike)
+- multi-node
+- database refactoring (lib)
+- indexes (spike)
 
 MILESTONES:
 - Single node, in-memory database, capable of running applications for development.
