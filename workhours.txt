@@ -247,7 +247,7 @@ TODO:
 			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
 			- compatibility with com.sun.sgs.client.simple.SimpleClient should be covered by end-to-end tests to be sure (also it uses MessageBuffer)
 		OK - creting the Guice Injector
-		- parsing command line arguments
+		- parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments
 		OK - loading the deployed application
 		SKIP - compare MINA and Netty by implementing parts of SGS protocol both and doing a performance benchmark (?)
 			- session messages: multiple clients sending "ping" messages (measure latency and throughput, min/max/avg)
@@ -305,6 +305,10 @@ test: send and receive session messages
 test: stateful counter in session listener
 - entity integration
 - in-memory database
+
+test: entities referring other entities
+- transparent references
+- AOP agent (test equals/hashCode)
 
 delete old architecture
 
