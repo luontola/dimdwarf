@@ -202,6 +202,8 @@ TX	Transactions
 16.9.2010 02:40-03:22	0,5h	MISC	Made dependencies of dist modules non-transitive and other Maven tweaks
 20.9.2010 15:18-16:12	1h	MISC	Renamed services to actors
 22.9.2010 17:31-19:17	1,5h	NET	Logging out clients
+	-- Done: Logout
+
 28.9.2010 19:55-21:15	1h	MISC	Asynchronous testing tools
 28.9.2010 21:47-23:04	1h	MISC	Asynchronous testing tools
 30.9.2010 14:57-15:25	0,5h	MISC	Upgraded to Hamcrest 1.2
@@ -210,25 +212,21 @@ TX	Transactions
 13.10.2010 15:05-16:40	1,5h	MISC	Asynchronous testing tools
 13.10.2010 20:10-20:53	0,5h	MISC	Asynchronous testing tools
 15.10.2010 16:20-17:58	1,5h	MISC	Asynchronous testing tools
+1.11.2010 15:50-16:16	0,5h	MISC	Asynchronous testing tools
+1.11.2010 16:16-16:59	0,5h	NET	# Refactored network tests
+1.11.2010 20:18-20:48	0,5h	NET	# Refactored network tests
+1.11.2010 20:51-22:55	2h	MISC	# Refactored asynchronous testing tools
+	-- Done: Asynchronous testing tools
 
 
-NEXT IN LET'S CODE: integrate ByteSink
+NEXT IN LET'S CODE:
+- show that async tool works by commenting out encoding LogoutSuccess in SimpleSgsProtocolEncoder
+- ClientConnectionTest#multiple_clients_can_be_connected_to_the_server, make it fail without session messages
 
 NEXT:
-!1 - async util class for noticing if a client got not message within a timeout (use in NetworkSpec, test by commenting out encoding messages)
-- duplication in test responsibilities:
-!2	- NetworkSpec could rely on the SimpleSgsProtocolEncoder/Decoder instead of using SimpleSgsProtocolReferenceMessages, which now results in testing the SimpleSgsProtocol implementation twice
-		- instead of Socket, use NioSocketConnector
-			http://mina.apache.org/tutorial-on-protocolcodecfilter-for-mina-2x.html
-		- would make it easier to probe for messages, because MINA makes receiving messages event-driven
-		- MINA's client library will anyways be needed later, with server-to-server communication, so working with it now is informative
-	- move SimpleSgsProtocol related classes to a decoupled package
-	- NetworkSpec is testing two things, maybe split them to different test classes:
-		- integration with MINA library
-		- logic of how to handle client messages
-- org.apache.mina.core.buffer.AbstractIoBuffer#getHexDump might make it easier to compare IoBuffers in tests as strings, so that the error messages show the full content of the buffer
-- extract application module loading from net.orfjackal.dimdwarf.server.Main, write tests for it
 - next end-to-end-test: more than one client (without sending messages, only logging out)
+- move SimpleSgsProtocol related classes to a decoupled package
+- extract application module loading from net.orfjackal.dimdwarf.server.Main, write tests for it
 - next end-to-end test: session messages roundtrip
 - next end-to-end test: clients can send each other messages
 - implement encoding and decoding of all SimpleSgsProtocol messages properly
