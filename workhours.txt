@@ -218,14 +218,17 @@ TX	Transactions
 1.11.2010 20:51-22:55	2h	MISC	# Refactored asynchronous testing tools
 	-- Done: Asynchronous testing tools
 
+3.11.2010 17:38-19:40	2h	NET	Multiple clients
+3.11.2010 19:59-21:29	1,5h	NET	Multiple clients
+3.11.2010 21:29-22:41	1h	AUTH	Multiple clients
+	-- Done: Multiple clients
+
 
 NEXT IN LET'S CODE:
-- show that async tool works by commenting out encoding LogoutSuccess in SimpleSgsProtocolEncoder
-- ClientConnectionTest#multiple_clients_can_be_connected_to_the_server, make it fail without session messages
+- tests for application loading (*not* session messages as promised in the previous episode)
+- parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments
 
 NEXT:
-- next end-to-end-test: more than one client (without sending messages, only logging out)
-- move SimpleSgsProtocol related classes to a decoupled package
 - extract application module loading from net.orfjackal.dimdwarf.server.Main, write tests for it
 - next end-to-end test: session messages roundtrip
 - next end-to-end test: clients can send each other messages
@@ -241,9 +244,9 @@ NEXT:
 
 TODO:
 	- walking skeleton, infrastructure
-!!!		- encoding and decoding of SimpleSgsProtocol messages
+		- encoding and decoding of SimpleSgsProtocol messages
 			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
-			- compatibility with com.sun.sgs.client.simple.SimpleClient should be covered by end-to-end tests to be sure (also it uses MessageBuffer)
+			OK - compatibility with com.sun.sgs.client.simple.SimpleClient should be covered by end-to-end tests to be sure (also it uses MessageBuffer)
 		OK - creting the Guice Injector
 		- parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments
 		OK - loading the deployed application
@@ -290,9 +293,9 @@ TODO:
 ROADMAP:
 
 test: many clients
-- network message envelopes
-- session management
-- JMX or simplest thing first?
+OK - network message envelopes
+DEFER - session management
+DEFER - JMX or simplest thing first?
 
 test: send and receive session messages
 - run tasks
