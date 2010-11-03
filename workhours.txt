@@ -223,6 +223,8 @@ TX	Transactions
 3.11.2010 21:29-22:41	1h	AUTH	Multiple clients
 	-- Done: Multiple clients
 
+3.11.2010 23:28-00:57:	1,5h	CTRL	Authenticate in FIFO order, strongly typed actors
+
 
 NEXT IN LET'S CODE:
 - tests for application loading (*not* session messages as promised in the previous episode)
