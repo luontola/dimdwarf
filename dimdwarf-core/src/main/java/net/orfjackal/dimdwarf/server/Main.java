@@ -37,7 +37,7 @@ public class Main {
             File applicationDir = new File(args[3]).getCanonicalFile();
 
             Module appModule = loadApplication(applicationDir);
-            ActorStarter starter = configureServer(port, appModule);
+            ActorStarter starter = ManualDISpike.configureServer(port, appModule);
 
             starter.start();
             logger.info("Server started");

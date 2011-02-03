@@ -33,7 +33,7 @@ public class ControllerModule extends ActorModule<Object> {
         return hub;
     }
 
-    private static void registerControllers(ControllerHub hub, Set<ControllerRegistration> controllerRegs) {
+    public static void registerControllers(ControllerHub hub, Set<ControllerRegistration> controllerRegs) {
         for (ControllerRegistration reg : preventTemporalCoupling(controllerRegs)) {
             Controller controller = reg.getController().get();
             logger.info("Registering controller \"{}\" of type {}", reg.getName(), controller.getClass().getName());
