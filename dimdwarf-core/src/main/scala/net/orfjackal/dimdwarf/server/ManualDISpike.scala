@@ -4,11 +4,11 @@ import com.google.inject._
 import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.actors._
 import java.util.HashSet
-import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.net._
 import net.orfjackal.dimdwarf.controller._
 import net.orfjackal.dimdwarf.modules.ControllerModule
 import javax.inject.Provider
+import net.orfjackal.dimdwarf.mq._
 
 object ManualDISpike {
   def configureServer(port: Int, appModule: Module): ActorStarter = {
@@ -29,21 +29,23 @@ object ManualDISpike {
 
     // authentication
     val toAuthenticator = new MessageQueue[AuthenticatorMessage]("toAuthenticator")
-    val authenticatorController = new AuthenticatorController(toAuthenticator)
-    val authenticatorActor = new AuthenticatorActor(toHub, credentialsChecker)
-    controllers.add(new ControllerRegistration("Authenticator", new StubProvider(authenticatorController)))
+
+    val authenticator = new AuthenticatorModule(toAuthenticator, toHub, credentialsChecker)
+
+    controllers.add(new ControllerRegistration("Authenticator", new StubProvider(authenticator.controller)))
     actors.add(new ActorRegistration("Authenticator",
       new StubProvider(new ActorContext(null)),
-      new StubProvider(new ActorMessageLoop(authenticatorActor, toAuthenticator))))
+      new StubProvider(new ActorMessageLoop(authenticator.actor, toAuthenticator))))
 
     // networking
     val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
-    val networkController = new NetworkController(toNetwork, authenticatorController)
-    val networkActor = new NetworkActor(port, toHub)
-    controllers.add(new ControllerRegistration("Network", new StubProvider(networkController)))
+
+    val network = new NetworkModule(toNetwork, toHub, authenticator.authenticator, port)
+
+    controllers.add(new ControllerRegistration("Network", new StubProvider(network.controller)))
     actors.add(new ActorRegistration("Network",
       new StubProvider(new ActorContext(null)),
-      new StubProvider(new ActorMessageLoop(networkActor, toNetwork))))
+      new StubProvider(new ActorMessageLoop(network.actor, toNetwork))))
 
     // register controllers
     ControllerModule.registerControllers(hub, controllers)
@@ -51,6 +53,25 @@ object ManualDISpike {
     // start up actors
     new ActorStarter(actors)
   }
+}
+
+class AuthenticatorModule(
+        toActor: MessageSender[AuthenticatorMessage],
+        toHub: MessageSender[Any],
+        credentialsChecker: CredentialsChecker[Credentials]) {
+  val controller = new AuthenticatorController(toActor)
+  val actor = new AuthenticatorActor(toHub, credentialsChecker)
+
+  def authenticator: Authenticator = controller
+}
+
+class NetworkModule(
+        toActor: MessageSender[NetworkMessage],
+        toHub: MessageSender[Any],
+        authenticator: Authenticator,
+        port: Int) {
+  val controller = new NetworkController(toActor, authenticator)
+  val actor = new NetworkActor(port, toHub)
 }
 
 class StubProvider[T](value: T) extends Provider[T] {
