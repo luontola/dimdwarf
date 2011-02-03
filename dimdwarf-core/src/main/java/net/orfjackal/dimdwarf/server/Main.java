@@ -37,19 +37,25 @@ public class Main {
             File applicationDir = new File(args[3]).getCanonicalFile();
 
             Module appModule = loadApplication(applicationDir);
-            List<Module> modules = configureServerModules(port, appModule);
-            logger.info("Modules configured");
+            ActorStarter starter = configureServer(port, appModule);
 
-            Injector injector = Guice.createInjector(Stage.PRODUCTION, modules);
-            logger.info("Modules loaded");
-
-            injector.getInstance(ActorStarter.class).start();
+            starter.start();
             logger.info("Server started");
 
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);
             System.exit(1);
         }
+    }
+
+    private static ActorStarter configureServer(int port, Module appModule) {
+        List<Module> modules = configureServerModules(port, appModule);
+        logger.info("Modules configured");
+
+        Injector injector = Guice.createInjector(Stage.PRODUCTION, modules);
+        logger.info("Modules loaded");
+
+        return injector.getInstance(ActorStarter.class);
     }
 
     private static Module loadApplication(File applicationDir) throws ConfigurationException {
