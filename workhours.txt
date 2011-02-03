@@ -227,14 +227,21 @@ TX	Transactions
 4.11.2010 01:16-03:15	2h	CTRL	# Eliminated lots of ActorModule boilerplate
 5.11.2010 16:52-17:50	1h	MISC	Test for DI configuration, created test-utils module
 6.11.2010 00:01-01:47	2h	MISC	Extracted Sandbox from TestEnvironment, adjusted IDEA's run configurations
+11.12.2010 14:20-15:34	1h	DEP	# Application loading: unit tests, extracted to its own class
+11.12.2010 21:03-21:34	0,5h	DEP	# Application loading: unit tests
+11.12.2010 21:58-00:18	2h	DEP	# Application loading: unit tests
+12.12.2010 10:29-11:19	1h	DEP	# Fixed application loading tests to unlock JARs used by the ClassLoader
+3.1.2011 12:59-13:25	0,5h	DEP	# Refactored ApplicationLoadingSpec
+11.1.2011 17:56-19:52	2h	MISC	Upgraded to Guice 3.0 RC2, begun using JSR 330 annotations
+12.1.2011 11:57-12:08	0,5h	DEP	# Refactored ApplicationLoadingSpec
+3.2.2011 19:24-21:33	2h	CTRL	Spike on using manual DI instead of Guice
+3.2.2011 21:45-23:09	1,5h	CTRL	Spike on using manual DI instead of Guice
 
 
 NEXT IN LET'S CODE:
-- tests for application loading (*not* session messages as promised in the previous episode)
-- parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments
+- parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments (args4j appears better than Commons CLI due to automatic type conversions)
 
 NEXT:
-- extract application module loading from net.orfjackal.dimdwarf.server.Main, write tests for it
 - next end-to-end test: session messages roundtrip
 - next end-to-end test: clients can send each other messages
 - implement encoding and decoding of all SimpleSgsProtocol messages properly
