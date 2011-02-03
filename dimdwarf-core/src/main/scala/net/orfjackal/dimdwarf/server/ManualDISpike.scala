@@ -9,11 +9,13 @@ import net.orfjackal.dimdwarf.controller._
 import net.orfjackal.dimdwarf.modules.ControllerModule
 import javax.inject.Provider
 import net.orfjackal.dimdwarf.mq._
+import net.orfjackal.dimdwarf.context._
 
-object ManualDISpike {
+class ManualDISpike {
+  private val actors = new HashSet[ActorRegistration]
+  private val controllers = new HashSet[ControllerRegistration]
+
   def configureServer(port: Int, appModule: Module): ActorStarter = {
-    val actors = new HashSet[ActorRegistration]
-    val controllers = new HashSet[ControllerRegistration]
 
     // interface with the application using Guice
     // (individually give access to server objects which the application need to access)
@@ -23,35 +25,48 @@ object ManualDISpike {
     // controller hub
     val toHub = new MessageQueue[Any]("toHub")
     val hub = new ControllerHub
-    actors.add(new ActorRegistration("Controller",
-      new StubProvider(new ControllerContext(null)),
-      new StubProvider(new ActorMessageLoop(hub, toHub))))
+    registerActor("Controller", new ActorMessageLoop(hub, toHub))
 
     // authentication
-    val toAuthenticator = new MessageQueue[AuthenticatorMessage]("toAuthenticator")
+    val authenticator = {
+      val name = "Authenticator"
+      val toActor = new MessageQueue[AuthenticatorMessage]("to" + name)
 
-    val authenticator = new AuthenticatorModule(toAuthenticator, toHub, credentialsChecker)
+      val module = new AuthenticatorModule(toActor, toHub, credentialsChecker)
 
-    controllers.add(new ControllerRegistration("Authenticator", new StubProvider(authenticator.controller)))
-    actors.add(new ActorRegistration("Authenticator",
-      new StubProvider(new ActorContext(null)),
-      new StubProvider(new ActorMessageLoop(authenticator.actor, toAuthenticator))))
+      registerController(name, module.controller)
+      registerActor(name, new ActorMessageLoop(module.actor, toActor))
+
+      module.authenticator
+    }
 
     // networking
-    val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
+    {
+      val name = "Network"
+      val toActor = new MessageQueue[NetworkMessage]("to" + name)
 
-    val network = new NetworkModule(toNetwork, toHub, authenticator.authenticator, port)
+      val module = new NetworkModule(toActor, toHub, authenticator, port)
 
-    controllers.add(new ControllerRegistration("Network", new StubProvider(network.controller)))
-    actors.add(new ActorRegistration("Network",
-      new StubProvider(new ActorContext(null)),
-      new StubProvider(new ActorMessageLoop(network.actor, toNetwork))))
+      registerController(name, module.controller)
+      registerActor(name, new ActorMessageLoop(module.actor, toActor))
+    }
 
     // register controllers
     ControllerModule.registerControllers(hub, controllers)
 
     // start up actors
     new ActorStarter(actors)
+  }
+
+  def registerController(name: String, controller: Controller) {
+    controllers.add(new ControllerRegistration(name,
+      new StubProvider(controller)))
+  }
+
+  def registerActor(name: String, actor: ActorRunnable) {
+    actors.add(new ActorRegistration(name,
+      new StubProvider(null: Context),
+      new StubProvider(actor)))
   }
 }
 

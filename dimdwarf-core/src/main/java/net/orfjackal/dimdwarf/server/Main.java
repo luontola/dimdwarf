@@ -7,6 +7,8 @@ package net.orfjackal.dimdwarf.server;
 import com.google.inject.*;
 import net.orfjackal.dimdwarf.actors.ActorStarter;
 import net.orfjackal.dimdwarf.modules.*;
+import net.orfjackal.dimdwarf.modules.AuthenticatorModule;
+import net.orfjackal.dimdwarf.modules.NetworkModule;
 import net.orfjackal.dimdwarf.util.MavenUtil;
 import org.slf4j.*;
 
@@ -37,7 +39,7 @@ public class Main {
             File applicationDir = new File(args[3]).getCanonicalFile();
 
             Module appModule = loadApplication(applicationDir);
-            ActorStarter starter = ManualDISpike.configureServer(port, appModule);
+            ActorStarter starter = new ManualDISpike().configureServer(port, appModule);
 
             starter.start();
             logger.info("Server started");
