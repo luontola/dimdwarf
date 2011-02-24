@@ -21,16 +21,29 @@ class ManualDISpike {
 
     val builder = new ServerBuilder()
     builder.installActorModules(toHub => {
-
-      // authentication
       val authenticator = new AuthenticatorModule(credentialsChecker, toHub)
-
-      // networking
       val network = new NetworkModule(authenticator.getAuthenticator, port, toHub)
-
     })
     builder.build()
   }
+}
+
+class AuthenticatorModule(credentialsChecker: CredentialsChecker[Credentials], toHub: MessageSender[Any]) extends ActorModule2[AuthenticatorMessage] {
+  private val controller = new AuthenticatorController(toActor)
+  private val actor = new AuthenticatorActor(toHub, credentialsChecker)
+
+  registerController(controller)
+  registerActor(actor)
+
+  def getAuthenticator: Authenticator = controller
+}
+
+class NetworkModule(authenticator: Authenticator, port: Int, toHub: MessageSender[Any]) extends ActorModule2[NetworkMessage] {
+  private val controller = new NetworkController(toActor, authenticator)
+  private val actor = new NetworkActor(port, toHub)
+
+  registerController(controller)
+  registerActor(actor)
 }
 
 
@@ -109,25 +122,4 @@ class ControllerHubModule() extends ActorModule2[Any] {
   def addControllers(controllers: java.util.Set[ControllerRegistration]) {
     ControllerModule.registerControllers(hub, controllers)
   }
-}
-
-
-// individual actor modules
-
-class AuthenticatorModule(credentialsChecker: CredentialsChecker[Credentials], toHub: MessageSender[Any]) extends ActorModule2[AuthenticatorMessage] {
-  private val controller = new AuthenticatorController(toActor)
-  private val actor = new AuthenticatorActor(toHub, credentialsChecker)
-
-  registerController(controller)
-  registerActor(actor)
-
-  def getAuthenticator: Authenticator = controller
-}
-
-class NetworkModule(authenticator: Authenticator, port: Int, toHub: MessageSender[Any]) extends ActorModule2[NetworkMessage] {
-  private val controller = new NetworkController(toActor, authenticator)
-  private val actor = new NetworkActor(port, toHub)
-
-  registerController(controller)
-  registerActor(actor)
 }
