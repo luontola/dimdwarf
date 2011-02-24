@@ -41,6 +41,9 @@ class ServerBuilder {
   private val actors = new HashSet[ActorRegistration]
 
   def installActorModules(configuration: (MessageSender[Any]) => Unit) {
+    assert(controllers.isEmpty)
+    assert(actors.isEmpty)
+
     // pass the ServerBuilder as a hidden parameter to the actor modules, to make their syntax shorter
     ActorModule2.builder.set(this)
     try {
