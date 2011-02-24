@@ -12,7 +12,7 @@ import net.orfjackal.dimdwarf.context._
 import java.util._
 
 class ManualDISpike {
-  def configureServer(port: Int, appModule: Module): ActorStarter = configure(toHub => {
+  def configureServer(port: Int, appModule: Module): ActorStarter = ServerBuilder.configure(toHub => {
 
     // interface with the application using Guice
     // (individually give access to server objects which the application need to access)
@@ -22,12 +22,6 @@ class ManualDISpike {
     val authenticator = new AuthenticatorModule(credentialsChecker, toHub)
     val network = new NetworkModule(authenticator.getAuthenticator, port, toHub)
   })
-
-  private def configure(configuration: (MessageSender[Any]) => Unit): ActorStarter = {
-    val builder = new ServerBuilder()
-    builder.installActorModules(configuration)
-    builder.build()
-  }
 }
 
 class AuthenticatorModule(credentialsChecker: CredentialsChecker[Credentials], toHub: MessageSender[Any]) extends ActorModule2[AuthenticatorMessage] {
@@ -50,6 +44,14 @@ class NetworkModule(authenticator: Authenticator, port: Int, toHub: MessageSende
 
 
 // actor infrastructure
+
+object ServerBuilder {
+  def configure(configuration: (MessageSender[Any]) => Unit): ActorStarter = {
+    val builder = new ServerBuilder()
+    builder.installActorModules(configuration)
+    builder.build()
+  }
+}
 
 class ServerBuilder {
   private val controllers = new HashSet[ControllerRegistration]
