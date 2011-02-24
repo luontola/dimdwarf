@@ -96,9 +96,6 @@ abstract class ActorModule2[T] {
   }
 }
 
-
-// individual actor modules
-
 class ControllerHubModule() extends ActorModule2[Any] {
   val hub = new ControllerHub
 
@@ -110,6 +107,9 @@ class ControllerHubModule() extends ActorModule2[Any] {
     ControllerModule.registerControllers(hub, controllers)
   }
 }
+
+
+// individual actor modules
 
 class AuthenticatorModule(credentialsChecker: CredentialsChecker[Credentials], toHub: MessageSender[Any]) extends ActorModule2[AuthenticatorMessage] {
   private val controller = new AuthenticatorController(toActor)
