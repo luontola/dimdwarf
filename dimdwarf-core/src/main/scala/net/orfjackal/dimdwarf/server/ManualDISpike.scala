@@ -12,18 +12,20 @@ import net.orfjackal.dimdwarf.context._
 import java.util._
 
 class ManualDISpike {
-  def configureServer(port: Int, appModule: Module): ActorStarter = {
+  def configureServer(port: Int, appModule: Module): ActorStarter = configure(toHub => {
 
     // interface with the application using Guice
     // (individually give access to server objects which the application need to access)
     val appInjector = Guice.createInjector(Stage.PRODUCTION, appModule)
     val credentialsChecker = appInjector.getInstance(classOf[CredentialsChecker[Credentials]])
 
+    val authenticator = new AuthenticatorModule(credentialsChecker, toHub)
+    val network = new NetworkModule(authenticator.getAuthenticator, port, toHub)
+  })
+
+  private def configure(configuration: (MessageSender[Any]) => Unit): ActorStarter = {
     val builder = new ServerBuilder()
-    builder.installActorModules(toHub => {
-      val authenticator = new AuthenticatorModule(credentialsChecker, toHub)
-      val network = new NetworkModule(authenticator.getAuthenticator, port, toHub)
-    })
+    builder.installActorModules(configuration)
     builder.build()
   }
 }
