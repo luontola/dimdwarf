@@ -19,27 +19,17 @@ class ManualDISpike {
     val appInjector = Guice.createInjector(Stage.PRODUCTION, appModule)
     val credentialsChecker = appInjector.getInstance(classOf[CredentialsChecker[Credentials]])
 
-    // pass the ServerBuilder as a hidden parameter to the actor modules, to make their syntax shorter
     val builder = new ServerBuilder()
-    ActorModule2.builder.set(builder)
-    try {
-      val hub = new ControllerHubModule()
-      configureActorModules(credentialsChecker, port, hub.toHub)
-      hub.addControllers(builder.controllers)
-    } finally {
-      ActorModule2.builder.remove()
-    }
+    builder.installActorModules(toHub => {
 
-    new ActorStarter(builder.actors)
-  }
+      // authentication
+      val authenticator = new AuthenticatorModule(credentialsChecker, toHub)
 
-  private def configureActorModules(credentialsChecker: CredentialsChecker[Credentials], port: Int, toHub: MessageSender[Any]) {
+      // networking
+      val network = new NetworkModule(authenticator.getAuthenticator, port, toHub)
 
-    // authentication
-    val authenticator = new AuthenticatorModule(credentialsChecker, toHub)
-
-    // networking
-    val network = new NetworkModule(authenticator.getAuthenticator, port, toHub)
+    })
+    builder.build()
   }
 }
 
@@ -47,8 +37,24 @@ class ManualDISpike {
 // actor infrastructure
 
 class ServerBuilder {
-  val controllers = new HashSet[ControllerRegistration]
-  val actors = new HashSet[ActorRegistration]
+  private val controllers = new HashSet[ControllerRegistration]
+  private val actors = new HashSet[ActorRegistration]
+
+  def installActorModules(configuration: (MessageSender[Any]) => Unit) {
+    // pass the ServerBuilder as a hidden parameter to the actor modules, to make their syntax shorter
+    ActorModule2.builder.set(this)
+    try {
+      val hub = new ControllerHubModule()
+      configuration(hub.toHub)
+      hub.addControllers(controllers)
+    } finally {
+      ActorModule2.builder.remove()
+    }
+  }
+
+  def build(): ActorStarter = {
+    new ActorStarter(actors)
+  }
 
   def registerController(name: String, controller: Controller) {
     controllers.add(new ControllerRegistration(name,
