@@ -13,26 +13,31 @@ import net.orfjackal.dimdwarf.context._
 
 class ManualDISpike {
   def configureServer(port: Int, appModule: Module): ActorStarter = {
-    val builder = new ServerBuilder()
 
     // interface with the application using Guice
     // (individually give access to server objects which the application need to access)
     val appInjector = Guice.createInjector(Stage.PRODUCTION, appModule)
     val credentialsChecker = appInjector.getInstance(classOf[CredentialsChecker[Credentials]])
 
-    // TODO: get actor names using reflection
-
-    // authentication
-    val authenticator = new AuthenticatorModule(
-      new ActorBuilder(builder, "Authenticator", builder.toHub),
-      credentialsChecker)
-
-    // networking
-    val network = new NetworkModule(
-      new ActorBuilder(builder, "Network", builder.toHub),
-      authenticator.getAuthenticator, port)
+    // pass the ServerBuilder as a hidden parameter to the actor modules, to make their syntax shorter
+    val builder = new ServerBuilder()
+    ActorModule2.serverBuilder.set(builder)
+    try {
+      configureActorModules(credentialsChecker, port)
+    } finally {
+      ActorModule2.serverBuilder.remove()
+    }
 
     builder.build()
+  }
+
+  private def configureActorModules(credentialsChecker: CredentialsChecker[Credentials], port: Int) {
+
+    // authentication
+    val authenticator = new AuthenticatorModule(credentialsChecker)
+
+    // networking
+    val network = new NetworkModule(authenticator.getAuthenticator, port)
   }
 }
 
@@ -43,7 +48,7 @@ class ServerBuilder {
   private val controllers = new HashSet[ControllerRegistration]
   private val actors = new HashSet[ActorRegistration]
 
-  // TODO: unify controller with actor modules
+  // TODO: unify controller with actor modules, maybe by passing toHub as an explicit parameter to the other actors
   private val controllerQueue = new MessageQueue[Any]("toHub")
 
   def toHub: MessageSender[Any] = controllerQueue
@@ -75,20 +80,29 @@ class ServerBuilder {
   }
 }
 
-class ActorBuilder[T](builder: ServerBuilder, name: String, val toHub: MessageSender[Any]) {
+object ActorModule2 {
+  val serverBuilder = new ThreadLocal[ServerBuilder]()
+}
+
+abstract class ActorModule2[T] {
+  private val builder = ActorModule2.serverBuilder.get
+  private val name = getClass.getSimpleName.replace("Module", "")
+
   private val actorQueue = new MessageQueue[T]("to" + name)
 
-  def toActor: MessageSender[T] = actorQueue
+  protected def toHub = builder.toHub
 
-  def registerController(controller: Controller) {
+  protected def toActor: MessageSender[T] = actorQueue
+
+  protected def registerController(controller: Controller) {
     builder.registerController(name, controller)
   }
 
-  def registerActor(actor: Actor[T]) {
+  protected def registerActor(actor: Actor[T]) {
     registerActorRunnable(new ActorMessageLoop(actor, actorQueue))
   }
 
-  def registerActorRunnable(actor: ActorRunnable) {
+  protected def registerActorRunnable(actor: ActorRunnable) {
     builder.registerActor(name, actor)
   }
 }
@@ -96,23 +110,20 @@ class ActorBuilder[T](builder: ServerBuilder, name: String, val toHub: MessageSe
 
 // individual actor modules
 
-class AuthenticatorModule(builder: ActorBuilder[AuthenticatorMessage],
-                          credentialsChecker: CredentialsChecker[Credentials]) {
-  private val controller = new AuthenticatorController(builder.toActor)
-  private val actor = new AuthenticatorActor(builder.toHub, credentialsChecker)
+class AuthenticatorModule(credentialsChecker: CredentialsChecker[Credentials]) extends ActorModule2[AuthenticatorMessage] {
+  private val controller = new AuthenticatorController(toActor)
+  private val actor = new AuthenticatorActor(toHub, credentialsChecker)
 
-  builder.registerController(controller)
-  builder.registerActor(actor)
+  registerController(controller)
+  registerActor(actor)
 
   def getAuthenticator: Authenticator = controller
 }
 
-class NetworkModule(builder: ActorBuilder[NetworkMessage],
-                    authenticator: Authenticator,
-                    port: Int) {
-  private val controller = new NetworkController(builder.toActor, authenticator)
-  private val actor = new NetworkActor(port, builder.toHub)
+class NetworkModule(authenticator: Authenticator, port: Int) extends ActorModule2[NetworkMessage] {
+  private val controller = new NetworkController(toActor, authenticator)
+  private val actor = new NetworkActor(port, toHub)
 
-  builder.registerController(controller)
-  builder.registerActor(actor)
+  registerController(controller)
+  registerActor(actor)
 }
