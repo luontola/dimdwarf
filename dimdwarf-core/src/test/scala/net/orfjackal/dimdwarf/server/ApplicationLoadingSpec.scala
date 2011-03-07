@@ -19,10 +19,12 @@ class ApplicationLoadingSpec extends Spec {
   val classesDir = createDir(applicationDir, ApplicationLoader.CLASSES_DIR)
   val libDir = createDir(applicationDir, ApplicationLoader.LIBRARIES_DIR)
 
+  val correctConfiguration = Map(
+    ApplicationLoader.APP_NAME -> "MyApp",
+    ApplicationLoader.APP_MODULE -> classOf[MyApp].getName)
+
   "When configured correctly" >> {
-    writeConfiguration(Map(
-      ApplicationLoader.APP_NAME -> "MyApp",
-      ApplicationLoader.APP_MODULE -> classOf[MyApp].getName))
+    writeConfiguration(correctConfiguration)
 
     "Adds to classpath the /classes directory" >> {
       FileUtils.write(new File(classesDir, "file.txt"), "file content")
@@ -60,14 +62,12 @@ class ApplicationLoadingSpec extends Spec {
     assertGivesAnErrorMentioning("File not found", ApplicationLoader.CONFIG_FILE)
   }
   "Error: no application name declared" >> {
-    writeConfiguration(Map(
-      ApplicationLoader.APP_MODULE -> classOf[MyApp].getName))
+    writeConfiguration(correctConfiguration - ApplicationLoader.APP_NAME)
 
     assertGivesAnErrorMentioning("Property", "was not set", ApplicationLoader.APP_NAME, ApplicationLoader.CONFIG_FILE)
   }
   "Error: no application module declared" >> {
-    writeConfiguration(Map(
-      ApplicationLoader.APP_NAME -> "MyApp"))
+    writeConfiguration(correctConfiguration - ApplicationLoader.APP_MODULE)
 
     assertGivesAnErrorMentioning("Property", "was not set", ApplicationLoader.APP_MODULE, ApplicationLoader.CONFIG_FILE)
   }
