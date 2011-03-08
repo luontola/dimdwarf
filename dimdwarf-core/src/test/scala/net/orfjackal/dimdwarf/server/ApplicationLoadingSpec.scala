@@ -25,28 +25,22 @@ class ApplicationLoadingSpec extends Spec {
 
   "When configured correctly" >> {
     writeConfiguration(correctConfiguration)
+    writeFileToClassesDir("file-in-classes-dir.txt", "file content 1")
+    val jar = writeJarToLibDir("sample.jar", Map("file-in-jar.txt" -> "file content 2"))
+
+    val loader = new ApplicationLoader(applicationDir)
+    defer {worksOnlyOnJava7 {closeClassLoader(loader.getClassLoader, jar)}}
 
     "Adds to classpath the /classes directory" >> {
-      FileUtils.write(new File(classesDir, "file.txt"), "file content")
-      val loader = new ApplicationLoader(applicationDir)
-
-      val content = readContent("file.txt", loader.getClassLoader)
-      assertThat(content, is("file content"))
+      val content = readContent("file-in-classes-dir.txt", loader.getClassLoader)
+      assertThat(content, is("file content 1"))
     }
     "Adds to classpath all JARs in the /lib directory" >> worksOnlyOnJava7 {
-      val jarFile = new File(libDir, "sample.jar")
-      writeJarFile(jarFile, Map(
-        "file-in-jar.txt" -> "file content"))
-
-      val loader = new ApplicationLoader(applicationDir)
-      defer {closeClassLoader(loader.getClassLoader, jarFile)}
-
       val content = readContent("file-in-jar.txt", loader.getClassLoader)
-      assertThat(content, is("file content"))
+      assertThat(content, is("file content 2"))
     }
     // TODO: write a test case that the /classes dir is first in classpath? (write a file with same name to /classes and a JAR)
 
-    val loader = new ApplicationLoader(applicationDir)
     "Reads the application name from configuration" >> {
       assertThat(loader.getApplicationName, is("MyApp"))
     }
@@ -71,6 +65,84 @@ class ApplicationLoadingSpec extends Spec {
 
     assertGivesAnErrorMentioning("Property", "was not set", ApplicationLoader.APP_MODULE, ApplicationLoader.CONFIG_FILE)
   }
+
+  // creating temporary directories
+
+  private def createTempDir(): File = {
+    val sandbox = new Sandbox(new File("target"))
+    val dir = sandbox.createTempDir()
+    defer {sandbox.deleteTempDir(dir)}
+    dir
+  }
+
+  private def createDir(parent: File, name: String): File = {
+    val dir = new File(parent, name)
+    assert(dir.mkdir())
+    dir
+  }
+
+  // writing application files
+
+  private def writeConfiguration(properties: Map[String, String]) {
+    writePropertiesFile(classesDir, ApplicationLoader.CONFIG_FILE, properties)
+  }
+
+  private def writePropertiesFile(dir: File, name: String, properties: Map[String, String]) {
+    import scala.collection.JavaConversions._
+    val file = new File(dir, name)
+    val rows = properties map {case (key, value) => key + "=" + value}
+    FileUtils.writeLines(file, rows)
+  }
+
+  private def writeFileToClassesDir(fileName: String, content: String): File = {
+    val file = new File(classesDir, fileName)
+    FileUtils.write(file, content)
+    file
+  }
+
+  private def writeJarToLibDir(fileName: String, contents: Map[String, String]): File = {
+    val jarFile = new File(libDir, fileName)
+    writeJarFile(jarFile, contents)
+    jarFile
+  }
+
+  private def writeJarFile(jarFile: File, entries: Map[String, String]) {
+    val out = new ZipOutputStream(new FileOutputStream(jarFile))
+    try {
+      for ((entry, content) <- entries) {
+        out.putNextEntry(new ZipEntry(entry))
+        IOUtils.write(content, out)
+      }
+    } finally {
+      out.close()
+    }
+  }
+
+  private def readContent(path: String, classLoader: ClassLoader): String = {
+    val in = classLoader.getResourceAsStream(path)
+    assert(in != null, "Resource not found: " + path)
+    try {
+      IOUtils.toString(in)
+    } finally {
+      in.close()
+    }
+  }
+
+  // custom asserts
+
+  private def assertGivesAnErrorMentioning(messages: String*) {
+    try {
+      new ApplicationLoader(applicationDir)
+      Assert.fail("should have thrown an exception")
+    } catch {
+      case e: ConfigurationException =>
+        for (message <- messages) {
+          assertThat(e.getMessage, containsString(message))
+        }
+    }
+  }
+
+  // closing the class loader
 
   private def worksOnlyOnJava7(closure: => Unit) {
     if (JRE.isJava7) {
@@ -98,64 +170,6 @@ class ApplicationLoadingSpec extends Spec {
     val url = new URL("jar:" + jarFile.toURI.toURL + "!/")
     val connection = url.openConnection.asInstanceOf[JarURLConnection]
     connection.getJarFile.close()
-  }
-
-  private def assertGivesAnErrorMentioning(messages: String*) {
-    try {
-      new ApplicationLoader(applicationDir)
-      Assert.fail("should have thrown an exception")
-    } catch {
-      case e: ConfigurationException =>
-        for (message <- messages) {
-          assertThat(e.getMessage, containsString(message))
-        }
-    }
-  }
-
-  private def createTempDir(): File = {
-    val sandbox = new Sandbox(new File("target"))
-    val dir = sandbox.createTempDir()
-    defer {sandbox.deleteTempDir(dir)}
-    dir
-  }
-
-  private def createDir(parent: File, name: String): File = {
-    val dir = new File(parent, name)
-    assert(dir.mkdir())
-    dir
-  }
-
-  private def writeConfiguration(properties: Map[String, String]) {
-    writePropertiesFile(classesDir, ApplicationLoader.CONFIG_FILE, properties)
-  }
-
-  private def writePropertiesFile(dir: File, name: String, properties: Map[String, String]) {
-    import scala.collection.JavaConversions._
-    val file = new File(dir, name)
-    val rows = properties map {case (key, value) => key + "=" + value}
-    FileUtils.writeLines(file, rows)
-  }
-
-  def writeJarFile(jarFile: File, entries: Map[String, String]) {
-    val out = new ZipOutputStream(new FileOutputStream(jarFile))
-    try {
-      for ((entry, content) <- entries) {
-        out.putNextEntry(new ZipEntry(entry))
-        IOUtils.write(content, out)
-      }
-    } finally {
-      out.close()
-    }
-  }
-
-  private def readContent(path: String, classLoader: ClassLoader): String = {
-    val in = classLoader.getResourceAsStream(path)
-    assert(in != null, "Resource not found: " + path)
-    try {
-      IOUtils.toString(in)
-    } finally {
-      in.close()
-    }
   }
 }
 
