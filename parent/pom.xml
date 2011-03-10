@@ -244,12 +244,12 @@
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
-                <version>3.0-rc2</version>
+                <version>3.0-rc3</version>
             </dependency>
             <dependency>
                 <groupId>com.google.inject.extensions</groupId>
                 <artifactId>guice-multibindings</artifactId>
-                <version>3.0-rc2</version>
+                <version>3.0-rc3</version>
             </dependency>
 
             <!-- Bytecode manipulation -->
