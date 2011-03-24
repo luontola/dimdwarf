@@ -18,6 +18,16 @@ public class JRE {
     }
 
     /**
+     * URLClassLoader locks any JARs from which it loads resources, which
+     * will prevent removing the JAR file until the ClassLoader is garbage collected.
+     * The {@link java.net.URLClassLoader#close()} method was added in Java 7 to
+     * solve this problem.
+     * <p/>
+     * Related issues and some workarounds:
+     * http://bugs.sun.com/view_bug.do?bug_id=4950148
+     * http://bugs.sun.com/view_bug.do?bug_id=4167874
+     * http://download.oracle.com/javase/7/docs/technotes/guides/net/ClassLoader.html
+     *
      * @see java.net.URLClassLoader#close()
      */
     public static void closeClassLoader(URLClassLoader cl) {

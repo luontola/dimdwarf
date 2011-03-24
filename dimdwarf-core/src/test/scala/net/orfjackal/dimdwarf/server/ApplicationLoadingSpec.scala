@@ -11,7 +11,6 @@ import com.google.inject._
 import org.junit.Assert
 import java.io._
 import java.util.zip._
-import java.net._
 
 @RunWith(classOf[Specsy])
 class ApplicationLoadingSpec extends Spec {
@@ -26,10 +25,10 @@ class ApplicationLoadingSpec extends Spec {
   "When configured correctly" >> {
     writeConfiguration(correctConfiguration)
     writeFileToClassesDir("file-in-classes-dir.txt", "file content 1")
-    val jar = writeJarToLibDir("sample.jar", Map("file-in-jar.txt" -> "file content 2"))
+    writeJarToLibDir("sample.jar", Map("file-in-jar.txt" -> "file content 2"))
 
     val loader = new ApplicationLoader(applicationDir)
-    defer {worksOnlyOnJava7 {closeClassLoader(loader.getClassLoader, jar)}}
+    defer {worksOnlyOnJava7 {JRE.closeClassLoader(loader.getClassLoader)}}
 
     "Adds to classpath the /classes directory" >> {
       val content = readContent("file-in-classes-dir.txt", loader.getClassLoader)
@@ -94,16 +93,14 @@ class ApplicationLoadingSpec extends Spec {
     FileUtils.writeLines(file, rows)
   }
 
-  private def writeFileToClassesDir(fileName: String, content: String): File = {
+  private def writeFileToClassesDir(fileName: String, content: String) {
     val file = new File(classesDir, fileName)
     FileUtils.write(file, content)
-    file
   }
 
-  private def writeJarToLibDir(fileName: String, contents: Map[String, String]): File = {
-    val jarFile = new File(libDir, fileName)
-    writeJarFile(jarFile, contents)
-    jarFile
+  private def writeJarToLibDir(fileName: String, contents: Map[String, String]) {
+    val file = new File(libDir, fileName)
+    writeJarFile(file, contents)
   }
 
   private def writeJarFile(jarFile: File, entries: Map[String, String]) {
@@ -142,34 +139,12 @@ class ApplicationLoadingSpec extends Spec {
     }
   }
 
-  // closing the class loader
+  // other utility methods
 
   private def worksOnlyOnJava7(closure: => Unit) {
     if (JRE.isJava7) {
       closure
     }
-  }
-
-  private def closeClassLoader(cl: URLClassLoader, jarFiles: File*) {
-    assert(JRE.isJava7)
-    // URLClassLoader locks the JAR when it reads a file from it,
-    // which would here prevent the removing of the temporary directory.
-    // Related issues and some workarounds.
-    // http://bugs.sun.com/view_bug.do?bug_id=4950148
-    // http://bugs.sun.com/view_bug.do?bug_id=4167874
-    // http://download.oracle.com/javase/7/docs/technotes/guides/net/ClassLoader.html
-
-    // XXX: URLClassLoader.close() has been added in JDK 7, but it does not appear to work without explicitly closing the JAR
-    for (jarFile <- jarFiles) {
-      closeJarConnection(jarFile)
-    }
-    JRE.closeClassLoader(cl)
-  }
-
-  private def closeJarConnection(jarFile: File) {
-    val url = new URL("jar:" + jarFile.toURI.toURL + "!/")
-    val connection = url.openConnection.asInstanceOf[JarURLConnection]
-    connection.getJarFile.close()
   }
 }
 
