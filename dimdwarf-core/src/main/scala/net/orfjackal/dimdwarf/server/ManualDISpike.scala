@@ -12,7 +12,16 @@ import net.orfjackal.dimdwarf.context._
 import java.util._
 
 class ManualDISpike {
-  def configureServer(port: Int, appModule: Module): ActorStarter = ServerBuilder.configure(toHub => {
+  def bootstrapFromJava(port: Int, appModule: Module): ActorStarter = {
+    ServerBuilder(ServerModule.configure(port, appModule))
+  }
+}
+
+
+// DI configuration
+
+object ServerModule {
+  def configure(port: Int, appModule: Module)(toHub: MessageSender[Any]) {
 
     // interface with the application using Guice
     // (individually give access to server objects which the application need to access)
@@ -21,7 +30,7 @@ class ManualDISpike {
 
     val authenticator = new AuthenticatorModule(credentialsChecker, toHub)
     val network = new NetworkModule(authenticator.getAuthenticator, port, toHub)
-  })
+  }
 }
 
 class AuthenticatorModule(credentialsChecker: CredentialsChecker[Credentials], toHub: MessageSender[Any]) extends ActorModule2[AuthenticatorMessage] {
@@ -46,7 +55,7 @@ class NetworkModule(authenticator: Authenticator, port: Int, toHub: MessageSende
 // actor infrastructure
 
 object ServerBuilder {
-  def configure(configuration: (MessageSender[Any]) => Unit): ActorStarter = {
+  def apply(configuration: MessageSender[Any] => Unit): ActorStarter = {
     val builder = new ServerBuilder()
     builder.installActorModules(configuration)
     builder.build()
@@ -57,7 +66,7 @@ class ServerBuilder {
   private val controllers = new HashSet[ControllerRegistration]
   private val actors = new HashSet[ActorRegistration]
 
-  def installActorModules(configuration: (MessageSender[Any]) => Unit) {
+  def installActorModules(configuration: MessageSender[Any] => Unit) {
     assert(controllers.isEmpty)
     assert(actors.isEmpty)
 
