@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         ApplicationLoadingSpec.class,
+        CommandLineArgumentsSpec.class,
         ModuleConfigurationSpec.class
 })
 public class ScalaSpecs {

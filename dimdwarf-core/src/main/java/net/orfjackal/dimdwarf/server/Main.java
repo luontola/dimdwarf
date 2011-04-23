@@ -8,6 +8,7 @@ import com.google.inject.*;
 import net.orfjackal.dimdwarf.actors.ActorStarter;
 import net.orfjackal.dimdwarf.modules.*;
 import net.orfjackal.dimdwarf.util.MavenUtil;
+import org.kohsuke.args4j.*;
 import org.slf4j.*;
 
 import java.io.*;
@@ -28,16 +29,12 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
         Thread.setDefaultUncaughtExceptionHandler(new KillProcessOnUncaughtException());
 
+        ServerOptions options = parseArguments(args);
         logger.info("Dimdwarf {} starting up", getVersion());
 
         try {
-            // TODO: parse args properly
-            // try http://java.dzone.com/articles/compute-command-line-arguments or https://args4j.dev.java.net/
-            int port = Integer.parseInt(args[1]);
-            File applicationDir = new File(args[3]).getCanonicalFile();
-
-            Module appModule = loadApplication(applicationDir);
-            List<Module> modules = configureServerModules(port, appModule);
+            Module appModule = loadApplication(options.applicationDir.getCanonicalFile());
+            List<Module> modules = configureServerModules(options.port, appModule);
             logger.info("Modules configured");
 
             Injector injector = Guice.createInjector(Stage.PRODUCTION, modules);
@@ -52,6 +49,26 @@ public class Main {
         }
     }
 
+    private static ServerOptions parseArguments(String[] args) {
+        ServerOptions options = new ServerOptions();
+        CmdLineParser parser = new CmdLineParser(options);
+        try {
+            parser.parseArgument(args);
+        } catch (CmdLineException e) {
+            // TODO: do not hard code the launcher file name?
+            System.err.println(e.getMessage());
+            System.err.println("java -jar launcher.jar" + parser.printExample(ExampleMode.REQUIRED));
+            parser.printUsage(System.err);
+            System.exit(1);
+        }
+        return options;
+    }
+
+    private static String getVersion() {
+        String version = MavenUtil.getPom("net.orfjackal.dimdwarf", "dimdwarf-core").getProperty("version");
+        return version != null ? version : "<unknown version>";
+    }
+
     private static Module loadApplication(File applicationDir) throws ConfigurationException {
         logger.info("Opening application directory {}", applicationDir);
 
@@ -60,11 +77,6 @@ public class Main {
 
         logger.info("Loading application module {}", loader.getApplicationModule());
         return loader.newModuleInstance();
-    }
-
-    private static String getVersion() {
-        String version = MavenUtil.getPom("net.orfjackal.dimdwarf", "dimdwarf-core").getProperty("version");
-        return version != null ? version : "<unknown version>";
     }
 
     public static List<Module> configureServerModules(int port, Module appModule) {
