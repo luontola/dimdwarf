@@ -45,14 +45,19 @@ public class ClientRunner {
         this.password = password;
     }
 
-    public void loginToServer() throws IOException {
+    public void login() throws IOException {
+        sendLogin();
+        getsLoggedIn();
+    }
+
+    public void sendLogin() throws IOException {
         Properties p = new Properties();
         p.setProperty("host", host);
         p.setProperty("port", Integer.toString(port));
         client.login(p);
     }
 
-    public void isLoggedIn() {
+    public void getsLoggedIn() {
         expectEvent(LOGGED_IN);
     }
 
@@ -60,11 +65,11 @@ public class ClientRunner {
         expectEvent(LOGIN_FAILED);
     }
 
-    public void logout() {
+    public void sendLogout() {
         client.logout(false);
     }
 
-    public void isLoggedOut() {
+    public void getsLoggedOut() {
         expectEvent(DISCONNECTED);
     }
 

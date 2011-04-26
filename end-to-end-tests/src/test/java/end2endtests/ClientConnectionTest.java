@@ -30,7 +30,7 @@ public class ClientConnectionTest {
         server.startApplication(EchoApp.class);
 
         client.setPassword("wrong-password");
-        client.loginToServer();
+        client.sendLogin();
         client.failsToLogin();
     }
 
@@ -38,39 +38,27 @@ public class ClientConnectionTest {
     public void login_and_logout_successfully() throws Exception {
         server.startApplication(EchoApp.class);
 
-        client.loginToServer();
-        client.isLoggedIn();
+        client.sendLogin();
+        client.getsLoggedIn();
 
-        client.logout();
-        client.isLoggedOut();
-    }
-
-    // TODO: test session messages in a different class
-    //@Test
-    public void send_and_receive_messages() throws Exception {
-        server.startApplication(EchoApp.class);
-
-        client.loginToServer();
-        client.isLoggedIn();
-
-        client.sendMessage("hello");
-        client.receivesMessage("hello");
+        client.sendLogout();
+        client.getsLoggedOut();
     }
 
     @Test
     public void multiple_clients_can_be_connected_to_the_server() throws Exception {
         server.startApplication(EchoApp.class);
 
-        client.loginToServer();
-        client2.loginToServer();
+        client.sendLogin();
+        client2.sendLogin();
 
-        client.isLoggedIn();
-        client2.isLoggedIn();
+        client.getsLoggedIn();
+        client2.getsLoggedIn();
 
-        client.logout();
-        client2.logout();
+        client.sendLogout();
+        client2.sendLogout();
 
-        client.isLoggedOut();
-        client2.isLoggedOut();
+        client.getsLoggedOut();
+        client2.getsLoggedOut();
     }
 }
