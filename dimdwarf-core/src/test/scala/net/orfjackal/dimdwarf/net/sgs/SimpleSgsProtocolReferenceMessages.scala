@@ -44,6 +44,13 @@ object SimpleSgsProtocolReferenceMessages {
     asIoBuffer(message.getBuffer)
   }
 
+  def sessionMessage(bytes: Array[Byte]): IoBuffer = {
+    val message = new MessageBuffer(1 + bytes.length).
+            putByte(SimpleSgsProtocol.SESSION_MESSAGE).
+            putBytes(bytes)
+    asIoBuffer(message.getBuffer)
+  }
+
   def logoutRequest(): IoBuffer = {
     asIoBuffer(Array[Byte](SimpleSgsProtocol.LOGOUT_REQUEST))
   }

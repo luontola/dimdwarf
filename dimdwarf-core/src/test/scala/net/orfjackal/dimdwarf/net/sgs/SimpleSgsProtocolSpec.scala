@@ -8,6 +8,7 @@ import org.apache.mina.core.session._
 import org.mockito.Mockito._
 import org.apache.mina.filter.codec._
 import SimpleSgsProtocolReferenceMessages._
+import net.orfjackal.dimdwarf.db.Blob
 
 @RunWith(classOf[Specsy])
 class SimpleSgsProtocolSpec extends Spec {
@@ -28,14 +29,6 @@ class SimpleSgsProtocolSpec extends Spec {
     verify(decoded).write(LoginRequest("username", "password"))
   }
 
-  "Decode LOGOUT_REQUEST" >> {
-    val in = logoutRequest()
-
-    decoder.decode(session, in, decoded)
-
-    verify(decoded).write(LogoutRequest())
-  }
-
   "Encode LOGIN_SUCCESS" >> {
     val message = LoginSuccess()
 
@@ -50,5 +43,22 @@ class SimpleSgsProtocolSpec extends Spec {
     encoder.encode(session, message, encoded)
 
     verify(encoded).write(loginFailure("")) // TODO: add reason
+  }
+
+  "Decode SESSION_MESSAGE" >> {
+    val bytes = Array[Byte](1, 2, 3)
+    val in = sessionMessage(bytes)
+
+    decoder.decode(session, in, decoded)
+
+    verify(decoded).write(SessionMessage(Blob.fromBytes(bytes)))
+  }
+
+  "Decode LOGOUT_REQUEST" >> {
+    val in = logoutRequest()
+
+    decoder.decode(session, in, decoded)
+
+    verify(decoded).write(LogoutRequest())
   }
 }

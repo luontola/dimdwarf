@@ -1,5 +1,7 @@
 package net.orfjackal.dimdwarf.net.sgs
 
+import net.orfjackal.dimdwarf.db.Blob
+
 // TODO: move these out of the sgs package, decouple them from the SimpleSgsProtocol?
 abstract sealed class ClientMessage
 
@@ -13,7 +15,7 @@ case class LoginFailure() extends ClientMessage
 // TODO: RELOCATE*
 // TODO: RECONNECT*
 
-// TODO: SESSION_MESSAGE
+case class SessionMessage(message: Blob) extends ClientMessage
 
 case class LogoutRequest() extends ClientMessage
 case class LogoutSuccess() extends ClientMessage
