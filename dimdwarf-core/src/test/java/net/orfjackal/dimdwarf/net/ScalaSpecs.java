@@ -10,7 +10,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         LoginLogoutSpec.class,
-        NetworkActorSpec.class
+        NetworkActorSpec.class,
+        SessionMessagesSpec.class
 })
 public class ScalaSpecs {
 }

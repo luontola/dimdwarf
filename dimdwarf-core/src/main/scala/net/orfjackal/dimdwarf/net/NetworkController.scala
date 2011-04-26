@@ -23,6 +23,9 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], auth
           onYes = {toNetwork.send(SendToClient(LoginSuccess(), session))},
           onNo = {toNetwork.send(SendToClient(LoginFailure(), session))})
 
+      case SessionMessage(message) =>
+      // TODO: handle the message
+
       case LogoutRequest() =>
         toNetwork.send(SendToClient(LogoutSuccess(), session))
 
