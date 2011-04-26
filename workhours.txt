@@ -236,10 +236,12 @@ TX	Transactions
 12.1.2011 11:57-12:08	0,5h	DEP	# Refactored ApplicationLoadingSpec
 3.2.2011 19:24-21:33	2h	CTRL	Spike on using manual DI instead of Guice
 3.2.2011 21:45-23:09	1,5h	CTRL	Spike on using manual DI instead of Guice
+24.2.2011 18:18-19:47	1,5h	CTRL	Spike on using manual DI instead of Guice
+8.3.2011 12:20-12:39	0,5h	DEP	# Refactored ApplicationLoadingSpec
+24.3.2011 22:35-23:02	0,5h	DEP	# Refactored ApplicationLoadingSpec
+12.4.2011 22:28-22:51	0,5h	DEP	# Refactored ManualDISpike
+23.4.2011 23:13-00:03	1h	DEP	Command line argument parsing using args4j
 
-
-NEXT IN LET'S CODE:
-- parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments (args4j appears better than Commons CLI due to automatic type conversions)
 
 NEXT:
 - next end-to-end test: session messages roundtrip
@@ -260,7 +262,7 @@ TODO:
 			- test compatibility with com.sun.sgs.impl.sharedutil.MessageBuffer
 			OK - compatibility with com.sun.sgs.client.simple.SimpleClient should be covered by end-to-end tests to be sure (also it uses MessageBuffer)
 		OK - creting the Guice Injector
-		- parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments
+		OK - parsing command line arguments, try http://java.dzone.com/articles/compute-command-line-arguments
 		OK - loading the deployed application
 		SKIP - compare MINA and Netty by implementing parts of SGS protocol both and doing a performance benchmark (?)
 			- session messages: multiple clients sending "ping" messages (measure latency and throughput, min/max/avg)
