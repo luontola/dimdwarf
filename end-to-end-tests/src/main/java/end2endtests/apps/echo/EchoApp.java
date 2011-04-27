@@ -12,5 +12,6 @@ public class EchoApp extends AbstractModule {
 
     protected void configure() {
         bind(CredentialsChecker.class).to(FakeCredentialsChecker.class);
+        // TODO: add client session listener
     }
 }

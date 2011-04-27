@@ -9,22 +9,21 @@ import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.actors._
 import net.orfjackal.dimdwarf.net.sgs._
 import net.orfjackal.dimdwarf.db.Blob
+import net.orfjackal.dimdwarf.tasks2.TaskExecutor
+import org.mockito.Mockito._
 
 @RunWith(classOf[Specsy])
 class SessionMessagesSpec extends Spec {
   val queues = new DeterministicMessageQueues
 
   // TODO: remove duplication between the setups of this test and LoginLogoutSpec 
-  val toAuthenticator = new MessageQueue[AuthenticatorMessage]("toAuthenticator")
-  val authenticatorActor = new AuthenticatorActor(queues.toHub, new DummyCredentialsChecker)
-  queues.addActor(authenticatorActor, toAuthenticator)
-  val authenticatorCtrl = new AuthenticatorController(toAuthenticator)
-  queues.addController(authenticatorCtrl)
+  val authenticator = new FakeAuthenticator()
+  val taskExecutor = mock(classOf[TaskExecutor])
 
   val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
   val networkActor = new DummyNetworkActor()
   queues.addActor(networkActor, toNetwork)
-  val networkCtrl = new NetworkController(toNetwork, authenticatorCtrl)
+  val networkCtrl = new NetworkController(toNetwork, authenticator, taskExecutor)
   queues.addController(networkCtrl)
 
   // given client has connected
@@ -34,7 +33,10 @@ class SessionMessagesSpec extends Spec {
   "When client sends a session message" >> {
     val message = Blob.fromBytes("hello".getBytes)
     clientSends(SessionMessage(message))
-    // TODO: handle the session message in a worker thread
+
+    "the session message will be handled by the task executor" >> {
+      verify(taskExecutor).processSessionMessage(DummySessionHandle(), message)
+    }
   }
 
   // TODO: when a task commits, send session messages to clients
@@ -57,7 +59,9 @@ class SessionMessagesSpec extends Spec {
 
   case class DummySessionHandle() extends SessionHandle
 
-  class DummyCredentialsChecker extends CredentialsChecker[Credentials] {
-    def isValid(credentials: Credentials) = true
+  class FakeAuthenticator extends Authenticator {
+    def isUserAuthenticated(credentials: Credentials, onYes: => Unit, onNo: => Unit) {
+      onYes
+    }
   }
 }

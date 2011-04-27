@@ -25,7 +25,6 @@ public class SessionMessagesTest {
         }
     }
 
-    @Ignore
     @Test
     public void send_and_receive_messages() throws Exception {
         server.startApplication(EchoApp.class);

@@ -17,7 +17,7 @@ class LoginLogoutSpec extends Spec {
 
   val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
   queues.addActor(networkActor, toNetwork)
-  val networkCtrl = new NetworkController(toNetwork, authenticator)
+  val networkCtrl = new NetworkController(toNetwork, authenticator, null)
   queues.addController(networkCtrl)
 
   val USERNAME = "John Doe"

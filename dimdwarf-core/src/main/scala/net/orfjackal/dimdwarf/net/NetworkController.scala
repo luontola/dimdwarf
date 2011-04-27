@@ -5,9 +5,10 @@ import net.orfjackal.dimdwarf.controller._
 import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.net.sgs._
 import javax.inject.Inject
+import net.orfjackal.dimdwarf.tasks2.TaskExecutor
 
 @ControllerScoped
-class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], authenticator: Authenticator) extends Controller {
+class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], authenticator: Authenticator, taskExecutor: TaskExecutor) extends Controller {
   def process(message: Any) {
     message match {
       case ReceivedFromClient(message, session) =>
@@ -24,9 +25,10 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], auth
           onNo = {toNetwork.send(SendToClient(LoginFailure(), session))})
 
       case SessionMessage(message) =>
-      // TODO: handle the message
+        taskExecutor.processSessionMessage(session, message)
 
       case LogoutRequest() =>
+        // TODO: release any resources related to the client (once there are some resources)
         toNetwork.send(SendToClient(LogoutSuccess(), session))
 
       case _ =>
