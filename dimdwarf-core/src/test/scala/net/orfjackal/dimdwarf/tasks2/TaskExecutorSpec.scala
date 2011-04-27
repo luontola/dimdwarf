@@ -7,12 +7,12 @@ import net.orfjackal.specsy._
 import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.net._
 import net.orfjackal.dimdwarf.db.Blob
-import net.orfjackal.dimdwarf.net.sgs.SessionMessage
+import net.orfjackal.dimdwarf.domain.SessionMessageToClient
 
 @RunWith(classOf[Specsy])
 class TaskExecutorSpec extends Spec {
-  val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
-  val taskExecutor = new TaskExecutor(toNetwork)
+  val toHub = new MessageQueue[Any]("toHub")
+  val taskExecutor = new TaskExecutor(toHub)
 
   val session = DummySessionHandle()
   val message = Blob.fromBytes("hello".getBytes)
@@ -21,7 +21,7 @@ class TaskExecutorSpec extends Spec {
     // TODO: deepen the design, split this test into smaller pieces
     taskExecutor.processSessionMessage(session, message)
 
-    assertThat(toNetwork.take(), is(SendToClient(SessionMessage(message), session): Any))
+    assertThat(toHub.poll(1000), is(SessionMessageToClient(message, session): Any))
   }
 
   case class DummySessionHandle() extends SessionHandle

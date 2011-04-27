@@ -6,6 +6,7 @@ import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.net.sgs._
 import javax.inject.Inject
 import net.orfjackal.dimdwarf.tasks2.TaskExecutor
+import net.orfjackal.dimdwarf.domain.SessionMessageToClient
 
 @ControllerScoped
 class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], authenticator: Authenticator, taskExecutor: TaskExecutor) extends Controller {
@@ -13,6 +14,11 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], auth
     message match {
       case ReceivedFromClient(message, session) =>
         processClientMessage(message, session)
+
+      case SessionMessageToClient(message, session) =>
+        // TODO: write a unit test for this (and in multinode it may need to forward this message to another server node)
+        toNetwork.send(SendToClient(SessionMessage(message), session))
+
       case _ =>
     }
   }
