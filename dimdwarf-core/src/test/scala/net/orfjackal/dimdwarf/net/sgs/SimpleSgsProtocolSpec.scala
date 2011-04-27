@@ -54,6 +54,15 @@ class SimpleSgsProtocolSpec extends Spec {
     verify(decoded).write(SessionMessage(Blob.fromBytes(bytes)))
   }
 
+  "Encode SESSION_MESSAGE" >> {
+    val bytes = Array[Byte](1, 2, 3)
+    val message = SessionMessage(Blob.fromBytes(bytes))
+
+    encoder.encode(session, message, encoded)
+
+    verify(encoded).write(sessionMessage(bytes))
+  }
+
   "Decode LOGOUT_REQUEST" >> {
     val in = logoutRequest()
 
