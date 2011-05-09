@@ -4,11 +4,11 @@
 
 package net.orfjackal.dimdwarf.scheduler;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import java.io.Serializable;
 import java.util.concurrent.*;
 
-@Immutable
+@NotThreadSafe
 public class SchedulingFuture implements ScheduledFuture<Object>, Serializable {
     private static final long serialVersionUID = 1L;
 

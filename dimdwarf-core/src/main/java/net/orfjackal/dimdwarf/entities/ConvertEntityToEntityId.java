@@ -7,10 +7,10 @@ package net.orfjackal.dimdwarf.entities;
 import net.orfjackal.dimdwarf.api.*;
 import net.orfjackal.dimdwarf.db.Converter;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class ConvertEntityToEntityId implements Converter<Object, EntityId> {
 
     private final AllEntities entities;

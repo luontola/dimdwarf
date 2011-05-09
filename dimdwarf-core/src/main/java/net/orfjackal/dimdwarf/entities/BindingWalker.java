@@ -4,10 +4,10 @@
 
 package net.orfjackal.dimdwarf.entities;
 
-import javax.annotation.concurrent.*;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Iterator;
 
-@Immutable
+@NotThreadSafe
 public class BindingWalker implements Iterable<String> {
 
     private final String prefix;

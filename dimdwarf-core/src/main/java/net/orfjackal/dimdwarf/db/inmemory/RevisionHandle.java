@@ -4,6 +4,9 @@
 
 package net.orfjackal.dimdwarf.db.inmemory;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
+@NotThreadSafe
 public class RevisionHandle {
 
     private static final long UNDEFINED = RevisionList.NULL_REVISION - 1;

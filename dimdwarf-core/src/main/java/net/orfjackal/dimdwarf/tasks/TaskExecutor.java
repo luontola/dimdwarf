@@ -6,11 +6,11 @@ package net.orfjackal.dimdwarf.tasks;
 
 import net.orfjackal.dimdwarf.context.*;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import javax.inject.*;
 import java.util.concurrent.Executor;
 
-@Immutable
+@ThreadSafe
 public class TaskExecutor implements Executor {
 
     private final Provider<Context> context;

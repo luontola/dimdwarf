@@ -6,10 +6,10 @@ package net.orfjackal.dimdwarf.entities;
 
 import net.orfjackal.dimdwarf.tasks.Filter;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class EntityFlushingFilter implements Filter {
 
     private final EntitiesLoadedInMemory entities;

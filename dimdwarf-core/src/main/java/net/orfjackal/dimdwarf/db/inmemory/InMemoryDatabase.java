@@ -87,7 +87,7 @@ public class InMemoryDatabase implements PersistedDatabase<RevisionHandle> {
     }
 
 
-    @Immutable
+    @NotThreadSafe
     private class DbCommitHandle implements CommitHandle {
 
         private final Collection<TransientDatabaseTable<RevisionHandle>> updates;

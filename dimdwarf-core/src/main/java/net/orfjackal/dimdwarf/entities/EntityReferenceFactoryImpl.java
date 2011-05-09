@@ -7,10 +7,10 @@ package net.orfjackal.dimdwarf.entities;
 import net.orfjackal.dimdwarf.api.EntityId;
 import net.orfjackal.dimdwarf.api.internal.*;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class EntityReferenceFactoryImpl implements EntityReferenceFactory {
 
     private final AllEntities entities;

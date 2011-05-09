@@ -6,10 +6,10 @@ package net.orfjackal.dimdwarf.scheduler;
 
 import net.orfjackal.dimdwarf.events.SystemLifecycleListener;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class TaskSchedulingLifecycleManager implements SystemLifecycleListener {
 
     private final TaskSchedulerImpl taskScheduler;

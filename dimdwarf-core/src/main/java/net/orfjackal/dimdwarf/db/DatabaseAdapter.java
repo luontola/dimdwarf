@@ -4,10 +4,10 @@
 
 package net.orfjackal.dimdwarf.db;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Set;
 
-@Immutable
+@NotThreadSafe
 public class DatabaseAdapter<K1, V1, K2, V2> implements Database<K1, V1> {
 
     private final Database<K2, V2> parent;

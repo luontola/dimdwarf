@@ -65,7 +65,7 @@ public class InMemoryDatabaseManager implements DatabaseManager {
     }
 
 
-    @Immutable
+    @ThreadSafe
     private class ConnectionCloser implements TransactionParticipant {
 
         private final Transaction tx;

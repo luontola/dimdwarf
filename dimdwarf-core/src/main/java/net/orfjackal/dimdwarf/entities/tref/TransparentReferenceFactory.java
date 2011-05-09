@@ -11,13 +11,13 @@ import net.orfjackal.dimdwarf.util.SingletonCache;
 import net.sf.cglib.proxy.*;
 import org.objenesis.*;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.inject.*;
 import java.lang.reflect.Method;
 import java.util.*;
 
 @Singleton
-@Immutable
+@ThreadSafe
 public class TransparentReferenceFactory {
 
     private final CglibProxyFactoryCache proxyFactories = new CglibProxyFactoryCache();

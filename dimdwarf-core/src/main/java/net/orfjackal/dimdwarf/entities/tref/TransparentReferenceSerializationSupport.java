@@ -6,10 +6,10 @@ package net.orfjackal.dimdwarf.entities.tref;
 
 import net.orfjackal.dimdwarf.api.internal.*;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class TransparentReferenceSerializationSupport {
 
     private final TransparentReferenceFactory factory;

@@ -8,10 +8,10 @@ import net.orfjackal.dimdwarf.tx.TransactionCoordinator;
 import net.orfjackal.dimdwarf.util.Exceptions;
 import org.slf4j.*;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class TransactionFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(TransactionFilter.class);
 

@@ -4,11 +4,11 @@
 
 package net.orfjackal.dimdwarf.tasks;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import javax.inject.Inject;
 import java.util.concurrent.Executor;
 
-@Immutable
+@NotThreadSafe
 public class FilterChain implements Executor {
 
     private final Filter[] chain;

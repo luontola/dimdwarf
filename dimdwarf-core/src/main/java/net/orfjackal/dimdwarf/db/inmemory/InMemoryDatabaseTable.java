@@ -43,7 +43,7 @@ public class InMemoryDatabaseTable implements PersistedDatabaseTable<RevisionHan
     }
 
 
-    @Immutable
+    @NotThreadSafe
     private class DbTableCommitHandle implements CommitHandle {
 
         private final Map<Blob, Blob> updates;

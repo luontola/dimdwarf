@@ -6,11 +6,11 @@ package net.orfjackal.dimdwarf.tasks;
 
 import org.slf4j.*;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.inject.*;
 import java.util.concurrent.Executor;
 
-@Immutable
+@ThreadSafe
 public class RetryingTaskExecutor implements Executor {
 
     // FIXME: RetryingTaskExecutor will be removed/refactored in new architecture

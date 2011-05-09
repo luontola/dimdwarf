@@ -8,10 +8,10 @@ import net.orfjackal.dimdwarf.api.*;
 import net.orfjackal.dimdwarf.api.internal.*;
 import net.orfjackal.dimdwarf.entities.AllEntities;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class TrefAwareEntityInfo implements EntityInfo {
 
     private final AllEntities entities;

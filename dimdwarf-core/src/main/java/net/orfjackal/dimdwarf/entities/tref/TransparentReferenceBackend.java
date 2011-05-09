@@ -7,10 +7,10 @@ package net.orfjackal.dimdwarf.entities.tref;
 
 import net.orfjackal.dimdwarf.api.internal.*;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.*;
 import java.io.Serializable;
 
-@Immutable
+@NotThreadSafe
 public class TransparentReferenceBackend implements TransparentReference, Serializable {
     private static final long serialVersionUID = 1L;
 

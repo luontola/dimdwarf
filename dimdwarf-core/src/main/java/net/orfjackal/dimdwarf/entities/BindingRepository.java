@@ -7,10 +7,10 @@ package net.orfjackal.dimdwarf.entities;
 import net.orfjackal.dimdwarf.db.DatabaseTable;
 import net.orfjackal.dimdwarf.entities.dao.BindingDao;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.inject.Inject;
 
-@Immutable
+@NotThreadSafe
 public class BindingRepository implements DatabaseTable<String, Object> {
 
     private final BindingDao bindings;
