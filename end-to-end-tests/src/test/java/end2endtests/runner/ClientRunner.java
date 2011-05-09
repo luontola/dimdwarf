@@ -100,6 +100,7 @@ public class ClientRunner {
             assertThat("event", event.type, is(expectedType));
             return event;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

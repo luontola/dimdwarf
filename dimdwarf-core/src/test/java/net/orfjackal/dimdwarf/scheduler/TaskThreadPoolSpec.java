@@ -115,6 +115,7 @@ public class TaskThreadPoolSpec extends Specification2 {
                         step2.await();
                         step3.countDown();
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         throw new RuntimeException(e);
                     }
                 }
@@ -127,6 +128,7 @@ public class TaskThreadPoolSpec extends Specification2 {
                         step2.countDown();
                         step3.await();
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         throw new RuntimeException(e);
                     }
                 }
@@ -177,6 +179,7 @@ public class TaskThreadPoolSpec extends Specification2 {
                         testHasEnded.await();
                         aNewTaskIsRunning = false;
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         throw new RuntimeException(e);
                     }
                 }
@@ -189,6 +192,7 @@ public class TaskThreadPoolSpec extends Specification2 {
                         taskQueue.add(new SimpleTaskBootstrap(task2));
                         secondTaskIsExecuting.await();
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         throw new RuntimeException(e);
                     }
                 }

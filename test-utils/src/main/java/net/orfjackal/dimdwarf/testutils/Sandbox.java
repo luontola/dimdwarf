@@ -68,8 +68,8 @@ public class Sandbox {
     private static void sleep(int millis) {
         try {
             Thread.sleep(millis);
-        } catch (InterruptedException e1) {
-            throw new RuntimeException(e1);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

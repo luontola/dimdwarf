@@ -44,6 +44,7 @@ public class TaskScopeSpec extends Specification<Object> {
             latch.countDown();
             latch.await();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

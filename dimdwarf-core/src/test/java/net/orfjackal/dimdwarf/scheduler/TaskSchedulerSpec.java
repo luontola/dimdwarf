@@ -93,6 +93,7 @@ public class TaskSchedulerSpec extends Specification<Object> {
         try {
             return scheduler.takeNextTask();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

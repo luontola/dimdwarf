@@ -51,6 +51,7 @@ public class EntityRepositorySpec extends Specification<Object> {
         try {
             latch.await();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

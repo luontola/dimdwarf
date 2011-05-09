@@ -40,6 +40,7 @@ public class TransactionSpec extends Specification<TransactionContext> {
         try {
             testHasEnded.await();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

@@ -61,6 +61,7 @@ public class TaskThreadPool {
         try {
             consumer.join();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             logger.error("Interrupted while shutting down", e);
             throw new RuntimeException(e);
         }
@@ -73,6 +74,7 @@ public class TaskThreadPool {
             workers.awaitTermination(10, TimeUnit.SECONDS);
             workers.shutdownNow();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             logger.error("Interrupted while shutting down", e);
             throw new RuntimeException(e);
         }
@@ -113,6 +115,7 @@ public class TaskThreadPool {
                     TaskBootstrap bootstrap = producer.takeNextTask();
                     workers.submit(new TaskContextSetup(new Bootstrapper(bootstrap)));
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     logger.info("Task consumer was interrupted", e);
                     return;
                 }
