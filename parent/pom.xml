@@ -287,7 +287,8 @@
             <dependency>
                 <groupId>org.apache.mina</groupId>
                 <artifactId>mina-core</artifactId>
-                <version>2.0.1</version>
+                <!-- TODO: upgrade to latest version after this issue is fixed: https://issues.apache.org/jira/browse/DIRMINA-833 -->
+                <version>2.0.0-RC1</version>
             </dependency>
 
             <!-- Caching -->
