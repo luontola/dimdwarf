@@ -10,12 +10,16 @@ case class SimpleTimestamp(timestamp: Long) extends Timestamp {
 
   def compare(other: Timestamp): Int = {
     val that = other.asInstanceOf[SimpleTimestamp]
-    if (inUpperRange(this.timestamp) && inLowerRange(that.timestamp)) {
+    unsignedCompare(this.timestamp, that.timestamp)
+  }
+
+  private def unsignedCompare(a: Long, b: Long): Int = {
+    if (inUpperRange(a) && inLowerRange(b)) {
       1
-    } else if (inLowerRange(this.timestamp) && inUpperRange(that.timestamp)) {
+    } else if (inLowerRange(a) && inUpperRange(b)) {
       -1
     } else {
-      this.timestamp.compareTo(that.timestamp)
+      a.compareTo(b)
     }
   }
 
@@ -24,11 +28,11 @@ case class SimpleTimestamp(timestamp: Long) extends Timestamp {
   private def inUpperRange(value: Long) = value < 0
 
   override def toString: String = {
-    "{" + separators(8, padWithZero(16, timestamp.toHexString)) + "}"
+    "{" + separators(8, zeroPadded(16, timestamp.toHexString)) + "}"
   }
 
-  private def padWithZero(length: Int, hex: String): String = {
-    ("0" * (length - hex.length)) + hex
+  private def zeroPadded(length: Int, hex: String): String = {
+    "0" * (length - hex.length) + hex
   }
 
   private def separators(length: Int, hex: String): String = {
