@@ -1,6 +1,13 @@
 package net.orfjackal.dimdwarf.domain
 
 case class SimpleTimestamp(timestamp: Long) extends Timestamp {
+  def next: SimpleTimestamp = {
+    if (timestamp == -1L) {
+      throw new IllegalStateException("timestamp overflow")
+    }
+    SimpleTimestamp(timestamp + 1L)
+  }
+
   def compareTo(o: Timestamp): Int = {
     val that = o.asInstanceOf[SimpleTimestamp]
     if (inUpperRange(this.timestamp) && inLowerRange(that.timestamp)) {

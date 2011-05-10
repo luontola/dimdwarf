@@ -29,6 +29,24 @@ class SimpleTimestampSpec extends Spec {
     assertThat(SimpleTimestamp(-1L).toString, is("{ffffffff-ffffffff}"))
   }
 
+  "Timestamps can be incremented" >> {
+    assertThat(SimpleTimestamp(0L).next, is(SimpleTimestamp(1L)))
+    assertThat(SimpleTimestamp(1L).next, is(SimpleTimestamp(2L)))
+    assertThat(SimpleTimestamp(Long.MAX_VALUE).next, is(SimpleTimestamp(Long.MIN_VALUE)))
+    assertThat(SimpleTimestamp(-2L).next, is(SimpleTimestamp(-1L)))
+  }
+
+  "Timestamps cannot overflow" >> {
+    try {
+      SimpleTimestamp(-1L).next
+
+      fail("should have thrown an exception")
+    } catch {
+      case e: IllegalStateException =>
+        assertThat(e.getMessage, containsString("overflow"))
+    }
+  }
+
   "Timestamps are ordered" >> {
     val order = Seq(
       SimpleTimestamp(0L),
