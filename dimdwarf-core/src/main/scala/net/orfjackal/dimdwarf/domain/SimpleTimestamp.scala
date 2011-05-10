@@ -13,19 +13,9 @@ case class SimpleTimestamp(timestamp: Long) extends Timestamp {
     unsignedCompare(this.timestamp, that.timestamp)
   }
 
-  private def unsignedCompare(a: Long, b: Long): Int = {
-    if (inUpperRange(a) && inLowerRange(b)) {
-      1
-    } else if (inLowerRange(a) && inUpperRange(b)) {
-      -1
-    } else {
-      a.compareTo(b)
-    }
-  }
+  private def unsignedCompare(a: Long, b: Long) = unsigned(a).compareTo(unsigned(b))
 
-  private def inLowerRange(value: Long) = value >= 0
-
-  private def inUpperRange(value: Long) = value < 0
+  private def unsigned(x: Long) = x + Long.MinValue
 
   override def toString: String = {
     "{" + separators(8, zeroPadded(16, timestamp.toHexString)) + "}"

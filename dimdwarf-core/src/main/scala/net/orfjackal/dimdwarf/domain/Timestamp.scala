@@ -1,7 +1,5 @@
 package net.orfjackal.dimdwarf.domain
 
-import scala.math.Ordered
-
 trait Timestamp extends Ordered[Timestamp] {
   def next: Timestamp
 }

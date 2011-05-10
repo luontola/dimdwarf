@@ -5,7 +5,6 @@ import net.orfjackal.specsy._
 import org.junit.Assert._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
-import java.lang.Long
 
 @RunWith(classOf[Specsy])
 class SimpleTimestampSpec extends Spec {
@@ -24,15 +23,15 @@ class SimpleTimestampSpec extends Spec {
   "Timestamps are shown in hexadecimal format" >> {
     assertThat(SimpleTimestamp(0L).toString, is("{00000000-00000000}"))
     assertThat(SimpleTimestamp(1L).toString, is("{00000000-00000001}"))
-    assertThat(SimpleTimestamp(Long.MAX_VALUE).toString, is("{7fffffff-ffffffff}"))
-    assertThat(SimpleTimestamp(Long.MIN_VALUE).toString, is("{80000000-00000000}"))
+    assertThat(SimpleTimestamp(Long.MaxValue).toString, is("{7fffffff-ffffffff}"))
+    assertThat(SimpleTimestamp(Long.MinValue).toString, is("{80000000-00000000}"))
     assertThat(SimpleTimestamp(-1L).toString, is("{ffffffff-ffffffff}"))
   }
 
   "Timestamps can be incremented" >> {
     assertThat(SimpleTimestamp(0L).next, is(SimpleTimestamp(1L)))
     assertThat(SimpleTimestamp(1L).next, is(SimpleTimestamp(2L)))
-    assertThat(SimpleTimestamp(Long.MAX_VALUE).next, is(SimpleTimestamp(Long.MIN_VALUE)))
+    assertThat(SimpleTimestamp(Long.MaxValue).next, is(SimpleTimestamp(Long.MinValue)))
     assertThat(SimpleTimestamp(-2L).next, is(SimpleTimestamp(-1L)))
   }
 
@@ -51,16 +50,16 @@ class SimpleTimestampSpec extends Spec {
     assertComparableInOrder(
       SimpleTimestamp(0L),
       SimpleTimestamp(1L),
-      SimpleTimestamp(Integer.MAX_VALUE - 1L),
-      SimpleTimestamp(Integer.MAX_VALUE),
-      SimpleTimestamp(Integer.MAX_VALUE + 1L),
-      SimpleTimestamp(Long.MAX_VALUE - 1L),
-      SimpleTimestamp(Long.MAX_VALUE),
-      SimpleTimestamp(Long.MIN_VALUE),
-      SimpleTimestamp(Long.MIN_VALUE + 1L),
-      SimpleTimestamp(Integer.MIN_VALUE - 1L),
-      SimpleTimestamp(Integer.MIN_VALUE),
-      SimpleTimestamp(Integer.MIN_VALUE + 1L),
+      SimpleTimestamp(Int.MaxValue - 1L),
+      SimpleTimestamp(Int.MaxValue),
+      SimpleTimestamp(Int.MaxValue + 1L),
+      SimpleTimestamp(Long.MaxValue - 1L),
+      SimpleTimestamp(Long.MaxValue),
+      SimpleTimestamp(Long.MinValue),
+      SimpleTimestamp(Long.MinValue + 1L),
+      SimpleTimestamp(Int.MinValue - 1L),
+      SimpleTimestamp(Int.MinValue),
+      SimpleTimestamp(Int.MinValue + 1L),
       SimpleTimestamp(-1L))
   }
 
