@@ -8,8 +8,8 @@ case class SimpleTimestamp(timestamp: Long) extends Timestamp {
     SimpleTimestamp(timestamp + 1L)
   }
 
-  def compareTo(o: Timestamp): Int = {
-    val that = o.asInstanceOf[SimpleTimestamp]
+  def compare(other: Timestamp): Int = {
+    val that = other.asInstanceOf[SimpleTimestamp]
     if (inUpperRange(this.timestamp) && inLowerRange(that.timestamp)) {
       1
     } else if (inLowerRange(this.timestamp) && inUpperRange(that.timestamp)) {

@@ -1,9 +1,9 @@
 package net.orfjackal.dimdwarf.domain
 
-trait Timestamp extends Comparable[Timestamp] {
-  def next: Timestamp
+import scala.math.Ordered
 
-  // TODO: support for Scala's < operator
+trait Timestamp extends Ordered[Timestamp] {
+  def next: Timestamp
 }
 
 // TODO: timestamps based on "Time, Clocks, and the Ordering of Events
