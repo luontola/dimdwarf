@@ -48,7 +48,7 @@ class SimpleTimestampSpec extends Spec {
   }
 
   "Timestamps are ordered" >> {
-    val order = Seq(
+    assertComparableInOrder(
       SimpleTimestamp(0L),
       SimpleTimestamp(1L),
       SimpleTimestamp(Integer.MAX_VALUE - 1L),
@@ -62,29 +62,30 @@ class SimpleTimestampSpec extends Spec {
       SimpleTimestamp(Integer.MIN_VALUE),
       SimpleTimestamp(Integer.MIN_VALUE + 1L),
       SimpleTimestamp(-1L))
+  }
 
-    for (i <- 0 until order.length) {
-      val first = order(i)
-      assertEqualToItself(first)
+  private def assertComparableInOrder(ordered: Timestamp*) {
+    for (i <- 0 until ordered.length) {
+      val lesser = ordered(i)
+      assertEqualToItself(lesser)
 
-      for (j <- i + 1 until order.length) {
-        val second = order(j)
+      for (j <- i + 1 until ordered.length) {
+        val greater = ordered(j)
 
-        "Case: " + first + " < " + second >> {
-          assertLessThan(first, second)
+        // TODO: use sharing of side-effects, once implemented in Specsy, to improve performance
+        "Case: " + lesser + " < " + greater >> {
+          assertLessThan(lesser, greater)
         }
       }
     }
-
-    // TODO: use Scala's < operator
   }
 
   private def assertEqualToItself(ts: Timestamp) {
     assertTrue("did not satisfy: " + ts + " == " + ts, ts.compareTo(ts) == 0)
   }
 
-  private def assertLessThan(ts1: Timestamp, ts2: Timestamp) {
-    assertTrue("did not satisfy: " + ts1 + " < " + ts2, ts1.compareTo(ts2) < 0)
-    assertTrue("did not satisfy: " + ts2 + " > " + ts1, ts2.compareTo(ts1) > 0)
+  private def assertLessThan(lesser: Timestamp, greater: Timestamp) {
+    assertTrue("did not satisfy: " + lesser + " < " + greater, lesser.compareTo(greater) < 0)
+    assertTrue("did not satisfy: " + greater + " > " + lesser, greater.compareTo(lesser) > 0)
   }
 }

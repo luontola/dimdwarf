@@ -2,6 +2,8 @@ package net.orfjackal.dimdwarf.domain
 
 trait Timestamp extends Comparable[Timestamp] {
   def next: Timestamp
+
+  // TODO: support for Scala's < operator
 }
 
 // TODO: timestamps based on "Time, Clocks, and the Ordering of Events
