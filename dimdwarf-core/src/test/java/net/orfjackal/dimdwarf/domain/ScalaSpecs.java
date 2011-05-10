@@ -9,7 +9,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        SimpleTimestampSpec.class
+        SimpleTimestampSpec.class,
+        ClockSpec.class
 })
 public class ScalaSpecs {
 }
