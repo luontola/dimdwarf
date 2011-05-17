@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.orfjackal.specsy:specsy:scala281:1.2.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/orfjackal/specsy/specsy/1.2.0/specsy-1.2.0-scala281.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/orfjackal/specsy/specsy/1.2.0/specsy-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/orfjackal/specsy/specsy/1.2.0/specsy-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

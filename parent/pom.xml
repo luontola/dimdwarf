@@ -123,7 +123,8 @@
         <dependency>
             <groupId>net.orfjackal.specsy</groupId>
             <artifactId>specsy</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
+            <classifier>scala281</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
