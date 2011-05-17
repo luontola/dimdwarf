@@ -64,6 +64,8 @@ class SimpleTimestampSpec extends Spec {
   }
 
   private def assertComparableInOrder(ordered: Timestamp*) {
+    shareSideEffects() // performance optimization
+
     for (i <- 0 until ordered.length) {
       val lesser = ordered(i)
       assertEqualToItself(lesser)
