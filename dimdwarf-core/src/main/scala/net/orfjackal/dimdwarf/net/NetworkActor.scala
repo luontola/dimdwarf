@@ -49,7 +49,8 @@ class NetworkActor @Inject()(@Named("port") port: Int, @Hub toHub: MessageSender
   }
 
   def process(message: NetworkMessage) {
-    message match {
+    // TODO: consider avoiding @unchecked by having different base classes for incoming and outgoing messages (if distinct sets)
+    (message: @unchecked) match {
       case SendToClient(message, IoSessionHandle(session)) =>
         session.write(message)
     }

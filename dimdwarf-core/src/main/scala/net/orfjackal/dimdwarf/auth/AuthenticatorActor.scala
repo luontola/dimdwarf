@@ -10,7 +10,8 @@ class AuthenticatorActor @Inject()(@Hub toHub: MessageSender[Any], checker: Cred
   def start() {}
 
   def process(message: AuthenticatorMessage) {
-    message match {
+    // TODO: consider avoiding @unchecked by having different base classes for incoming and outgoing messages (if distinct sets)
+    (message: @unchecked) match {
       case IsUserAuthenticated(credentials) =>
         if (checker.isValid(credentials)) {
           toHub.send(YesUserIsAuthenticated(credentials))
