@@ -21,3 +21,4 @@ Other useful commands:
   mvn clean deploy
   mvn dependency:tree
   mvn versions:display-dependency-updates
+  mvn versions:display-plugin-updates
