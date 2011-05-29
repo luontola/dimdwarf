@@ -12,7 +12,7 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
   private val sessionIds = mutable.Map[SessionHandle, SessionId]()
   private val sessionStates = mutable.Map[SessionHandle, SessionState]()
 
-  def process(session: SessionHandle, f: SessionState => (SessionState, () => Unit)) {
+  def process(session: SessionHandle, f: SessionState => Transition) {
     val oldState = sessionStates.getOrElse(session, new Disconnected(session))
     val (newState, actions) = f(oldState)
     if (newState.isInstanceOf[Disconnected]) {
@@ -35,64 +35,76 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     sessionStates.size
   }
 
-  private abstract class SessionState {
+  type Transition = (SessionState, () => Unit)
+
+  abstract sealed class SessionState(session: SessionHandle) {
     // TODO: log illegal events and disconnect the client (needs to fire a disconnect request?)
-    def onConnected(): (SessionState, () => Unit) = operationNotAllowed
+    // - might need an end-to-end test for checking illegal client behavior
 
-    def onDisconnected(): (SessionState, () => Unit) = operationNotAllowed
+    def onConnected(): Transition = operationNotAllowed
 
-    def onLoginRequest(credentials: Credentials, authenticator: Authenticator): (SessionState, () => Unit) = operationNotAllowed
+    def onDisconnected(): Transition = operationNotAllowed
 
-    def onLoginSuccess(): (SessionState, () => Unit) = operationNotAllowed
+    def onLoginRequest(credentials: Credentials, authenticator: Authenticator): Transition = operationNotAllowed
 
-    def onLoginFailure(): (SessionState, () => Unit) = operationNotAllowed
+    def onLoginSuccess(): Transition = operationNotAllowed
 
-    def onSessionMessage(message: Blob, taskExecutor: TaskExecutor): (SessionState, () => Unit) = operationNotAllowed
+    def onLoginFailure(): Transition = operationNotAllowed
 
-    def onLogoutRequest(): (SessionState, () => Unit) = operationNotAllowed
+    def onSessionMessage(message: Blob, taskExecutor: TaskExecutor): Transition = operationNotAllowed
 
-    // TODO: extract methods: becomeConnected, becomeAuthenticated, becomeDisconnected
+    def onLogoutRequest(): Transition = operationNotAllowed
 
     // TODO: disconnect the client when it tries to do an illegal operation
     private def operationNotAllowed: Nothing =
       throw new IllegalStateException("operation not allowed in state " + getClass.getSimpleName)
+
+
+    protected def stayAsIs: SessionState = this
+
+    protected def becomeDisconnected: SessionState = new Disconnected(session)
+
+    protected def becomeNotAuthenticated: SessionState = new NotAuthenticated(session)
+
+    protected def becomeAuthenticated: SessionState = new Authenticated(session)
   }
 
-  private class Disconnected(session: SessionHandle) extends SessionState {
-    override def onConnected() = (new NotAuthenticated(session), () => {
+  private class Disconnected(session: SessionHandle) extends SessionState(session) {
+    override def onConnected() = (becomeNotAuthenticated, () => {
       val sessionId = sessionIdFactory.uniqueSessionId()
       sessionIds(session) = sessionId
     })
   }
 
-  private class NotAuthenticated(session: SessionHandle) extends SessionState {
-    override def onDisconnected() = (new Disconnected(session), () => {
+  private class NotAuthenticated(session: SessionHandle) extends SessionState(session) {
+    override def onDisconnected() = (becomeDisconnected, () => {
       sessionIds -= session
     })
 
     override def onLoginRequest(credentials: Credentials, authenticator: Authenticator) =
-      (this, () => {
+      (stayAsIs, () => {
         authenticator.isUserAuthenticated(credentials,
           onYes = process(session, _.onLoginSuccess()),
           onNo = process(session, _.onLoginFailure()))
       })
 
-    override def onLoginSuccess() = (new Authenticated(session), () => {
+    override def onLoginSuccess() = (becomeAuthenticated, () => {
       notifier.fireLoginSuccess(session)
     })
 
-    override def onLoginFailure() = (new Disconnected(session), () => {
+    override def onLoginFailure() = (becomeDisconnected, () => {
       notifier.fireLoginFailure(session)
     })
   }
 
-  private class Authenticated(session: SessionHandle) extends SessionState {
-    override def onSessionMessage(message: Blob, taskExecutor: TaskExecutor) = (this, () => {
-      taskExecutor.processSessionMessage(session, message)
-    })
+  private class Authenticated(session: SessionHandle) extends SessionState(session) {
+    override def onSessionMessage(message: Blob, taskExecutor: TaskExecutor) =
+      (stayAsIs, () => {
+        taskExecutor.processSessionMessage(session, message)
+      })
 
-    override def onLogoutRequest() = (new Disconnected(session), () => {
-      // TODO: transition to a new state "Disconnecting", because it's the client's responsibility to disconnect?
+    override def onLogoutRequest() = (becomeDisconnected, () => {
+      // TODO: transition to a new state "Disconnecting" or "LoggingOut", because it's the client's responsibility to disconnect?
       notifier.fireLogoutSuccess(session)
     })
   }
