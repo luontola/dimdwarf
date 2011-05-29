@@ -11,6 +11,7 @@ import net.orfjackal.dimdwarf.net.sgs._
 import net.orfjackal.dimdwarf.db.Blob
 import net.orfjackal.dimdwarf.tasks2.TaskExecutor
 import org.mockito.Mockito._
+import net.orfjackal.dimdwarf.domain._
 
 @RunWith(classOf[Specsy])
 class SessionMessagesSpec extends Spec {
@@ -19,11 +20,12 @@ class SessionMessagesSpec extends Spec {
   // TODO: remove duplication between the setups of this test and LoginLogoutSpec 
   val authenticator = new FakeAuthenticator()
   val taskExecutor = mock(classOf[TaskExecutor])
+  val clock = new Clock(new SimpleTimestamp(0L))
 
   val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
   val networkActor = new DummyNetworkActor()
   queues.addActor(networkActor, toNetwork)
-  val networkCtrl = new NetworkController(toNetwork, authenticator, taskExecutor)
+  val networkCtrl = new NetworkController(toNetwork, authenticator, taskExecutor, clock)
   queues.addController(networkCtrl)
 
   // given client has connected

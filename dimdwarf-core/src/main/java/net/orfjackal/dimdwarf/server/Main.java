@@ -86,6 +86,7 @@ public class Main {
                 new AuthenticatorModule(),
                 new NetworkModule(port)
         ));
+        modules.add(new TimestampModule());
         modules.add(appModule);
         return modules;
     }

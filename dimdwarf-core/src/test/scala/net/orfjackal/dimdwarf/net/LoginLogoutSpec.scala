@@ -8,21 +8,26 @@ import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.actors._
 import net.orfjackal.dimdwarf.net.sgs._
+import net.orfjackal.dimdwarf.domain._
 
 @RunWith(classOf[Specsy])
 class LoginLogoutSpec extends Spec {
   val queues = new DeterministicMessageQueues
   val authenticator = new SpyAuthenticator
+  val clock = new Clock(new SimpleTimestamp(0L))
   val networkActor = new DummyNetworkActor()
 
   val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
   queues.addActor(networkActor, toNetwork)
-  val networkCtrl = new NetworkController(toNetwork, authenticator, null)
+  val networkCtrl = new NetworkController(toNetwork, authenticator, null, clock)
   queues.addController(networkCtrl)
 
   val USERNAME = "John Doe"
   val PASSWORD = "secret"
   val SESSION = DummySessionHandle()
+
+  // TODO: refactor to remove the details of how the authenticator is called
+  // - use a fake authenticator instead of a mock
 
   "When a client sends a login request" >> {
     clientSends(LoginRequest(USERNAME, PASSWORD))
@@ -52,10 +57,10 @@ class LoginLogoutSpec extends Spec {
   }
 
   "When a client sends a logout request" >> {
-    //    queues.toHub.send(LoginRequest(USERNAME, PASSWORD))
-    //    queues.processMessagesUntilIdle()
-    //    assertThat(networkCtrl.loggedInClients)
-    // TODO: login the client
+    // XXX: clean up these tests, use a simpler fake authenticator
+    clientSends(LoginRequest(USERNAME, PASSWORD))
+    authenticator.lastOnYes.apply()
+    queues.processMessagesUntilIdle()
 
     clientSends(LogoutRequest())
 
@@ -70,7 +75,7 @@ class LoginLogoutSpec extends Spec {
   // TODO: when a client is not logged in, do not allow a logout request (or any other messages)
 
   private def assertMessageSent(queue: MessageQueue[NetworkMessage], expected: Any) {
-    assertThat(queues.seenIn(queue).head, is(expected))
+    assertThat(queues.seenIn(queue).last, is(expected))
   }
 
   private def clientSends(message: ClientMessage) {

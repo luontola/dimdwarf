@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        ClientSessionsSpec.class,
         LoginLogoutSpec.class,
         NetworkActorSpec.class,
         SessionMessagesSpec.class

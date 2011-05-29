@@ -6,10 +6,16 @@ import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.net.sgs._
 import javax.inject.Inject
 import net.orfjackal.dimdwarf.tasks2.TaskExecutor
-import net.orfjackal.dimdwarf.domain.SessionMessageToClient
+import net.orfjackal.dimdwarf.domain._
 
+// TODO: rename to ClientConnectionController or ClientSessionController?
 @ControllerScoped
-class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], authenticator: Authenticator, taskExecutor: TaskExecutor) extends Controller {
+class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage],
+                                  authenticator: Authenticator,
+                                  taskExecutor: TaskExecutor,
+                                  clock: Clock) extends Controller with ClientSessionNotifier {
+  private val sessions = new ClientSessions(clock, this)
+
   def process(message: Any) {
     message match {
       case ReceivedFromClient(message, session) =>
@@ -17,29 +23,47 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage], auth
 
       case SessionMessageToClient(message, session) =>
         // TODO: write a unit test for this (and in multinode it may need to forward this message to another server node)
+        // TODO: should also this be done in ClientSessions?
         toNetwork.send(SendToClient(SessionMessage(message), session))
 
       case _ =>
     }
   }
 
+  // TODO: have events for when a client connects/disconnects at the socket level?
+  // - org.apache.mina.core.service.IoHandler.sessionOpened
+  // - org.apache.mina.core.service.IoHandler.sessionClosed
+
+  // TODO: add a way for the server to explicitly disconnect the client
+  // (on logout using a timeout? on illegal message immediately)
+
   private def processClientMessage(message: ClientMessage, session: SessionHandle) {
     message match {
       case LoginRequest(username, password) =>
-        authenticator.isUserAuthenticated(new PasswordCredentials(username, password),
-          onYes = {toNetwork.send(SendToClient(LoginSuccess(), session))},
-          onNo = {toNetwork.send(SendToClient(LoginFailure(), session))})
+        sessions.onConnected(session)
+        sessions.onLoginRequest(session, new PasswordCredentials(username, password), authenticator)
 
       case SessionMessage(message) =>
-        taskExecutor.processSessionMessage(session, message)
+        sessions.onSessionMessage(session, message, taskExecutor)
 
       case LogoutRequest() =>
-        // TODO: release any resources related to the client (once there are some resources)
-        toNetwork.send(SendToClient(LogoutSuccess(), session))
+        sessions.onLogoutRequest(session)
 
       case _ =>
         // TODO: do something smart, maybe disconnect the client if it sends a not allowed message
         assert(false, "Unsupported message: " + message)
     }
+  }
+
+  def fireLoginSuccess(session: SessionHandle) {
+    toNetwork.send(SendToClient(LoginSuccess(), session))
+  }
+
+  def fireLoginFailure(session: SessionHandle) {
+    toNetwork.send(SendToClient(LoginFailure(), session))
+  }
+
+  def fireLogoutSuccess(session: SessionHandle) {
+    toNetwork.send(SendToClient(LogoutSuccess(), session))
   }
 }
