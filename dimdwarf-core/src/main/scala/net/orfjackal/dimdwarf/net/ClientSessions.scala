@@ -12,9 +12,9 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
   private val sessionIds = mutable.Map[SessionHandle, SessionId]()
   private val sessionStates = mutable.Map[SessionHandle, SessionState]()
 
-  def process(session: SessionHandle, f: SessionState => Transition) {
+  def process(session: SessionHandle, event: SessionState => Transition) {
     val oldState = sessionStates.getOrElse(session, new Disconnected(session))
-    val (newState, actions) = f(oldState)
+    val (newState, actions) = event(oldState)
     if (newState.isInstanceOf[Disconnected]) {
       sessionStates -= session
     } else {
@@ -34,6 +34,7 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     assert(sessionStates.size == sessionIds.size)
     sessionStates.size
   }
+
 
   type Transition = (SessionState, () => Unit)
 
@@ -80,6 +81,7 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
 
   private class NotAuthenticated(session: SessionHandle) extends SessionState(session) {
     override def onDisconnected() = (becomeDisconnected, () => {
+      // FIXME: sessionIds is not cleared in all possible states
       sessionIds -= session
     })
 
