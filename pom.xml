@@ -10,7 +10,9 @@
 
     <name>Dimdwarf Application Server</name>
     <description>
-        A lightweight application container for Java with the same programming model as Project Darkstar
+        Distributed application server for Java. You write single-threaded, event-driven POJO code
+        - the server makes it multi-threaded, persisted and transactional. Designed for the needs of
+        online games. Compatible with Project Darkstar (now RedDwarf).
     </description>
     <url>http://dimdwarf.sourceforge.net/</url>
     <inceptionYear>2008</inceptionYear>
