@@ -40,14 +40,14 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage],
   private def processClientMessage(message: ClientMessage, session: SessionHandle) {
     message match {
       case LoginRequest(username, password) =>
-        sessions.onConnected(session)
-        sessions.onLoginRequest(session, new PasswordCredentials(username, password), authenticator)
+        sessions.process(session, _.onConnected())
+        sessions.process(session, _.onLoginRequest(new PasswordCredentials(username, password), authenticator))
 
       case SessionMessage(message) =>
-        sessions.onSessionMessage(session, message, taskExecutor)
+        sessions.process(session, _.onSessionMessage(message, taskExecutor))
 
       case LogoutRequest() =>
-        sessions.onLogoutRequest(session)
+        sessions.process(session, _.onLogoutRequest())
 
       case _ =>
         // TODO: do something smart, maybe disconnect the client if it sends a not allowed message

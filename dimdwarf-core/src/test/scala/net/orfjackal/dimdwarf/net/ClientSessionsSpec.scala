@@ -22,8 +22,8 @@ class ClientSessionsSpec extends Spec with Assertions {
   // TODO: rewrite these tests to cover all states and events
 
   "Each connected client gets its own session ID" >> {
-    sessions.onConnected(session1)
-    sessions.onConnected(session2)
+    sessions.process(session1, _.onConnected())
+    sessions.process(session2, _.onConnected())
     val id1 = sessions.getSessionId(session1)
     val id2 = sessions.getSessionId(session2)
 
@@ -31,7 +31,7 @@ class ClientSessionsSpec extends Spec with Assertions {
     assertThat(sessions.count, is(2))
   }
   "Sessions are remembered while the client is connected" >> {
-    sessions.onConnected(session1)
+    sessions.process(session1, _.onConnected())
     val id1a = sessions.getSessionId(session1)
     val id1b = sessions.getSessionId(session1)
 
@@ -39,8 +39,8 @@ class ClientSessionsSpec extends Spec with Assertions {
     assertThat(sessions.count, is(1))
   }
   "Sessions are forgotten when the client disconnects" >> {
-    sessions.onConnected(session1)
-    sessions.onDisconnected(session1)
+    sessions.process(session1, _.onConnected())
+    sessions.process(session1, _.onDisconnected())
 
     intercept[AssertionError] {
       sessions.getSessionId(session1)
@@ -48,15 +48,15 @@ class ClientSessionsSpec extends Spec with Assertions {
     assertThat(sessions.count, is(0))
   }
   "Connecting twice is disallowed" >> {
-    sessions.onConnected(session1)
+    sessions.process(session1, _.onConnected())
 
     intercept[IllegalStateException] {
-      sessions.onConnected(session1)
+      sessions.process(session1, _.onConnected())
     }
   }
   "Disconnecting when disconnected is disallowed" >> {
     intercept[IllegalStateException] {
-      sessions.onDisconnected(session1)
+      sessions.process(session1, _.onDisconnected())
     }
   }
 
@@ -66,23 +66,23 @@ class ClientSessionsSpec extends Spec with Assertions {
 
     "Disallowed when disconnected" >> {
       intercept[IllegalStateException] {
-        sessions.onSessionMessage(session1, message, taskExecutor)
+        sessions.process(session1, _.onSessionMessage(message, taskExecutor))
       }
 
       verifyZeroInteractions(taskExecutor)
     }
     "Disallowed when connected" >> {
-      sessions.onConnected(session1)
+      sessions.process(session1, _.onConnected())
       intercept[IllegalStateException] {
-        sessions.onSessionMessage(session1, message, taskExecutor)
+        sessions.process(session1, _.onSessionMessage(message, taskExecutor))
       }
 
       verifyZeroInteractions(taskExecutor)
     }
     "Allowed when authenticated" >> {
-      sessions.onConnected(session1)
-      sessions.onLoginSuccess(session1)
-      sessions.onSessionMessage(session1, message, taskExecutor)
+      sessions.process(session1, _.onConnected())
+      sessions.process(session1, _.onLoginSuccess())
+      sessions.process(session1, _.onSessionMessage(message, taskExecutor))
 
       verify(taskExecutor).processSessionMessage(session1, message)
     }

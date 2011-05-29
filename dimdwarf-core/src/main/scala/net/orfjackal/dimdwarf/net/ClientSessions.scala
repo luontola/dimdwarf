@@ -12,7 +12,7 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
   private val sessionIds = mutable.Map[SessionHandle, SessionId]()
   private val sessionStates = mutable.Map[SessionHandle, SessionState]()
 
-  private def process(session: SessionHandle, f: SessionState => (SessionState, () => Unit)) {
+  def process(session: SessionHandle, f: SessionState => (SessionState, () => Unit)) {
     val oldState = sessionStates.getOrElse(session, new Disconnected(session))
     val (newState, actions) = f(oldState)
     if (newState.isInstanceOf[Disconnected]) {
@@ -34,39 +34,6 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     assert(sessionStates.size == sessionIds.size)
     sessionStates.size
   }
-
-  // TODO: inline methods to remove duplication
-
-  def onConnected(session: SessionHandle) {
-    process(session, _.onConnected())
-  }
-
-  def onDisconnected(session: SessionHandle) {
-    process(session, _.onDisconnected())
-  }
-
-  def onLoginRequest(session: SessionHandle, credentials: Credentials, authenticator: Authenticator) {
-    process(session, _.onLoginRequest(credentials, authenticator))
-  }
-
-  def onLoginSuccess(session: SessionHandle) {
-    process(session, _.onLoginSuccess())
-  }
-
-  def onLoginFailure(session: SessionHandle) {
-    process(session, _.onLoginFailure())
-  }
-
-  def onSessionMessage(session: SessionHandle, message: Blob, taskExecutor: TaskExecutor) {
-    process(session, _.onSessionMessage(message, taskExecutor))
-  }
-
-  def onLogoutRequest(session: SessionHandle) {
-    process(session, _.onLogoutRequest())
-  }
-
-
-  // TODO: cover all events and states with unit tests
 
   private abstract class SessionState {
     // TODO: log illegal events and disconnect the client (needs to fire a disconnect request?)
@@ -106,8 +73,8 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     override def onLoginRequest(credentials: Credentials, authenticator: Authenticator) =
       (this, () => {
         authenticator.isUserAuthenticated(credentials,
-          onYes = {ClientSessions.this.onLoginSuccess(session)},
-          onNo = {ClientSessions.this.onLoginFailure(session)})
+          onYes = process(session, _.onLoginSuccess()),
+          onNo = process(session, _.onLoginFailure()))
       })
 
     override def onLoginSuccess() = (new Authenticated(session), () => {
