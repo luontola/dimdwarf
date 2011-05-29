@@ -10,6 +10,7 @@ GC	Garbage collection
 MISC	Miscellaneous tasks and refactorings
 MGMT	Project management
 NET	Networking
+SMSG	Session messages
 TASK	Task scheduling
 TEST	Testing infrastructure, non-unit tests
 TREF	Transparent references
@@ -241,10 +242,27 @@ TX	Transactions
 24.3.2011 22:35-23:02	0,5h	DEP	# Refactored ApplicationLoadingSpec
 12.4.2011 22:28-22:51	0,5h	DEP	# Refactored ManualDISpike
 23.4.2011 23:13-00:03	1h	DEP	Command line argument parsing using args4j
+26.4.2011 22:44-23:58	1h	SMSG	End-to-end test for receiving and sending session messages, decoding the message
+27.4.2011 20:57-22:31	1,5h	SMSG	Walking skeleton for receiving and sending session messages, safety net for deepening the design
+10.5.2011 20:48-23:35	3h	SMSG	Simple timestamps, generating timestamps, generating session IDs
+10.5.2011 23:35-01:44	2h	MISC	Located and report a bug in MINA's LoggingFilter, refactored timestamps
+28.5.2011 22:00-00:11	2h	SMSG	Mapping sessions to session IDs
+29.5.2011 19:44-22:10	2,5h	SMSG	Mapping sessions to session IDs
 
+
+NEXT IN LET'S CODE:
+- keep SessionHandle internal to NetworkController (don't use from tasks2.TaskExecutor and domain.SessionMessageToClient)
+- write ClientSessionsSpec test-after, cover all states and events
+- start worker threads
+- get the application's client listener (it needs injected a session handle to send messages)
+- process session message in worker thread
+- commit transaction
+- send session messages which were committed
 
 NEXT:
 - next end-to-end test: session messages roundtrip
+- next end-to-end test: disconnect misbehaving clients (e.g. login twice, session message before login, invalid op code)
+	- connect/disconnect events (NetworkController, ClientSessions)
 - next end-to-end test: clients can send each other messages
 - implement encoding and decoding of all SimpleSgsProtocol messages properly
 	- hardcoded or declarative?
@@ -255,6 +273,9 @@ NEXT:
 	- what if client reports a larger message size (first 2 bytes) than the payload really is?
 	- what if login request is not the first message?
 	- other messages which are not allowed ever? not allowed in current state? 
+- next end-to-end test: keep track of how many clients are connected
+	- JMX
+	- gathering statistics from controllers (NetworkController)
 
 TODO:
 	- walking skeleton, infrastructure
