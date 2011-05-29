@@ -24,7 +24,7 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage],
       case SessionMessageToClient(message, session) =>
         // TODO: write a unit test for this (and in multinode it may need to forward this message to another server node)
         // TODO: should also this be done in ClientSessions?
-        toNetwork.send(SendToClient(SessionMessage(message), session))
+        sendToClient(session, SessionMessage(message))
 
       case _ =>
     }
@@ -56,14 +56,18 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage],
   }
 
   def fireLoginSuccess(session: SessionHandle) {
-    toNetwork.send(SendToClient(LoginSuccess(), session))
+    sendToClient(session, LoginSuccess())
   }
 
   def fireLoginFailure(session: SessionHandle) {
-    toNetwork.send(SendToClient(LoginFailure(), session))
+    sendToClient(session, LoginFailure())
   }
 
   def fireLogoutSuccess(session: SessionHandle) {
-    toNetwork.send(SendToClient(LogoutSuccess(), session))
+    sendToClient(session, LogoutSuccess())
+  }
+
+  private def sendToClient(session: SessionHandle, message: ClientMessage) {
+    toNetwork.send(SendToClient(message, session))
   }
 }
