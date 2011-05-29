@@ -31,7 +31,7 @@ class LoginLogoutSpec extends Spec {
   "When client send a login request with right credentials" >> {
     clientSends(LoginRequest(USERNAME, PASSWORD))
 
-    "NetworkController sends a success message to the client" >> {
+    "a login success message is sent to the client" >> {
       assertMessageSent(toNetwork, SendToClient(LoginSuccess(), SESSION))
     }
   }
@@ -39,7 +39,7 @@ class LoginLogoutSpec extends Spec {
   "When client send a login request with wrong credentials" >> {
     clientSends(LoginRequest(USERNAME, WRONG_PASSWORD))
 
-    "NetworkController sends a failure message to the client" >> {
+    "a login failure message is sent to the client" >> {
       assertMessageSent(toNetwork, SendToClient(LoginFailure(), SESSION))
     }
   }
@@ -49,11 +49,13 @@ class LoginLogoutSpec extends Spec {
     clientSends(LogoutRequest())
 
     // TODO: keep track of which clients are connected (cam be test-driven with JMX monitoring or session messages)
-    "and NetworkController logs out the client"
+    "NetworkController logs out the client"
 
-    "after which NetworkController sends a logout success message to the client" >> {
+    "a logout success message is sent to the client" >> {
       assertMessageSent(toNetwork, SendToClient(LogoutSuccess(), SESSION))
     }
+
+    // TODO: the client is disconnected after a timeout, if it doesn't disconnect by itself as it should
   }
 
   // TODO: when a client is not logged in, do not allow a logout request (or any other messages)
