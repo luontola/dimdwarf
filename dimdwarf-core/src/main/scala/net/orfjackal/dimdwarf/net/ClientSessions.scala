@@ -47,9 +47,9 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
 
     def onLoginRequest(credentials: Credentials, authenticator: Authenticator): Transition = operationNotAllowed
 
-    def onLoginSuccess(): Transition = operationNotAllowed
+    protected[ClientSessions] def onLoginSuccess(): Transition = operationNotAllowed
 
-    def onLoginFailure(): Transition = operationNotAllowed
+    protected[ClientSessions] def onLoginFailure(): Transition = operationNotAllowed
 
     def onSessionMessage(message: Blob, taskExecutor: TaskExecutor): Transition = operationNotAllowed
 
@@ -69,12 +69,14 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     protected def becomeAuthenticated: SessionState = new Authenticated(session)
   }
 
+
   private class Disconnected(session: SessionHandle) extends SessionState(session) {
     override def onConnected() = (becomeNotAuthenticated, () => {
       val sessionId = sessionIdFactory.uniqueSessionId()
       sessionIds(session) = sessionId
     })
   }
+
 
   private class NotAuthenticated(session: SessionHandle) extends SessionState(session) {
     override def onDisconnected() = (becomeDisconnected, () => {
@@ -88,14 +90,15 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
           onNo = process(session, _.onLoginFailure()))
       })
 
-    override def onLoginSuccess() = (becomeAuthenticated, () => {
+    override protected[ClientSessions] def onLoginSuccess() = (becomeAuthenticated, () => {
       notifier.fireLoginSuccess(session)
     })
 
-    override def onLoginFailure() = (becomeDisconnected, () => {
+    override protected[ClientSessions] def onLoginFailure() = (becomeDisconnected, () => {
       notifier.fireLoginFailure(session)
     })
   }
+
 
   private class Authenticated(session: SessionHandle) extends SessionState(session) {
     override def onSessionMessage(message: Blob, taskExecutor: TaskExecutor) =

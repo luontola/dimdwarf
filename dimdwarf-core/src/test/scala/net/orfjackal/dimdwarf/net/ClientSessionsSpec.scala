@@ -9,6 +9,7 @@ import org.scalatest.Assertions
 import net.orfjackal.dimdwarf.db.Blob
 import org.mockito.Mockito._
 import net.orfjackal.dimdwarf.tasks2.TaskExecutor
+import net.orfjackal.dimdwarf.auth._
 
 @RunWith(classOf[Specsy])
 class ClientSessionsSpec extends Spec with Assertions {
@@ -81,7 +82,7 @@ class ClientSessionsSpec extends Spec with Assertions {
     }
     "Allowed when authenticated" >> {
       sessions.process(session1, _.onConnected())
-      sessions.process(session1, _.onLoginSuccess())
+      sessions.process(session1, _.onLoginRequest(null, new FakeAuthenticator))
       sessions.process(session1, _.onSessionMessage(message, taskExecutor))
 
       verify(taskExecutor).processSessionMessage(session1, message)
@@ -89,4 +90,10 @@ class ClientSessionsSpec extends Spec with Assertions {
   }
 
   case class DummySessionHandle(id: Int) extends SessionHandle
+
+  class FakeAuthenticator extends Authenticator {
+    def isUserAuthenticated(credentials: Credentials, onYes: => Unit, onNo: => Unit) {
+      onYes
+    }
+  }
 }
