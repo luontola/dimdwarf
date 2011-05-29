@@ -13,7 +13,7 @@ import net.orfjackal.dimdwarf.domain._
 @RunWith(classOf[Specsy])
 class LoginLogoutSpec extends Spec {
   val queues = new DeterministicMessageQueues
-  val authenticator = new SpyAuthenticator
+  val authenticator = new FakeAuthenticator
   val clock = new Clock(new SimpleTimestamp(0L))
   val networkActor = new DummyNetworkActor()
 
@@ -24,44 +24,28 @@ class LoginLogoutSpec extends Spec {
 
   val USERNAME = "John Doe"
   val PASSWORD = "secret"
-  val SESSION = DummySessionHandle()
+  val WRONG_PASSWORD = "wrong-password"
+  val SESSION = DummySessionHandle(1)
 
-  // TODO: refactor to remove the details of how the authenticator is called
-  // - use a fake authenticator instead of a mock
 
-  "When a client sends a login request" >> {
+  "When client send a login request with right credentials" >> {
     clientSends(LoginRequest(USERNAME, PASSWORD))
 
-    "NetworkController authenticates the username and password with Authenticator" >> {
-      assertThat(authenticator.lastMethod, is("isUserAuthenticated"))
-      assertThat(authenticator.lastCredentials, is(new PasswordCredentials(USERNAME, PASSWORD): Credentials))
-    }
-
-    "If authentication succeeds" >> {
-      authenticator.lastOnYes.apply()
-      queues.processMessagesUntilIdle()
-
-      "NetworkController sends a success message to the client" >> {
-        assertMessageSent(toNetwork, SendToClient(LoginSuccess(), SESSION))
-      }
-    }
-
-    "If authentication fails" >> {
-      authenticator.lastOnNo.apply()
-      queues.processMessagesUntilIdle()
-
-      "NetworkController sends a failure message to the client" >> {
-        assertMessageSent(toNetwork, SendToClient(LoginFailure(), SESSION))
-      }
+    "NetworkController sends a success message to the client" >> {
+      assertMessageSent(toNetwork, SendToClient(LoginSuccess(), SESSION))
     }
   }
 
-  "When a client sends a logout request" >> {
-    // XXX: clean up these tests, use a simpler fake authenticator
-    clientSends(LoginRequest(USERNAME, PASSWORD))
-    authenticator.lastOnYes.apply()
-    queues.processMessagesUntilIdle()
+  "When client send a login request with wrong credentials" >> {
+    clientSends(LoginRequest(USERNAME, WRONG_PASSWORD))
 
+    "NetworkController sends a failure message to the client" >> {
+      assertMessageSent(toNetwork, SendToClient(LoginFailure(), SESSION))
+    }
+  }
+
+  "When client sends a logout request" >> {
+    clientSends(LoginRequest(USERNAME, PASSWORD))
     clientSends(LogoutRequest())
 
     // TODO: keep track of which clients are connected (cam be test-driven with JMX monitoring or session messages)
@@ -83,17 +67,14 @@ class LoginLogoutSpec extends Spec {
     queues.processMessagesUntilIdle()
   }
 
-  class SpyAuthenticator extends Authenticator {
-    var lastMethod: String = null
-    var lastCredentials: Credentials = null
-    var lastOnNo: (() => Unit) = null
-    var lastOnYes: (() => Unit) = null
-
+  class FakeAuthenticator extends Authenticator {
     def isUserAuthenticated(credentials: Credentials, onYes: => Unit, onNo: => Unit) {
-      lastMethod = "isUserAuthenticated"
-      lastCredentials = credentials
-      lastOnYes = onYes _
-      lastOnNo = onNo _
+      if (credentials == new PasswordCredentials(USERNAME, PASSWORD)) {
+        onYes
+      } else {
+        onNo
+      }
+      queues.processMessagesUntilIdle()
     }
   }
 
@@ -103,5 +84,5 @@ class LoginLogoutSpec extends Spec {
     def process(message: NetworkMessage) {}
   }
 
-  case class DummySessionHandle() extends SessionHandle
+  case class DummySessionHandle(id: Int) extends SessionHandle
 }
