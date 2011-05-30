@@ -60,57 +60,58 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     private def operationNotAllowed: Nothing =
       throw new IllegalStateException("operation not allowed in state " + getClass.getSimpleName)
 
+    protected def stayAsIs(action: => Unit): Transition = become(this)(action)
 
-    protected def stayAsIs: SessionState = this
+    protected def become(newState: SessionState)(action: => Unit): Transition = (newState, () => action)
 
-    protected def becomeDisconnected: SessionState = new Disconnected(session)
+    protected def Disconnected: SessionState = new Disconnected(session)
 
-    protected def becomeNotAuthenticated: SessionState = new NotAuthenticated(session)
+    protected def NotAuthenticated: SessionState = new NotAuthenticated(session)
 
-    protected def becomeAuthenticated: SessionState = new Authenticated(session)
+    protected def Authenticated: SessionState = new Authenticated(session)
+
+    // TODO: add states NewConnection, LoggingIn, LoggingOut? use Disconnected only as terminal state?
   }
 
 
   private class Disconnected(session: SessionHandle) extends SessionState(session) {
-    override def onConnected() = (becomeNotAuthenticated, () => {
+    override def onConnected() = become(NotAuthenticated) {
       val sessionId = sessionIdFactory.uniqueSessionId()
       sessionIds(session) = sessionId
-    })
+    }
   }
 
 
   private class NotAuthenticated(session: SessionHandle) extends SessionState(session) {
-    override def onDisconnected() = (becomeDisconnected, () => {
+    override def onDisconnected() = become(Disconnected) {
       // FIXME: sessionIds is not cleared in all possible states
       sessionIds -= session
-    })
+    }
 
-    override def onLoginRequest(credentials: Credentials, authenticator: Authenticator) =
-      (stayAsIs, () => {
-        authenticator.isUserAuthenticated(credentials,
-          onYes = process(session, _.onLoginSuccess()),
-          onNo = process(session, _.onLoginFailure()))
-      })
+    override def onLoginRequest(credentials: Credentials, authenticator: Authenticator) = stayAsIs {
+      authenticator.isUserAuthenticated(credentials,
+        onYes = process(session, _.onLoginSuccess()),
+        onNo = process(session, _.onLoginFailure()))
+    }
 
-    override protected[ClientSessions] def onLoginSuccess() = (becomeAuthenticated, () => {
+    override protected[ClientSessions] def onLoginSuccess() = become(Authenticated) {
       notifier.fireLoginSuccess(session)
-    })
+    }
 
-    override protected[ClientSessions] def onLoginFailure() = (becomeDisconnected, () => {
+    override protected[ClientSessions] def onLoginFailure() = become(Disconnected) {
       notifier.fireLoginFailure(session)
-    })
+    }
   }
 
 
   private class Authenticated(session: SessionHandle) extends SessionState(session) {
-    override def onSessionMessage(message: Blob, taskExecutor: TaskExecutor) =
-      (stayAsIs, () => {
-        taskExecutor.processSessionMessage(session, message)
-      })
+    override def onSessionMessage(message: Blob, taskExecutor: TaskExecutor) = stayAsIs {
+      taskExecutor.processSessionMessage(session, message)
+    }
 
-    override def onLogoutRequest() = (becomeDisconnected, () => {
+    override def onLogoutRequest() = become(Disconnected) {
       // TODO: transition to a new state "Disconnecting" or "LoggingOut", because it's the client's responsibility to disconnect?
       notifier.fireLogoutSuccess(session)
-    })
+    }
   }
 }
