@@ -13,9 +13,10 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
   private val sessionStates = mutable.Map[SessionHandle, SessionState]()
 
   def process(session: SessionHandle, event: SessionState => Transition) {
-    val oldState = sessionStates.getOrElse(session, new Disconnected(session))
+    val oldState = sessionStates.getOrElse(session, new NewConnection(session))
     val (newState, actions) = event(oldState)
     if (newState.isInstanceOf[Disconnected]) {
+      // TODO: release all resources here?
       sessionStates -= session
     } else {
       sessionStates(session) = newState
@@ -64,27 +65,32 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
 
     protected def become(newState: SessionState)(action: => Unit): Transition = (newState, () => action)
 
-    protected def Disconnected: SessionState = new Disconnected(session)
-
-    protected def NotAuthenticated: SessionState = new NotAuthenticated(session)
+    protected def LoggingIn: SessionState = new LoggingIn(session)
 
     protected def Authenticated: SessionState = new Authenticated(session)
 
-    // TODO: add states NewConnection, LoggingIn, LoggingOut? use Disconnected only as terminal state?
+    protected def LoggingOut: SessionState = new LoggingOut(session)
+
+    protected def Disconnected: SessionState = new Disconnected(session)
   }
 
-
-  private class Disconnected(session: SessionHandle) extends SessionState(session) {
-    override def onConnected() = become(NotAuthenticated) {
+  /**
+   * Transient initial state; needed only to handle the `onConnected` event
+   * in a similar fashion as all other events.
+   */
+  private class NewConnection(session: SessionHandle) extends SessionState(session) {
+    override def onConnected() = become(LoggingIn) {
       val sessionId = sessionIdFactory.uniqueSessionId()
       sessionIds(session) = sessionId
     }
   }
 
-
-  private class NotAuthenticated(session: SessionHandle) extends SessionState(session) {
+  /**
+   * Client connected, but not yet authenticated.
+   */
+  private class LoggingIn(session: SessionHandle) extends SessionState(session) {
     override def onDisconnected() = become(Disconnected) {
-      // FIXME: sessionIds is not cleared in all possible states
+      // FIXME: sessionIds is not cleared in all possible states; do this in `process` or the base class?
       sessionIds -= session
     }
 
@@ -98,20 +104,40 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
       notifier.fireLoginSuccess(session)
     }
 
+    // TODO: should become LoggingOut? or should allow relogin?
     override protected[ClientSessions] def onLoginFailure() = become(Disconnected) {
       notifier.fireLoginFailure(session)
     }
   }
 
-
+  /**
+   * Allow regular operation.
+   */
   private class Authenticated(session: SessionHandle) extends SessionState(session) {
     override def onSessionMessage(message: Blob, taskExecutor: TaskExecutor) = stayAsIs {
       taskExecutor.processSessionMessage(session, message)
     }
 
-    override def onLogoutRequest() = become(Disconnected) {
-      // TODO: transition to a new state "Disconnecting" or "LoggingOut", because it's the client's responsibility to disconnect?
+    override def onLogoutRequest() = become(LoggingOut) {
       notifier.fireLogoutSuccess(session)
     }
+  }
+
+  /**
+   * It's the client's responsibility to disconnect after the client receives
+   * the logout success message. In this state, wait for the client to disconnect,
+   * or after a timeout make the server disconnect.
+   */
+  private class LoggingOut(session: SessionHandle) extends SessionState(session) {
+    override def onDisconnected() = become(Disconnected) {
+      // TODO: should this `onDisconnected` be in the base class, to inherit it to all states?
+    }
+  }
+
+  /**
+   * Terminal state; no further events allowed. Release all resources.
+   */
+  private class Disconnected(session: SessionHandle) extends SessionState(session) {
+    // TODO: make `onDisconnected` log an error, if the default in base class is made to disconnect quietly? 
   }
 }
