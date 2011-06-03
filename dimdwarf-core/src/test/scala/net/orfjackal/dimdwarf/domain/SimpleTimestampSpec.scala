@@ -73,7 +73,6 @@ class SimpleTimestampSpec extends Spec {
       for (j <- i + 1 until ordered.length) {
         val greater = ordered(j)
 
-        // TODO: use sharing of side-effects, once implemented in Specsy, to improve performance
         "Case: " + lesser + " < " + greater >> {
           assertLessThan(lesser, greater)
         }
