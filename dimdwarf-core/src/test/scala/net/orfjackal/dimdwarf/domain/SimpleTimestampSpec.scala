@@ -5,9 +5,10 @@ import net.orfjackal.specsy._
 import org.junit.Assert._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
+import org.scalatest.Assertions
 
 @RunWith(classOf[Specsy])
-class SimpleTimestampSpec extends Spec {
+class SimpleTimestampSpec extends Spec with Assertions {
   "Timestamps are value objects" >> {
     val ts1a = SimpleTimestamp(1L)
     val ts1b = SimpleTimestamp(1L)
@@ -36,14 +37,10 @@ class SimpleTimestampSpec extends Spec {
   }
 
   "Timestamps cannot overflow" >> {
-    try {
+    val e = intercept[IllegalStateException] {
       SimpleTimestamp(-1L).next
-
-      fail("should have thrown an exception")
-    } catch {
-      case e: IllegalStateException =>
-        assertThat(e.getMessage, containsString("overflow"))
     }
+    assertThat(e.getMessage, containsString("overflow"))
   }
 
   "Timestamps are ordered" >> {
