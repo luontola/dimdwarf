@@ -61,6 +61,9 @@ class ClientSessionsSpec extends Spec with Assertions {
     }
   }
 
+  // TODO: postpone (re)writing these tests
+  // - fix the obvious resource leaks (sessionIds)
+  // - do an end-to-end test about disconnect-on-misbehaving before writing thorough unit tests
   "Client sending session messages to the server" >> {
     val message = Blob.fromBytes("hello".getBytes)
     val taskExecutor = mock(classOf[TaskExecutor]) // XXX: TaskExecutor should be an interface
