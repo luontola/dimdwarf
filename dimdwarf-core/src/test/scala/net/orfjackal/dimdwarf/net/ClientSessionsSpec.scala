@@ -13,7 +13,7 @@ import net.orfjackal.dimdwarf.auth._
 
 @RunWith(classOf[Specsy])
 class ClientSessionsSpec extends Spec with Assertions {
-  val clock = new Clock(SimpleTimestamp(0L))
+  val clock = new Clock(SimpleTimestamp(100L))
   val notifier = mock(classOf[ClientSessionNotifier])
   val sessions = new ClientSessions(clock, notifier)
 
@@ -88,7 +88,8 @@ class ClientSessionsSpec extends Spec with Assertions {
       sessions.process(session1, _.onLoginRequest(null, new FakeAuthenticator))
       sessions.process(session1, _.onSessionMessage(message, taskExecutor))
 
-      verify(taskExecutor).processSessionMessage(session1, message)
+      val sessionId = SessionId(SimpleTimestamp(100L))
+      verify(taskExecutor).processSessionMessage(sessionId, message)
     }
   }
 

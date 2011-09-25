@@ -10,6 +10,7 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
   private val sessionIdFactory = new SessionIdFactory(clock)
 
   private val sessionIds = mutable.Map[SessionHandle, SessionId]()
+  private val sessionHandles = mutable.Map[SessionId, SessionHandle]()
   private val sessionStates = mutable.Map[SessionHandle, SessionState]()
 
   def process(session: SessionHandle, event: SessionState => Transition) {
@@ -24,6 +25,12 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     // Executed after changing the state, to allow asynchronous actions
     // to be executed synchronously in unit tests (e.g. authentication)
     actions()
+  }
+
+  def getSessionHandle(sessionId: SessionId): SessionHandle = {
+    // TODO: write tests for this method
+    assert(sessionHandles.contains(sessionId), "client not connected")
+    sessionHandles(sessionId)
   }
 
   def getSessionId(session: SessionHandle): SessionId = {
@@ -82,6 +89,7 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
     override def onConnected() = become(LoggingIn) {
       val sessionId = sessionIdFactory.uniqueSessionId()
       sessionIds(session) = sessionId
+      sessionHandles(sessionId) = session
     }
   }
 
@@ -91,7 +99,9 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
   private class LoggingIn(session: SessionHandle) extends SessionState(session) {
     override def onDisconnected() = become(Disconnected) {
       // FIXME: sessionIds is not cleared in all possible states; do this in `process` or the base class?
+      val sessionId = sessionIds(session)
       sessionIds -= session
+      sessionHandles -= sessionId
     }
 
     override def onLoginRequest(credentials: Credentials, authenticator: Authenticator) = stayAsIs {
@@ -115,7 +125,8 @@ class ClientSessions(clock: Clock, notifier: ClientSessionNotifier) {
    */
   private class Authenticated(session: SessionHandle) extends SessionState(session) {
     override def onSessionMessage(message: Blob, taskExecutor: TaskExecutor) = stayAsIs {
-      taskExecutor.processSessionMessage(session, message)
+      val sessionId = getSessionId(session) // TODO: keep sessionId in SessionState
+      taskExecutor.processSessionMessage(sessionId, message)
     }
 
     override def onLogoutRequest() = become(LoggingOut) {

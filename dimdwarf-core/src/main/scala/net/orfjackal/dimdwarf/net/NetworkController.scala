@@ -21,9 +21,10 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage],
       case ReceivedFromClient(message, session) =>
         processClientMessage(message, session)
 
-      case SessionMessageToClient(message, session) =>
+      case SessionMessageToClient(message, sessionId) =>
         // TODO: write a unit test for this (and in multinode it may need to forward this message to another server node)
         // TODO: should also this be done in ClientSessions?
+        val session = sessions.getSessionHandle(sessionId)
         sendToClient(session, SessionMessage(message))
 
       case _ =>

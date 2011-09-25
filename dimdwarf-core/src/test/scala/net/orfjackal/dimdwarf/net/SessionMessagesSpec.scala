@@ -20,7 +20,7 @@ class SessionMessagesSpec extends Spec {
   // TODO: remove duplication between the setups of this test and LoginLogoutSpec 
   val authenticator = new FakeAuthenticator()
   val taskExecutor = mock(classOf[TaskExecutor])
-  val clock = new Clock(new SimpleTimestamp(0L))
+  val clock = new Clock(SimpleTimestamp(100L))
 
   val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
   val networkActor = new DummyNetworkActor()
@@ -37,7 +37,8 @@ class SessionMessagesSpec extends Spec {
     clientSends(SessionMessage(message))
 
     "the session message will be handled by the task executor" >> {
-      verify(taskExecutor).processSessionMessage(DummySessionHandle(), message)
+      val sessionId = SessionId(SimpleTimestamp(100L))
+      verify(taskExecutor).processSessionMessage(sessionId, message)
     }
   }
 

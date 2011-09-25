@@ -7,7 +7,7 @@ import net.orfjackal.specsy._
 import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.net._
 import net.orfjackal.dimdwarf.db.Blob
-import net.orfjackal.dimdwarf.domain.SessionMessageToClient
+import net.orfjackal.dimdwarf.domain._
 
 @RunWith(classOf[Specsy])
 class TaskExecutorSpec extends Spec {
@@ -19,9 +19,10 @@ class TaskExecutorSpec extends Spec {
 
   "TEMPORARY INTEGRATION TEST" >> {
     // TODO: deepen the design, split this test into smaller pieces
-    taskExecutor.processSessionMessage(session, message)
+    val sessionId = SessionId(SimpleTimestamp(42L))
+    taskExecutor.processSessionMessage(sessionId, message)
 
-    assertThat(toHub.poll(1000), is(SessionMessageToClient(message, session): Any))
+    assertThat(toHub.poll(1000), is(SessionMessageToClient(message, sessionId): Any))
   }
 
   case class DummySessionHandle() extends SessionHandle
