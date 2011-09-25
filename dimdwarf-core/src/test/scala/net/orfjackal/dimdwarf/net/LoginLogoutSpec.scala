@@ -14,7 +14,7 @@ import net.orfjackal.dimdwarf.domain._
 class LoginLogoutSpec extends Spec {
   val queues = new DeterministicMessageQueues
   val authenticator = new FakeAuthenticator
-  val clock = new Clock(new SimpleTimestamp(0L))
+  val clock = new Clock(SimpleTimestamp(0L))
   val networkActor = new DummyNetworkActor()
 
   val toNetwork = new MessageQueue[NetworkMessage]("toNetwork")
@@ -76,7 +76,6 @@ class LoginLogoutSpec extends Spec {
       } else {
         onNo
       }
-      queues.processMessagesUntilIdle()
     }
   }
 
