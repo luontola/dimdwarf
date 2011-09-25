@@ -20,12 +20,18 @@ class TaskExecutor @Inject()(@Hub toHub: MessageSender[Any]) {
     val application = new EchoClientListener(new FakeSession(sessionId, messageService))
     application.onSessionMessage(message.toByteBuffer)
 
-    // TODO: use asynchronous commit request messages
-
-    // TODO: on commit, send session messages to clients
-    messageService.sessionMessagesToSend.foreach(m => toHub.send(SessionMessageToClient(m, sessionId)))
+    val sessionMessagesToSend = messageService.sessionMessagesToSend.toList map {(message) => (sessionId, message)}
+    val commit = TransactionCommitRequest(sessionMessagesToSend)
+    toHub.send(commit)
   }
 
+  def commitTransaction(commit: TransactionCommitRequest) {
+    // XXX: do not call this method from NetworkController, but a more appropriate place, or make TaskExecutor itself a controller?
+    commit.sessionMessagesToSend foreach {
+      case (sessionId, message) =>
+        toHub.send(SessionMessageToClient(message, sessionId))
+    }
+  }
 
   class EchoClientListener(currentSession: Session) extends ClientListener {
     def onSessionMessage(message: ByteBuffer) {
@@ -47,3 +53,5 @@ class TaskExecutor @Inject()(@Hub toHub: MessageSender[Any]) {
     }
   }
 }
+
+case class TransactionCommitRequest(sessionMessagesToSend: List[(SessionId, Blob)])

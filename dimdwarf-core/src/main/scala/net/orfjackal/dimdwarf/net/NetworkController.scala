@@ -5,8 +5,8 @@ import net.orfjackal.dimdwarf.controller._
 import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.net.sgs._
 import javax.inject.Inject
-import net.orfjackal.dimdwarf.tasks2.TaskExecutor
 import net.orfjackal.dimdwarf.domain._
+import net.orfjackal.dimdwarf.tasks2._
 
 // TODO: rename to ClientConnectionController or ClientSessionController?
 @ControllerScoped
@@ -26,6 +26,10 @@ class NetworkController @Inject()(toNetwork: MessageSender[NetworkMessage],
         // TODO: should also this be done in ClientSessions?
         val session = sessions.getSessionHandle(sessionId)
         sendToClient(session, SessionMessage(message))
+
+      case commit: TransactionCommitRequest =>
+        // XXX: handling TransactionCommitRequest should not be done in NetworkController; create TaskController?
+        taskExecutor.commitTransaction(commit)
 
       case _ =>
     }
