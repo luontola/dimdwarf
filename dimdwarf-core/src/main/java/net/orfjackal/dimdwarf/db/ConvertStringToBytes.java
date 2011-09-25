@@ -16,7 +16,7 @@ public class ConvertStringToBytes implements Converter<String, Blob> {
         if (value == null) {
             return null;
         }
-        return new String(value.getByteArray(), CHARSET);
+        return new String(value.toByteArray(), CHARSET);
     }
 
     public Blob forth(String value) {

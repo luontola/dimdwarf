@@ -42,15 +42,15 @@ public final class Blob implements Comparable<Blob> {
         return bytes.length;
     }
 
-    public ByteArrayInputStream getInputStream() {
+    public ByteArrayInputStream toInputStream() {
         return new ByteArrayInputStream(bytes);
     }
 
-    public ByteBuffer getByteBuffer() {
+    public ByteBuffer toByteBuffer() {
         return ByteBuffer.wrap(bytes).asReadOnlyBuffer();
     }
 
-    public byte[] getByteArray() {
+    public byte[] toByteArray() {
         return Arrays.copyOf(bytes, bytes.length);
     }
 

@@ -30,7 +30,7 @@ class SimpleSgsProtocolEncoder extends ProtocolEncoderAdapter {
         IoBuffer.allocate(3 + message.length).
                 putShort((1 + message.length).asInstanceOf[Short]). // message length
                 put(SimpleSgsProtocol.SESSION_MESSAGE). // op code
-                put(message.getByteBuffer). // message
+                put(message.toByteBuffer). // message
                 flip()
 
       case LogoutSuccess() =>

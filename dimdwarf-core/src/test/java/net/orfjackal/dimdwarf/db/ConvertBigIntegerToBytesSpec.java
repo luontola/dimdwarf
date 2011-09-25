@@ -26,7 +26,7 @@ public class ConvertBigIntegerToBytesSpec extends Specification<Object> {
 
     @SuppressWarnings({"ConstantConditions"})
     private byte[] bytesOfValue(int value) {
-        return converter.forth(BigInteger.valueOf(value)).getByteArray();
+        return converter.forth(BigInteger.valueOf(value)).toByteArray();
     }
 
 

@@ -14,7 +14,7 @@ public class ConvertBigIntegerToBytes implements Converter<BigInteger, Blob> {
         if (value == null || value.length() == 0) {
             return null;
         }
-        return new BigInteger(1, unpack(value.getByteArray()));
+        return new BigInteger(1, unpack(value.toByteArray()));
     }
 
     public Blob forth(BigInteger value) {

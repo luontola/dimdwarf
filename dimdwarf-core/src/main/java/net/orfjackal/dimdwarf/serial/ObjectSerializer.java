@@ -21,7 +21,7 @@ public class ObjectSerializer {
     }
 
     public Object deserialize(Blob serialized, SerializationFilter filter) {
-        return deserializeFromStream(serialized.getInputStream(), filter);
+        return deserializeFromStream(serialized.toInputStream(), filter);
     }
 
     private void serializeToStream(OutputStream target, Object obj, SerializationFilter filter) {

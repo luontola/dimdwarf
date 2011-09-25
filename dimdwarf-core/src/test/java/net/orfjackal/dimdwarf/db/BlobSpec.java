@@ -30,17 +30,17 @@ public class BlobSpec extends Specification<Blob> {
         }
 
         public void hasNoBytesThroughInputStream() {
-            ByteArrayInputStream in = blob.getInputStream();
+            ByteArrayInputStream in = blob.toInputStream();
             specify(in.available(), should.equal(0));
             specify(in.read(), should.equal(-1));
         }
 
         public void hasNoBytesThroughByteBuffer() {
-            specify(blob.getByteBuffer().capacity(), should.equal(0));
+            specify(blob.toByteBuffer().capacity(), should.equal(0));
         }
 
         public void hasNoBytesThroughByteArray() {
-            specify(blob.getByteArray().length, should.equal(0));
+            specify(blob.toByteArray().length, should.equal(0));
         }
     }
 
@@ -55,43 +55,43 @@ public class BlobSpec extends Specification<Blob> {
         }
 
         public void hasTheSameBytesThroughInputStream() {
-            ByteArrayInputStream in = blob.getInputStream();
+            ByteArrayInputStream in = blob.toInputStream();
             specify(in.available(), should.equal(bytes.length));
             specify(in.read(), should.equal(bytes[0]));
             specify(in.read(), should.equal(-1));
         }
 
         public void hasTheSameBytesThroughByteBuffer() {
-            ByteBuffer buf = blob.getByteBuffer();
+            ByteBuffer buf = blob.toByteBuffer();
             specify(buf.capacity(), should.equal(bytes.length));
             specify(buf.get(), should.equal(bytes[0]));
         }
 
         public void hasTheSameBytesThroughByteArray() {
-            specify(blob.getByteArray(), should.containInOrder(bytes));
+            specify(blob.toByteArray(), should.containInOrder(bytes));
         }
 
         public void canNotBeModifiedThroughTheSourceByteArray() {
             byte before = bytes[0];
             bytes[0]++;
-            specify(blob.getInputStream().read(), should.equal(before));
+            specify(blob.toInputStream().read(), should.equal(before));
         }
 
         public void canNotBeModifiedThroughTheResultByteBuffer() {
             final byte before = bytes[0];
             specify(new Block() {
                 public void run() throws Throwable {
-                    blob.getByteBuffer().put((byte) (before + 1));
+                    blob.toByteBuffer().put((byte) (before + 1));
                 }
             }, should.raise(ReadOnlyBufferException.class));
-            specify(blob.getInputStream().read(), should.equal(before));
+            specify(blob.toInputStream().read(), should.equal(before));
         }
 
         public void canNotBeModifiedThroughTheResultByteArray() {
             byte before = bytes[0];
-            blob.getByteArray()[0]++;
-            specify(blob.getByteArray()[0], should.equal(before));
-            specify(blob.getInputStream().read(), should.equal(before));
+            blob.toByteArray()[0]++;
+            specify(blob.toByteArray()[0], should.equal(before));
+            specify(blob.toInputStream().read(), should.equal(before));
         }
     }
 
@@ -102,7 +102,7 @@ public class BlobSpec extends Specification<Blob> {
         }
 
         public void readsTheStreamFully() {
-            specify(blob.getByteArray(), should.containInOrder(bytes));
+            specify(blob.toByteArray(), should.containInOrder(bytes));
         }
     }
 
@@ -116,13 +116,13 @@ public class BlobSpec extends Specification<Blob> {
         }
 
         public void readsTheBufferFully() {
-            specify(blob.getByteArray(), should.containInOrder(bytes));
+            specify(blob.toByteArray(), should.containInOrder(bytes));
         }
 
         public void canNotBeModifiedThroughTheSourceBuffer() {
             byte before = bytes[0];
             buffer.put((byte) (before + 1));
-            specify(blob.getInputStream().read(), should.equal(before));
+            specify(blob.toInputStream().read(), should.equal(before));
         }
 
         public void theSourceBufferIsNotModified() {
