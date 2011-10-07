@@ -6,7 +6,6 @@
     <inspection_tool class="CollectionsFieldAccessReplaceableByMethodCall" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EnumerationCanBeIteration" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EqualsHashCodeCalledOnUrl" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="IndexOfReplaceableByContains" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="TOP_LEVEL_CLASS_OPTIONS">
         <value>
@@ -35,6 +34,7 @@
       <option name="IGNORE_DEPRECATED" value="false" />
       <option name="IGNORE_JAVADOC_PERIOD" value="true" />
       <option name="IGNORE_DUPLICATED_THROWS" value="false" />
+      <option name="IGNORE_POINT_TO_ITSELF" value="false" />
       <option name="myAdditionalJavadocTags" value="" />
     </inspection_tool>
     <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -68,16 +68,6 @@
       <option name="ADD_APPLET_TO_ENTRIES" value="true" />
       <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
       <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
-      <option name="ADDITIONAL_ANNOTATIONS">
-        <value>
-          <list size="1">
-            <item index="0" class="java.lang.String" itemvalue="javax.ws.rs.*" />
-          </list>
-        </value>
-      </option>
-      <option name="ADD_EJB_TO_ENTRIES" value="true" />
-      <option name="ADD_TESTNG_TO_ENTRIES" value="true" />
-      <option name="ADD_JUNIT_TO_ENTRIES" value="true" />
     </inspection_tool>
   </profile>
 </component>

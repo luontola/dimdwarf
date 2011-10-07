@@ -10,7 +10,6 @@
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <extension name="snapshooter" />
     <module name="dimdwarf-core" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -27,6 +26,7 @@
       <value defaultName="wholeProject" />
     </option>
     <envs />
+    <patterns />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="2162" />
       <option name="TRANSPORT" value="0" />

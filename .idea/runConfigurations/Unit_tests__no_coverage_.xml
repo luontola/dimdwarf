@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Unit tests (no coverage)" type="JUnit" factoryName="JUnit">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-    <extension name="snapshooter" />
     <module name="dimdwarf-core" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -18,6 +17,7 @@
       <value defaultName="wholeProject" />
     </option>
     <envs />
+    <patterns />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="1565" />
       <option name="TRANSPORT" value="0" />

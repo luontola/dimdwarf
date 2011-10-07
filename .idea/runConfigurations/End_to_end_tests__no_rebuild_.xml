@@ -10,7 +10,6 @@
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <extension name="snapshooter" />
     <module name="end-to-end-tests" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -27,6 +26,7 @@
       <value defaultName="singleModule" />
     </option>
     <envs />
+    <patterns />
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Run" />
     <method>
