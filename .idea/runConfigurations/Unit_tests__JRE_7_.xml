@@ -1,9 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Unit tests (no coverage)" type="JUnit" factoryName="JUnit">
-    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+  <configuration default="false" name="Unit tests (JRE 7)" type="JUnit" factoryName="JUnit">
+    <extension name="coverage" enabled="false" merge="false" per_test_coverage_enabled="false" track_test_folders="true" runner="idea">
+      <pattern>
+        <option name="PATTERN" value="net.orfjackal.dimdwarf.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="end2endtests.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
     <module name="dimdwarf-core" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-    <option name="ALTERNATIVE_JRE_PATH" value="" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="C:/Program Files/Java/jdk1.7.0" />
     <option name="PACKAGE_NAME" value="net.orfjackal.dimdwarf" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
@@ -18,13 +27,9 @@
     </option>
     <envs />
     <patterns />
-    <RunnerSettings RunnerId="Debug">
-      <option name="DEBUG_PORT" value="1565" />
-      <option name="TRANSPORT" value="0" />
-      <option name="LOCAL" value="true" />
-    </RunnerSettings>
+    <RunnerSettings RunnerId="Cover" />
     <RunnerSettings RunnerId="Run" />
-    <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="Cover" />
     <ConfigurationWrapper RunnerId="Run" />
     <method />
   </configuration>
