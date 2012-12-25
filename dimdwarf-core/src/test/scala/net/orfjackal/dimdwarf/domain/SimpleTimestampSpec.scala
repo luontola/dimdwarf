@@ -1,14 +1,16 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.domain
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.junit.Assert._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
 import org.scalatest.Assertions
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class SimpleTimestampSpec extends Spec with Assertions {
+class SimpleTimestampSpec extends ScalaSpecsy with Assertions {
   "Timestamps are value objects" >> {
     val ts1a = SimpleTimestamp(1L)
     val ts1b = SimpleTimestamp(1L)

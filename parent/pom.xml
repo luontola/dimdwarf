@@ -134,12 +134,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.orfjackal.specsy</groupId>
-            <artifactId>specsy</artifactId>
-            <version>1.2.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.scala-tools.testing</groupId>
             <artifactId>specs_2.9.1</artifactId>
             <version>1.6.9</version>

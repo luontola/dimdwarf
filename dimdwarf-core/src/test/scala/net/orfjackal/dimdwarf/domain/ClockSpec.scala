@@ -1,14 +1,16 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.domain
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
 import java.util.ArrayList
 import java.util.concurrent._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class ClockSpec extends Spec {
+class ClockSpec extends ScalaSpecsy {
   "Clock creates incrementing timestamps starting from the first value" >> {
     val clock = new Clock(SimpleTimestamp(0L))
 

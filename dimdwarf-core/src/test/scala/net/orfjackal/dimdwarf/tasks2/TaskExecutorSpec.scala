@@ -1,9 +1,11 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.tasks2
 
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.net._
 import net.orfjackal.dimdwarf.db.Blob
@@ -11,9 +13,9 @@ import net.orfjackal.dimdwarf.domain._
 import net.orfjackal.dimdwarf.actors._
 import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.net.sgs._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class TaskExecutorSpec extends Spec {
+class TaskExecutorSpec extends ScalaSpecsy {
   val queues = new DeterministicMessageQueues
   val authenticator = new FakeAuthenticator
   val clock = new Clock(SimpleTimestamp(100L))
@@ -25,8 +27,6 @@ class TaskExecutorSpec extends Spec {
   val taskExecutor = new TaskExecutor(queues.toHub)
   val networkCtrl = new NetworkController(toNetwork, authenticator, taskExecutor, clock)
   queues.addController(networkCtrl)
-
-
 
 
   val session = DummySessionHandle(50)

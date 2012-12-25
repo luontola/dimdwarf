@@ -1,15 +1,17 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.server
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert._
 import org.kohsuke.args4j._
 import java.io._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class CommandLineArgumentsSpec extends Spec {
+class CommandLineArgumentsSpec extends ScalaSpecsy {
   // Some documentation on how to use the args4j library
   // http://args4j.java.net/
   // http://weblogs.java.net/blog/kohsuke/archive/2005/05/parsing_command.html

@@ -1,14 +1,16 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.actors
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.scalatest.matchers.ShouldMatchers
 import net.orfjackal.dimdwarf.util.StubProvider._
 import java.util.HashSet
 import java.util.concurrent.ConcurrentHashMap
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class ActorStarterSpec extends Spec with ShouldMatchers {
+class ActorStarterSpec extends ScalaSpecsy with ShouldMatchers {
   "When actors are started" >> {
     val threadOfActor = new ConcurrentHashMap[String, Thread]
     val actorA = makeActor("Actor A", {threadOfActor.put("A", Thread.currentThread)})
@@ -35,7 +37,8 @@ class ActorStarterSpec extends Spec with ShouldMatchers {
     }
   }
 
-  "Having two actors with the same name is not allowed" >> { // alternatively, add a sequential number to make them different
+  "Having two actors with the same name is not allowed" >> {
+    // alternatively, add a sequential number to make them different
     val sameName = "Actor"
 
     val actor1 = makeActor(sameName, {})

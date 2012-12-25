@@ -1,7 +1,9 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.net
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
 import net.orfjackal.dimdwarf.domain._
@@ -10,9 +12,9 @@ import net.orfjackal.dimdwarf.db.Blob
 import org.mockito.Mockito._
 import net.orfjackal.dimdwarf.tasks2.TaskExecutor
 import net.orfjackal.dimdwarf.auth._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class ClientSessionsSpec extends Spec with Assertions {
+class ClientSessionsSpec extends ScalaSpecsy with Assertions {
   val clock = new Clock(SimpleTimestamp(100L))
   val notifier = mock(classOf[ClientSessionNotifier])
   val sessions = new ClientSessions(clock, notifier)

@@ -1,9 +1,11 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.net
 
-import org.junit.runner.RunWith
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
-import net.orfjackal.specsy._
 import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.util._
 import org.apache.mina.core.buffer.IoBuffer
@@ -14,9 +16,9 @@ import org.apache.mina.core.session.IoSession
 import java.net._
 import net.orfjackal.dimdwarf.net.sgs._
 import SimpleSgsProtocolReferenceMessages._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class NetworkActorSpec extends Spec {
+class NetworkActorSpec extends ScalaSpecsy {
   val TIMEOUT = 100L
   val port = SocketUtil.anyFreePort
   val toHub = new MessageQueue[Any]("toHub")

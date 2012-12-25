@@ -1,13 +1,15 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.controller
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.scalatest.matchers.ShouldMatchers
 import org.mockito.Mockito._
 import org.mockito.Matchers._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class ControllerHubSpec extends Spec with ShouldMatchers {
+class ControllerHubSpec extends ScalaSpecsy with ShouldMatchers {
   val hub = new ControllerHub
   val controller1 = mock(classOf[Controller], "controller1")
   val controller2 = mock(classOf[Controller], "controller2")

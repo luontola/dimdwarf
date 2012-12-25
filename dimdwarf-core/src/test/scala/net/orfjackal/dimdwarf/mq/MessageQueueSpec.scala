@@ -1,11 +1,13 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.mq
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.specs.SpecsMatchers
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class MessageQueueSpec extends Spec with SpecsMatchers {
+class MessageQueueSpec extends ScalaSpecsy with SpecsMatchers {
   val queue = new MessageQueue[String]("Unnamed")
 
   "Messages are read from the queue in FIFO order" >> {

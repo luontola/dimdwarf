@@ -1,7 +1,9 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.actors
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import com.google.inject._
 import collection.JavaConversions._
 import org.scalatest.matchers.ShouldMatchers
@@ -12,10 +14,10 @@ import net.orfjackal.dimdwarf.modules._
 import net.orfjackal.dimdwarf.mq._
 import net.orfjackal.dimdwarf.context.ThreadContext
 import javax.inject.Inject
+import org.specsy.scala.ScalaSpecsy
 
 // TODO: use JUnit/Hamcrest matchers instead of Specs' matchers (?)
-@RunWith(classOf[Specsy])
-class InstallingActorsSpec extends Spec with ShouldMatchers {
+class InstallingActorsSpec extends ScalaSpecsy with ShouldMatchers {
   val injector = Guice.createInjector(new ActorInstallerModule(new ControllerModule, new RelayModule))
 
   val toHub = injector.getInstance(Key.get(new TypeLiteral[MessageSender[Any]] {}, classOf[Hub]))

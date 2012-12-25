@@ -1,9 +1,11 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.net
 
-import org.junit.runner.RunWith
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
-import net.orfjackal.specsy._
 import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.actors._
@@ -12,9 +14,9 @@ import net.orfjackal.dimdwarf.db.Blob
 import net.orfjackal.dimdwarf.tasks2.TaskExecutor
 import org.mockito.Mockito._
 import net.orfjackal.dimdwarf.domain._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class SessionMessagesSpec extends Spec {
+class SessionMessagesSpec extends ScalaSpecsy {
   val queues = new DeterministicMessageQueues
 
   // TODO: remove duplication between the setups of this test and LoginLogoutSpec 

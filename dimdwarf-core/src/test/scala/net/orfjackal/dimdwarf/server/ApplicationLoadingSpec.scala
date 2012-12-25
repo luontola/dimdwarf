@@ -1,7 +1,9 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.server
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
 import net.orfjackal.dimdwarf.testutils.Sandbox
@@ -11,9 +13,9 @@ import com.google.inject._
 import org.junit.Assert
 import java.io._
 import java.util.zip._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class ApplicationLoadingSpec extends Spec {
+class ApplicationLoadingSpec extends ScalaSpecsy {
   val applicationDir = createTempDir()
   val classesDir = createDir(applicationDir, ApplicationLoader.CLASSES_DIR)
   val libDir = createDir(applicationDir, ApplicationLoader.LIBRARIES_DIR)

@@ -1,17 +1,19 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.net
 
-import org.junit.runner.RunWith
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
-import net.orfjackal.specsy._
 import net.orfjackal.dimdwarf.mq.MessageQueue
 import net.orfjackal.dimdwarf.auth._
 import net.orfjackal.dimdwarf.actors._
 import net.orfjackal.dimdwarf.net.sgs._
 import net.orfjackal.dimdwarf.domain._
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class LoginLogoutSpec extends Spec {
+class LoginLogoutSpec extends ScalaSpecsy {
   val queues = new DeterministicMessageQueues
   val authenticator = new FakeAuthenticator
   val clock = new Clock(SimpleTimestamp(0L))

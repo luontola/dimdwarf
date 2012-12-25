@@ -1,17 +1,19 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.net.sgs
 
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import org.apache.mina.core.session._
 import org.mockito.Mockito._
 import org.apache.mina.filter.codec._
 import SimpleSgsProtocolReferenceMessages._
 import net.orfjackal.dimdwarf.db.Blob
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class SimpleSgsProtocolSpec extends Spec {
+class SimpleSgsProtocolSpec extends ScalaSpecsy {
   val session = new DummySession
   val decoded = mock(classOf[ProtocolDecoderOutput])
   val encoded = mock(classOf[ProtocolEncoderOutput])

@@ -1,16 +1,18 @@
+// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// This software is released under the Apache License 2.0.
+// The license text is at http://dimdwarf.sourceforge.net/LICENSE
+
 package net.orfjackal.dimdwarf.auth
 
-import org.junit.runner.RunWith
-import net.orfjackal.specsy._
 import net.orfjackal.dimdwarf.mq._
 import net.orfjackal.dimdwarf.actors._
 import org.mockito.Mockito._
 import org.hamcrest.Matchers._
 import org.hamcrest.MatcherAssert.assertThat
 import scala.collection.mutable.Buffer
+import org.specsy.scala.ScalaSpecsy
 
-@RunWith(classOf[Specsy])
-class AuthenticatorSpec extends Spec {
+class AuthenticatorSpec extends ScalaSpecsy {
   val queues = new DeterministicMessageQueues
 
   val credentialsChecker = mock(classOf[CredentialsChecker[Credentials]])
