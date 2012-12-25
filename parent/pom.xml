@@ -121,6 +121,19 @@
         </dependency>
 
         <dependency>
+            <groupId>org.specsy</groupId>
+            <artifactId>specsy-scala_2.9.2</artifactId>
+            <version>2.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- TODO: remove me after Jumi has IDE and Maven support -->
+            <groupId>fi.jumi</groupId>
+            <artifactId>jumi-launcher</artifactId>
+            <version>0.2.235</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.orfjackal.specsy</groupId>
             <artifactId>specsy</artifactId>
             <version>1.2.0</version>
@@ -357,8 +370,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 

@@ -8,6 +8,7 @@
           <option name="localRepository" value="" />
           <option name="mavenHome" value="" />
           <option name="nonRecursive" value="false" />
+          <option name="outputLevel" value="INFO" />
           <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
           <option name="printErrorStackTraces" value="false" />
           <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
@@ -29,14 +30,17 @@
       </option>
       <option name="myRunnerParameters">
         <MavenRunnerParameters>
+          <option name="profiles">
+            <set />
+          </option>
           <option name="goals">
             <list>
               <option value="clean" />
               <option value="verify" />
             </list>
           </option>
-          <option name="profiles">
-            <set />
+          <option name="profilesMap">
+            <map />
           </option>
           <option name="workingDirPath" value="$PROJECT_DIR$" />
         </MavenRunnerParameters>

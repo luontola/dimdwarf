@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="JRUBY" name="JRuby">
       <configuration>
-        <JRUBY_FACET_CONFIG_ID NAME="JRUBY_SDK_NAME" VALUE="jruby-1.6.2-p330" />
+        <JRUBY_FACET_CONFIG_ID NAME="JRUBY_SDK_NAME" VALUE="" />
         <LOAD_PATH number="0" />
         <I18N_FOLDERS number="0" />
       </configuration>
