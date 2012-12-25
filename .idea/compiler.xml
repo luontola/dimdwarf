@@ -10,12 +10,12 @@
       <directory url="file://$PROJECT_DIR$/dimdwarf-aop/target/generated-test-sources/test-annotations" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/dimdwarf-api/target/generated-test-sources/test-annotations" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/dimdwarf-core/target/generated-test-sources/test-annotations" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/dimdwarf-core/target/generated-sources/annotations" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/dimdwarf-aop/target/generated-sources/annotations" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/test-utils/target/generated-sources/annotations" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/dist/launcher/target/generated-sources/annotations" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/dimdwarf-api/target/generated-sources/annotations" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/dimdwarf-aop/target/generated-sources/annotations" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/dimdwarf-api-internal/target/generated-sources/annotations" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/dimdwarf-api/target/generated-sources/annotations" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/test-utils/target/generated-sources/annotations" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/dimdwarf-core/target/generated-sources/annotations" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/end-to-end-tests/target/generated-sources/annotations" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions>
