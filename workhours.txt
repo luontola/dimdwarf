@@ -248,21 +248,23 @@ TX	Transactions
 10.5.2011 23:35-01:44	2h	MISC	Located and report a bug in MINA's LoggingFilter, refactored timestamps
 28.5.2011 22:00-00:11	2h	SMSG	Mapping sessions to session IDs
 29.5.2011 19:44-22:10	2,5h	SMSG	Mapping sessions to session IDs
+31.5.2011 01:50-02:37	0,5h	SMSG	Mapping sessions to session IDs
+25.9.2011 19:22-21:21	2h	SMGS	Deepened session message walking skeleton: hidden SessionHandle, application API, commit requests
+7.10.2011 18:42-19:03	0,5h	MISC	Upgraded to Scala 2.9.1, IDEA 10.5.2
+25.12.2012 15:18-15:55	0,5h	MISC	Upgraded to Java 7, Specsy 2.1.0, Jumi 0.2.235
 
 
 NEXT IN LET'S CODE:
-- keep SessionHandle internal to NetworkController (don't use from tasks2.TaskExecutor and domain.SessionMessageToClient)
-- write ClientSessionsSpec test-after, cover all states and events
-- start worker threads
-- get the application's client listener (it needs injected a session handle to send messages)
+- start worker threads (TaskExecutor)
 - process session message in worker thread
-- commit transaction
-- send session messages which were committed
+- get the application's client listener (it needs injected a session handle to send messages)
+- write unit tests for all layers of the walking skeleton, from TaskExecutor downwards
 
 NEXT:
 - next end-to-end test: session messages roundtrip
 - next end-to-end test: disconnect misbehaving clients (e.g. login twice, session message before login, invalid op code)
 	- connect/disconnect events (NetworkController, ClientSessions)
+	- rewrite ClientSessionsSpec test-after, cover all states and events (or do it later, with next end-to-end test?)
 - next end-to-end test: clients can send each other messages
 - implement encoding and decoding of all SimpleSgsProtocol messages properly
 	- hardcoded or declarative?
