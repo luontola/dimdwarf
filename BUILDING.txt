@@ -1,7 +1,7 @@
 Requirements:
 
   Maven 2        (http://maven.apache.org/)
-  Java SE 6 JDK  (http://java.sun.com/javase/downloads/index.jsp)
+  Java SE 7 JDK  (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
 Run all unit tests:
 

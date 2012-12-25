@@ -30,13 +30,13 @@ class ApplicationLoadingSpec extends ScalaSpecsy {
     writeJarToLibDir("sample.jar", Map("file-in-jar.txt" -> "file content 2"))
 
     val loader = new ApplicationLoader(applicationDir)
-    defer {worksOnlyOnJava7 {JRE.closeClassLoader(loader.getClassLoader)}}
+    defer {loader.getClassLoader.close()}
 
     "Adds to classpath the /classes directory" >> {
       val content = readContent("file-in-classes-dir.txt", loader.getClassLoader)
       assertThat(content, is("file content 1"))
     }
-    "Adds to classpath all JARs in the /lib directory" >> worksOnlyOnJava7 {
+    "Adds to classpath all JARs in the /lib directory" >> {
       val content = readContent("file-in-jar.txt", loader.getClassLoader)
       assertThat(content, is("file content 2"))
     }
@@ -138,14 +138,6 @@ class ApplicationLoadingSpec extends ScalaSpecsy {
         for (message <- messages) {
           assertThat(e.getMessage, containsString(message))
         }
-    }
-  }
-
-  // other utility methods
-
-  private def worksOnlyOnJava7(closure: => Unit) {
-    if (JRE.isJava7) {
-      closure
     }
   }
 }
