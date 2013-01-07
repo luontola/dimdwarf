@@ -1,4 +1,4 @@
-// Copyright © 2008-2012 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -11,6 +11,7 @@ class JumiBootstrapSpec {
 
   @Test
   def runJumiTests() {
+    // TODO: when upgrading to use patterns, make sure to exclude this test (it would produce infinite recursion)
     new JumiBootstrap()
             .setPassingTestsVisible(false)
             .runTestClasses(

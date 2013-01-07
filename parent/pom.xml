@@ -130,7 +130,7 @@
             <!-- TODO: remove me after Jumi has IDE and Maven support -->
             <groupId>fi.jumi</groupId>
             <artifactId>jumi-launcher</artifactId>
-            <version>0.2.241</version>
+            <version>0.3.257</version>
             <scope>test</scope>
         </dependency>
         <dependency>
