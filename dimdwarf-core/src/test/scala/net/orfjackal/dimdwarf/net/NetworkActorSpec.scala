@@ -19,7 +19,7 @@ import SimpleSgsProtocolReferenceMessages._
 import org.specsy.scala.ScalaSpecsy
 
 class NetworkActorSpec extends ScalaSpecsy {
-  val TIMEOUT = 100L
+  val TIMEOUT = 1000L
   val port = SocketUtil.anyFreePort
   val toHub = new MessageQueue[Any]("toHub")
 
