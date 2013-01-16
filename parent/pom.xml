@@ -39,7 +39,7 @@
         </repository>
         <repository>
             <id>laughingpanda.org</id>
-            <url>http://www.laughingpanda.org/maven2</url>
+            <url>http://maven.laughingpanda.org/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -108,16 +108,8 @@
         <dependency>
             <groupId>org.jdave</groupId>
             <artifactId>jdave-junit4</artifactId>
-            <version>1.1</version>
+            <version>1.4</version>
             <scope>test</scope>
-            <!-- JDave cannot work without cglib-nodep, because JDave depends on CGLIB's embedded ASM library (net.sf.cglib.asm)
-            <exclusions>
-                <exclusion>
-                    <groupId>cglib</groupId>
-                    <artifactId>cglib-nodep</artifactId>
-                </exclusion>
-            </exclusions>
-            -->
         </dependency>
 
         <dependency>
@@ -170,13 +162,6 @@
             <artifactId>easymock</artifactId>
             <version>3.0</version>
             <scope>test</scope>
-            <!-- cglib-nodep duplicates cglib -->
-            <exclusions>
-                <exclusion>
-                    <groupId>cglib</groupId>
-                    <artifactId>cglib-nodep</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
     </dependencies>
@@ -263,7 +248,8 @@
 
             <dependency>
                 <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
+                <artifactId>cglib-nodep</artifactId>
+                <!-- Must be the same version as JDave uses, because JDave uses the embedded ASM library directly -->
                 <version>2.2</version>
             </dependency>
 
@@ -404,6 +390,29 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <!-- We use cglib-nodep instead of cglib -->
+                                        <exclude>cglib:cglib</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

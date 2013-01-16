@@ -19,12 +19,12 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-library:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit-dep:4.8.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jdave:jdave-junit4:1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jdave:jdave-core:1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jdave:jdave-junit4:1.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jdave:jdave-core:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jmock:jmock:2.4.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jmock:jmock-legacy:2.4.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:1.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: cglib:cglib-nodep:2.1_3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: cglib:cglib-nodep:2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.specsy:specsy-scala_2.9.2:2.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.specsy:specsy-core:2.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-api:0.2.235" level="project" />
