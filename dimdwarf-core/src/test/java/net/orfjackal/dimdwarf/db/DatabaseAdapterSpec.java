@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -11,6 +11,7 @@ import net.orfjackal.dimdwarf.api.internal.EntityObjectId;
 import net.orfjackal.dimdwarf.entities.dao.ConvertEntityIdToBytes;
 import org.jmock.Expectations;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -42,10 +43,14 @@ public class DatabaseAdapterSpec extends Specification<Object> {
 
     public class ADatabaseAdapter {
 
-        public void delegatesTables() {
-            checking(new Expectations() {{
-                one(db).getTableNames(); will(returnValue(new HashSet<String>(Arrays.asList("test"))));
-            }});
+        public void delegatesTables() throws ClassNotFoundException {
+            // XXX: JMock fails with when running with Jumi, probably due to looking into java.util.Set's class loader:
+            // java.lang.IllegalArgumentException: could not imposterise interface java.util.Set
+            // Caused by: java.lang.ClassNotFoundException: net.sf.cglib.proxy.Factory
+            db = uncheckedCast(Mockito.mock(Database.class));
+            dbAdapter = new DatabaseAdapter<String, EntityId, Blob, Blob>(db, new ConvertStringToBytes(), new ConvertEntityIdToBytes());
+            Mockito.stub(db.getTableNames()).toReturn(new HashSet<String>(Arrays.asList("test")));
+
             specify(dbAdapter.getTableNames(), should.containExactly("test"));
         }
 

@@ -122,7 +122,7 @@
             <!-- TODO: remove me after Jumi has IDE and Maven support -->
             <groupId>fi.jumi</groupId>
             <artifactId>jumi-launcher</artifactId>
-            <version>0.3.257</version>
+            <version>0.4-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -361,6 +361,7 @@
                 <configuration>
                     <includes>
                         <include>**/*Spec.class</include>
+                        <include>**/*Suite.class</include>
                     </includes>
                     <systemProperties>
                         <property>
