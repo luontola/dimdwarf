@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -12,7 +12,7 @@ import java.util.*;
 public class ActorStarter {
 
     private final Set<ActorRegistration> actors;
-    private final Set<Thread> actorThreads = new HashSet<Thread>();
+    private final Set<Thread> actorThreads = new HashSet<>();
 
     @Inject
     public ActorStarter(Set<ActorRegistration> actors) {
@@ -21,7 +21,7 @@ public class ActorStarter {
     }
 
     private static void checkForDuplicateNames(Set<ActorRegistration> actors) {
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         for (ActorRegistration actor : actors) {
             String name = actor.getName();
             if (names.contains(name)) {
@@ -32,7 +32,7 @@ public class ActorStarter {
     }
 
     public void start() throws InterruptedException {
-        List<ActorRunner> runners = new ArrayList<ActorRunner>();
+        List<ActorRunner> runners = new ArrayList<>();
         for (ActorRegistration actor : actors) {
             ActorRunner r = new ActorRunner(actor);
             startNewThread(r, actor.getName());

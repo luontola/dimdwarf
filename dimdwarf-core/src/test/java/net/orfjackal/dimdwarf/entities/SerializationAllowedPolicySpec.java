@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -81,7 +81,7 @@ public class SerializationAllowedPolicySpec extends Specification<Object> {
 
 
     private static EntityReferenceImpl<DummyEntity> referenceTo(DummyEntity entity) {
-        return new EntityReferenceImpl<DummyEntity>(new EntityObjectId(entity.hashCode()), entity);
+        return new EntityReferenceImpl<>(new EntityObjectId(entity.hashCode()), entity);
     }
 
     private static Object newAnonymousClassInstance() {

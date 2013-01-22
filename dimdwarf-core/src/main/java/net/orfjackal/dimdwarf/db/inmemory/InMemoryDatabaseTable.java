@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -14,8 +14,8 @@ import java.util.*;
 @ThreadSafe
 public class InMemoryDatabaseTable implements PersistedDatabaseTable<RevisionHandle> {
 
-    private final RevisionMap<Blob, Blob> revisions = new RevisionMap<Blob, Blob>();
-    private final GroupLock<Blob> keysLockedForCommit = new GroupLock<Blob>();
+    private final RevisionMap<Blob, Blob> revisions = new RevisionMap<>();
+    private final GroupLock<Blob> keysLockedForCommit = new GroupLock<>();
 
     public Blob firstKey(RevisionHandle handle) {
         return revisions.firstKey(handle.getReadRevision());
@@ -51,7 +51,7 @@ public class InMemoryDatabaseTable implements PersistedDatabaseTable<RevisionHan
         private final LockHandle lock;
 
         public DbTableCommitHandle(Map<Blob, Blob> updates, RevisionHandle handle) {
-            this.updates = Collections.unmodifiableMap(new HashMap<Blob, Blob>(updates));
+            this.updates = Collections.unmodifiableMap(new HashMap<>(updates));
             this.handle = handle;
             this.lock = prepare();
         }

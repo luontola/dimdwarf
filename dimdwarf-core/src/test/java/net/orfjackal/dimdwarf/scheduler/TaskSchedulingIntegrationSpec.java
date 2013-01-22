@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -114,7 +114,7 @@ public class TaskSchedulingIntegrationSpec extends Specification<Object> {
         public void afterRestartTheExecutionIsContinuedFromWhereItWasLeft() throws InterruptedException {
             shutdownTheServer();
 
-            List<String> executedBeforeRestart = new ArrayList<String>(spy.executions);
+            List<String> executedBeforeRestart = new ArrayList<>(spy.executions);
             specify(executedBeforeRestart, executedBeforeRestart.size() >= 2);
 
             restartTheServer();

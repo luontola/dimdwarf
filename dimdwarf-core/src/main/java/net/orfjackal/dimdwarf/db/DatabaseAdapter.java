@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -29,6 +29,6 @@ public class DatabaseAdapter<K1, V1, K2, V2> implements Database<K1, V1> {
     }
 
     public DatabaseTable<K1, V1> openTable(String name) {
-        return new DatabaseTableAdapter<K1, V1, K2, V2>(parent.openTable(name), keys, values);
+        return new DatabaseTableAdapter<>(parent.openTable(name), keys, values);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -42,7 +42,7 @@ public class RevisionMapIterator<K, V> implements Iterator<Map.Entry<K, V>> {
             V value = map.get(key, readRevision);
             nextKey = map.nextKeyAfter(key, readRevision);
             if (value != null) {
-                fetchedNext = new MyEntry<K, V>(key, value);
+                fetchedNext = new MyEntry<>(key, value);
             }
         }
     }

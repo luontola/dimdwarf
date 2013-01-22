@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -17,6 +17,6 @@ public class SerializableIterable<T> implements Iterable<T>, Serializable {
     }
 
     public Iterator<T> iterator() {
-        return new SerializableIterator<T>(list);
+        return new SerializableIterator<>(list);
     }
 }

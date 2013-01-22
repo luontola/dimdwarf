@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -38,7 +38,7 @@ public class EntityIntegrationSpec extends Specification<Object> {
     public class WhenTasksAreRun {
 
         public void entitiesCreatedInOneTaskCanBeReadInTheNextTask() {
-            final AtomicReference<EntityId> id = new AtomicReference<EntityId>();
+            final AtomicReference<EntityId> id = new AtomicReference<>();
             taskExecutor.execute(new Runnable() {
                 public void run() {
                     EntityReferenceFactory factory = injector.getInstance(EntityReferenceFactory.class);
@@ -57,7 +57,7 @@ public class EntityIntegrationSpec extends Specification<Object> {
 
         public void entityIdsAreUniqueOverAllTasks() {
             final Provider<EntityInfo> info = injector.getProvider(EntityInfo.class);
-            final AtomicReference<EntityId> idInFirstTask = new AtomicReference<EntityId>();
+            final AtomicReference<EntityId> idInFirstTask = new AtomicReference<>();
             taskExecutor.execute(new Runnable() {
                 public void run() {
                     EntityId id1 = info.get().getEntityId(new DummyEntity());

@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -20,7 +20,7 @@ public class TransactionContext implements Transaction, TransactionCoordinator {
     private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(TransactionContext.class);
     private final Logger logger;
 
-    private final Collection<TransactionParticipant> participants = new ConcurrentLinkedQueue<TransactionParticipant>();
+    private final Collection<TransactionParticipant> participants = new ConcurrentLinkedQueue<>();
     private final Object statusLock = new Object();
     private volatile TransactionStatus status = ACTIVE;
     private volatile boolean rollbackOnly = false;

@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -24,7 +24,7 @@ import java.util.concurrent.*;
 @ThreadSafe
 public class InMemoryDatabase implements PersistedDatabase<RevisionHandle> {
 
-    private final ConcurrentMap<String, InMemoryDatabaseTable> tables = new ConcurrentHashMap<String, InMemoryDatabaseTable>();
+    private final ConcurrentMap<String, InMemoryDatabaseTable> tables = new ConcurrentHashMap<>();
     private final RevisionCounter revisionCounter = new RevisionCounter();
 
     public IsolationLevel getIsolationLevel() {
@@ -54,7 +54,7 @@ public class InMemoryDatabase implements PersistedDatabase<RevisionHandle> {
 
     public Database<Blob, Blob> createNewConnection(Transaction tx) {
         RevisionHandle h = revisionCounter.openNewestRevision();
-        return new TransientDatabase<RevisionHandle>(this, h, tx);
+        return new TransientDatabase<>(this, h, tx);
     }
 
     private void purgeOldUnusedRevisions() {
@@ -94,7 +94,7 @@ public class InMemoryDatabase implements PersistedDatabase<RevisionHandle> {
         private final RevisionHandle handle;
 
         public DbCommitHandle(Collection<TransientDatabaseTable<RevisionHandle>> updates, RevisionHandle handle) {
-            this.updates = Collections.unmodifiableCollection(new ArrayList<TransientDatabaseTable<RevisionHandle>>(updates));
+            this.updates = Collections.unmodifiableCollection(new ArrayList<>(updates));
             this.handle = handle;
             prepare();
         }

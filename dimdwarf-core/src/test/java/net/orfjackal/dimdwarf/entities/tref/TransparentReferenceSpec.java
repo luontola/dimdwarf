@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -40,7 +40,7 @@ public class TransparentReferenceSpec extends Specification<Object> {
 
     private Expectations referenceIsCreatedFor(final EntityObject entity, final EntityId id) {
         return new Expectations() {{
-            one(referenceFactory).createReference(entity); will(returnValue(new EntityReferenceImpl<EntityObject>(id, entity)));
+            one(referenceFactory).createReference(entity); will(returnValue(new EntityReferenceImpl<>(id, entity)));
         }};
     }
 
@@ -87,7 +87,7 @@ public class TransparentReferenceSpec extends Specification<Object> {
         }
 
         public void itRefersToTheEntityThroughtAnEntityReference() throws IOException {
-            final List<Object> serializedObjects = new ArrayList<Object>();
+            final List<Object> serializedObjects = new ArrayList<>();
             ObjectOutputStream out = new ObjectOutputStream(new ByteArrayOutputStream()) {
                 {
                     enableReplaceObject(true);

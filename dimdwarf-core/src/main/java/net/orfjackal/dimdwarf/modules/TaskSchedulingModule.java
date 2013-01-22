@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -32,7 +32,7 @@ public class TaskSchedulingModule extends AbstractModule {
         @Inject public Provider<EntityInfo> info;
 
         public <T> RecoverableSet<T> create(String prefix) {
-            return new RecoverableSetImpl<T>(prefix, bindings, info);
+            return new RecoverableSetImpl<>(prefix, bindings, info);
         }
     }
 }

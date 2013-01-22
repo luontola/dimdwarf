@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -59,7 +59,7 @@ public class RecoverableSetImpl<T> implements RecoverableSet<T> {
     }
 
     public Collection<T> getAll() {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         for (String key : new BindingWalker(prefix, bindings.get())) {
             Object value = get(key);
             if (value != null) {

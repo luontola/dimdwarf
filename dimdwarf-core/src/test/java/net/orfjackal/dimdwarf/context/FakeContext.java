@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -10,7 +10,7 @@ import java.util.*;
 @NotThreadSafe
 public class FakeContext implements Context {
 
-    private final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> services = new HashMap<>();
 
     public <T> FakeContext with(Class<T> type, T instance) {
         services.put(type, instance);

@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -31,7 +31,7 @@ public class AddEqualsAndHashCodeMethodsForEntitiesSpec extends Specification<Ob
         EntityReferenceFactory factory = new EntityReferenceFactory() {
             public <T> EntityReference<T> createReference(T entity) {
                 entityHelperCalled++;
-                return new EntityReferenceImpl<T>(ID1, entity);
+                return new EntityReferenceImpl<>(ID1, entity);
             }
         };
         ThreadContext.setUp(new FakeContext().with(EntityReferenceFactory.class, factory));

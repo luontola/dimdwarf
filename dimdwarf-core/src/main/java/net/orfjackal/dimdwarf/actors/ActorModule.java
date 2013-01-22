@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -17,8 +17,8 @@ import java.util.*;
 
 public abstract class ActorModule<M> extends PrivateModule {
 
-    private final List<Key<ControllerRegistration>> controllers = new ArrayList<Key<ControllerRegistration>>();
-    private final List<Key<ActorRegistration>> actors = new ArrayList<Key<ActorRegistration>>();
+    private final List<Key<ControllerRegistration>> controllers = new ArrayList<>();
+    private final List<Key<ActorRegistration>> actors = new ArrayList<>();
     private final Class<? extends Annotation> actorScope;
 
     protected final String actorName;
@@ -94,7 +94,7 @@ public abstract class ActorModule<M> extends PrivateModule {
 
         bind(actorType).to(actor);
 
-        MessageQueue<M> mq = new MessageQueue<M>(actorName);
+        MessageQueue<M> mq = new MessageQueue<>(actorName);
         bind(messageSenderType).toInstance(mq);
         bind(messageReceiverType).toInstance(mq);
 

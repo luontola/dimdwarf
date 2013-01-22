@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -23,7 +23,7 @@ public class AsynchronouslyMatchingOneMessageTest {
 
     @Test
     public void passes_when_a_matching_event_has_already_arrived() throws InterruptedException {
-        EventSink<String> events = new EventSink<String>(TIMEOUT_NEVER_REACHED);
+        EventSink<String> events = new EventSink<>(TIMEOUT_NEVER_REACHED);
 
         events.append(Arrays.asList("event"));
 
@@ -32,7 +32,7 @@ public class AsynchronouslyMatchingOneMessageTest {
 
     @Test
     public void passes_when_a_matching_event_arrives_asynchronously() throws InterruptedException {
-        final EventSink<String> events = new EventSink<String>(TIMEOUT_NEVER_REACHED);
+        final EventSink<String> events = new EventSink<>(TIMEOUT_NEVER_REACHED);
 
         runAsynchronously(new Runnable() {
             public void run() {
@@ -45,7 +45,7 @@ public class AsynchronouslyMatchingOneMessageTest {
 
     @Test
     public void fails_when_there_is_a_non_matching_event() throws Throwable {
-        EventSink<String> events = new EventSink<String>(TIMEOUT_NEVER_REACHED);
+        EventSink<String> events = new EventSink<>(TIMEOUT_NEVER_REACHED);
 
         events.append(Arrays.asList("non matching event"));
 
@@ -57,7 +57,7 @@ public class AsynchronouslyMatchingOneMessageTest {
 
     @Test
     public void fails_due_to_timeout_when_there_are_no_events() throws InterruptedException {
-        EventSink<String> events = new EventSink<String>(TIMEOUT_IS_REACHED);
+        EventSink<String> events = new EventSink<>(TIMEOUT_IS_REACHED);
 
         thrown.expect(AssertionError.class);
         thrown.expectMessage("\"event\"");      // expected

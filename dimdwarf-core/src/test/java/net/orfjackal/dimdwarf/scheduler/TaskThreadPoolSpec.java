@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -29,14 +29,14 @@ public class TaskThreadPoolSpec extends Specification2 {
 
     public void create() throws Exception {
         Executor executor = new TaskExecutor(
-                new StubProvider<Context>(taskContext),
+                new StubProvider<>(taskContext),
                 new Provider<FilterChain>() {
                     public FilterChain get() {
                         return new FilterChain(new Filter[0]);
                     }
                 });
 
-        taskQueue = new LinkedBlockingDeque<TaskBootstrap>();
+        taskQueue = new LinkedBlockingDeque<>();
         TaskProducer producer = new TaskProducer() {
 
             public TaskBootstrap takeNextTask() throws InterruptedException {

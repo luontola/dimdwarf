@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -17,7 +17,7 @@ import java.util.*;
 @NotThreadSafe
 public abstract class BaseContext implements Context {
 
-    private final Map<Key<?>, Object> cache = new HashMap<Key<?>, Object>();
+    private final Map<Key<?>, Object> cache = new HashMap<>();
     private final Injector injector;
 
     public BaseContext(Injector injector) {

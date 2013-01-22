@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -63,7 +63,7 @@ public class ReadingEntityReferencesSpec extends Specification<Object> {
         private EntityReferenceImpl<DummyEntity> ref;
 
         public void create() throws IOException, ClassNotFoundException {
-            byte[] bytes = TestUtil.serialize(new EntityReferenceImpl<DummyEntity>(ID, entity));
+            byte[] bytes = TestUtil.serialize(new EntityReferenceImpl<>(ID, entity));
             ref = uncheckedCast(TestUtil.deserialize(bytes));
             ref.setEntityLocator(manager);
         }
@@ -91,7 +91,7 @@ public class ReadingEntityReferencesSpec extends Specification<Object> {
         private EntityReferenceImpl<DummyEntity> ref2;
 
         public void create() throws IOException, ClassNotFoundException {
-            byte[] bytes = TestUtil.serialize(new EntityReferenceImpl<DummyEntity>(ID, entity));
+            byte[] bytes = TestUtil.serialize(new EntityReferenceImpl<>(ID, entity));
             ref1 = uncheckedCast(TestUtil.deserialize(bytes));
             ref1.setEntityLocator(manager);
             ref2 = uncheckedCast(TestUtil.deserialize(bytes));

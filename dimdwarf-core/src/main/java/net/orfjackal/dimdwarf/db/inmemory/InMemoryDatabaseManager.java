@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -8,7 +8,7 @@ import net.orfjackal.dimdwarf.db.*;
 import net.orfjackal.dimdwarf.tx.*;
 import org.jetbrains.annotations.TestOnly;
 
-import javax.annotation.concurrent.*;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.inject.Singleton;
 import java.util.concurrent.*;
 
@@ -17,7 +17,7 @@ import java.util.concurrent.*;
 public class InMemoryDatabaseManager implements DatabaseManager {
 
     private final InMemoryDatabase db = new InMemoryDatabase();
-    private final ConcurrentMap<Transaction, Database<Blob, Blob>> openConnections = new ConcurrentHashMap<Transaction, Database<Blob, Blob>>();
+    private final ConcurrentMap<Transaction, Database<Blob, Blob>> openConnections = new ConcurrentHashMap<>();
 
     public Database<Blob, Blob> openConnection(Transaction tx) {
         Database<Blob, Blob> connection = getExistingConnection(tx);

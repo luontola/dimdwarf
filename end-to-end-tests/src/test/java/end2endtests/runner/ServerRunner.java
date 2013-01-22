@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -22,7 +22,7 @@ public class ServerRunner {
 
     private static final String JAVA_EXECUTABLE = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
     private static final List<String> JAR_TO_EXECUTE = Arrays.asList("-jar", "launcher.jar");
-    private final List<String> jvmOptions = new ArrayList<String>();
+    private final List<String> jvmOptions = new ArrayList<>();
     private final String host;
     private final int port;
 
@@ -84,7 +84,7 @@ public class ServerRunner {
                 "--app", applicationDir.getPath()
         );
 
-        List<String> command = new ArrayList<String>();
+        List<String> command = new ArrayList<>();
         command.add(JAVA_EXECUTABLE);
         command.addAll(jvmOptions);
         command.addAll(JAR_TO_EXECUTE);

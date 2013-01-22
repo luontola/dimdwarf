@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -14,7 +14,7 @@ import java.util.concurrent.*;
 @ThreadSafe
 public class TransientDatabase<H> implements Database<Blob, Blob>, TransactionParticipant {
 
-    private final ConcurrentMap<String, TransientDatabaseTable<H>> openTables = new ConcurrentHashMap<String, TransientDatabaseTable<H>>();
+    private final ConcurrentMap<String, TransientDatabaseTable<H>> openTables = new ConcurrentHashMap<>();
     private final PersistedDatabase<H> db;
     private final H dbHandle;
     private final Transaction tx;
@@ -50,7 +50,7 @@ public class TransientDatabase<H> implements Database<Blob, Blob>, TransactionPa
 
     private TransientDatabaseTable<H> openNewTable(String name) {
         PersistedDatabaseTable<H> backend = db.openTable(name);
-        openTables.putIfAbsent(name, new TransientDatabaseTable<H>(backend, dbHandle, tx));
+        openTables.putIfAbsent(name, new TransientDatabaseTable<>(backend, dbHandle, tx));
         return getOpenedTable(name);
     }
 

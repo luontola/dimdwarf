@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -14,12 +14,12 @@ import java.util.*;
 @Group({"fast"})
 public class RevisionMapIteratorSpec extends Specification<Object> {
 
-    private RevisionMap<String, String> map = new RevisionMap<String, String>();
-    private List<String> keys = new ArrayList<String>();
-    private List<String> values = new ArrayList<String>();
+    private RevisionMap<String, String> map = new RevisionMap<>();
+    private List<String> keys = new ArrayList<>();
+    private List<String> values = new ArrayList<>();
 
     private void readFully(long readRevision) {
-        Iterator<Map.Entry<String, String>> it = new RevisionMapIterator<String, String>(map, readRevision);
+        Iterator<Map.Entry<String, String>> it = new RevisionMapIterator<>(map, readRevision);
         while (it.hasNext()) {
             Map.Entry<String, String> e = it.next();
             keys.add(e.getKey());
@@ -61,7 +61,7 @@ public class RevisionMapIteratorSpec extends Specification<Object> {
         }
 
         public void concurrentModificationInOtherTransactionsIsAllowed() {
-            Iterator<Map.Entry<String, String>> it = new RevisionMapIterator<String, String>(map, readRevision);
+            Iterator<Map.Entry<String, String>> it = new RevisionMapIterator<>(map, readRevision);
             assert writeRevision > readRevision;
             map.put("newkey", "Z", writeRevision);
             specify(it.hasNext()); // should not throw ConcurrentModificationException
@@ -69,7 +69,7 @@ public class RevisionMapIteratorSpec extends Specification<Object> {
         }
 
         public void iteratorStopsWhenAllValuesHaveBeenIterated() {
-            final Iterator<Map.Entry<String, String>> it = new RevisionMapIterator<String, String>(map, readRevision);
+            final Iterator<Map.Entry<String, String>> it = new RevisionMapIterator<>(map, readRevision);
             specify(it.hasNext());
             it.next();
             specify(it.hasNext());

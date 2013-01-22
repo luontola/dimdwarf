@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @ThreadSafe
 public class RevisionCounter {
 
-    private final Collection<RevisionHandle> revisionsInUse = new ConcurrentLinkedQueue<RevisionHandle>();
+    private final Collection<RevisionHandle> revisionsInUse = new ConcurrentLinkedQueue<>();
     private final AtomicLong writeRevision = new AtomicLong(RevisionList.NULL_REVISION);
     private volatile long oldestReadableRevision = RevisionList.NULL_REVISION;
     private volatile long newestReadableRevision = RevisionList.NULL_REVISION;
@@ -89,7 +89,7 @@ public class RevisionCounter {
 
     @TestOnly
     Collection<Long> getRevisionsInUse() {
-        ArrayList<Long> revisions = new ArrayList<Long>();
+        ArrayList<Long> revisions = new ArrayList<>();
         for (RevisionHandle h : revisionsInUse) {
             revisions.add(h.getReadRevision());
         }

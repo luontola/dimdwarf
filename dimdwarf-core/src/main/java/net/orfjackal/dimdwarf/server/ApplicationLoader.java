@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -27,7 +27,7 @@ public class ApplicationLoader {
     }
 
     public ApplicationLoader(File applicationDir, ClassLoader parent) throws ConfigurationException {
-        List<File> classpath = new ArrayList<File>();
+        List<File> classpath = new ArrayList<>();
         classpath.add(new File(applicationDir, CLASSES_DIR));
         classpath.addAll(Arrays.asList(listJarsInDirectory(new File(applicationDir, LIBRARIES_DIR))));
         classLoader = new URLClassLoader(asUrls(classpath), parent);

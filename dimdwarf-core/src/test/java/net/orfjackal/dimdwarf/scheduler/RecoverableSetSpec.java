@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -41,7 +41,7 @@ public class RecoverableSetSpec extends Specification<Object> {
         info = injector.getProvider(EntityInfo.class);
         specify(thereMayBeBindingsInOtherNamespaces());
 
-        set = new RecoverableSetImpl<StoredValue>(PREFIX, bindings, info);
+        set = new RecoverableSetImpl<>(PREFIX, bindings, info);
     }
 
     private boolean thereMayBeBindingsInOtherNamespaces() {
@@ -93,7 +93,7 @@ public class RecoverableSetSpec extends Specification<Object> {
         public void afterRestartANewSetWithTheSamePrefixStillContainsThoseObjects() {
             taskContext.execute(new Runnable() {
                 public void run() {
-                    set = new RecoverableSetImpl<StoredValue>(PREFIX, bindings, info);
+                    set = new RecoverableSetImpl<>(PREFIX, bindings, info);
                     specify(set.getAll(), should.containExactly(value1, value2));
                 }
             });

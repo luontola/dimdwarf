@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -80,7 +80,7 @@ public class Main {
     }
 
     public static List<Module> configureServerModules(int port, Module appModule) {
-        List<Module> modules = new ArrayList<Module>();
+        List<Module> modules = new ArrayList<>();
         modules.add(new ActorInstallerModule(
                 new ControllerModule(),
                 new AuthenticatorModule(),

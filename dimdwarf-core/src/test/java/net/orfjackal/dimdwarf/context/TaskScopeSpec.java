@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -95,8 +95,8 @@ public class TaskScopeSpec extends Specification<Object> {
         }
 
         public void eachConcurrentScopeHasItsOwnInstances() throws InterruptedException {
-            final AtomicReference<MyService> s1 = new AtomicReference<MyService>();
-            final AtomicReference<MyService> s2 = new AtomicReference<MyService>();
+            final AtomicReference<MyService> s1 = new AtomicReference<>();
+            final AtomicReference<MyService> s2 = new AtomicReference<>();
             final CountDownLatch taskRunning = new CountDownLatch(2);
             final CountDownLatch gotInstance = new CountDownLatch(2);
 

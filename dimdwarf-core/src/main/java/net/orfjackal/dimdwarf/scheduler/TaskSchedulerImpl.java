@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -24,7 +24,7 @@ public class TaskSchedulerImpl implements TaskScheduler, TaskProducer {
     private static final String TASKS_PREFIX = TaskSchedulerImpl.class.getName() + ".tasks";
 
     // TODO: Extract 'scheduledTasks' into its own class, for example NonPersistedScheduledTasksQueue
-    private final BlockingQueue<ScheduledTaskHolder> scheduledTasks = new DelayQueue<ScheduledTaskHolder>();
+    private final BlockingQueue<ScheduledTaskHolder> scheduledTasks = new DelayQueue<>();
     private final RecoverableSet<ScheduledTask> persistedTasks;
 
     private final Provider<Transaction> tx;

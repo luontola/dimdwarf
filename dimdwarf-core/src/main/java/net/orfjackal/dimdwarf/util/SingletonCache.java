@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 @ThreadSafe
 public abstract class SingletonCache<K, V> {
 
-    private final ConcurrentMap<K, V> cache = new ConcurrentHashMap<K, V>();
+    private final ConcurrentMap<K, V> cache = new ConcurrentHashMap<>();
 
     public V get(K key) {
         V value = cache.get(key);

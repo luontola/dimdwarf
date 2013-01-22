@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -34,7 +34,7 @@ public class DatabaseAdapterSpec extends Specification<Object> {
     public void create() throws Exception {
         db = uncheckedCast(mock(Database.class));
         table = uncheckedCast(mock(DatabaseTable.class));
-        dbAdapter = new DatabaseAdapter<String, EntityId, Blob, Blob>(db, new ConvertStringToBytes(), new ConvertEntityIdToBytes());
+        dbAdapter = new DatabaseAdapter<>(db, new ConvertStringToBytes(), new ConvertEntityIdToBytes());
 
         keyBytes = Blob.fromBytes(key.getBytes("UTF-8"));
         valueBytes = new ConvertEntityIdToBytes().forth(value);
@@ -44,7 +44,7 @@ public class DatabaseAdapterSpec extends Specification<Object> {
 
         public void delegatesTables() {
             checking(new Expectations() {{
-                one(db).getTableNames(); will(returnValue(new HashSet<String>(Arrays.asList("test"))));
+                one(db).getTableNames(); will(returnValue(new HashSet<>(Arrays.asList("test"))));
             }});
             specify(dbAdapter.getTableNames(), should.containExactly("test"));
         }

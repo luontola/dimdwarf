@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -48,7 +48,7 @@ public class ControllerModule extends ActorModule<Object> {
         // in end-to-end tests may be a symptom of controller order dependency,
         // in which case you should check the logs that in which order the
         // controllers were registered.
-        List<ControllerRegistration> randomOrder = new ArrayList<ControllerRegistration>(deterministicOrder);
+        List<ControllerRegistration> randomOrder = new ArrayList<>(deterministicOrder);
         Collections.shuffle(randomOrder);
         return randomOrder;
     }

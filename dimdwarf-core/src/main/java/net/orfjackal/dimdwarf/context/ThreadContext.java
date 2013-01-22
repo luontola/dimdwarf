@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -14,7 +14,7 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public class ThreadContext {
 
-    private static final ThreadLocal<Context> THREAD_LOCAL = new ThreadLocal<Context>();
+    private static final ThreadLocal<Context> THREAD_LOCAL = new ThreadLocal<>();
 
     private ThreadContext() {
     }

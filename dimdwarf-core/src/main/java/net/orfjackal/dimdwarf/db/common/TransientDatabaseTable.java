@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 @ThreadSafe
 public class TransientDatabaseTable<H> implements DatabaseTable<Blob, Blob> {
 
-    private final SortedMap<Blob, Blob> updates = new ConcurrentSkipListMap<Blob, Blob>();
+    private final SortedMap<Blob, Blob> updates = new ConcurrentSkipListMap<>();
     private final PersistedDatabaseTable<H> dbTable;
     private final H dbHandle;
     private final Transaction tx;

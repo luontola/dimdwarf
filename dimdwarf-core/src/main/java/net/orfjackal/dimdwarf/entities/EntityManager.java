@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -22,9 +22,9 @@ public class EntityManager implements AllEntities, EntitiesLoadedInMemory {
     private final EntitiesPersistedInDatabase persistedEntities;
     private final EntityApi entityApi;
 
-    private final Map<EntityObject, EntityId> entities = new IdentityHashMap<EntityObject, EntityId>();
-    private final Map<EntityId, EntityObject> entitiesById = new HashMap<EntityId, EntityObject>();
-    private final Queue<EntityObject> flushQueue = new ArrayDeque<EntityObject>();
+    private final Map<EntityObject, EntityId> entities = new IdentityHashMap<>();
+    private final Map<EntityId, EntityObject> entitiesById = new HashMap<>();
+    private final Queue<EntityObject> flushQueue = new ArrayDeque<>();
     private State state = State.ACTIVE;
 
     @Inject

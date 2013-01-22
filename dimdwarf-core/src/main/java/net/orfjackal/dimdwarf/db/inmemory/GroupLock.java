@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -12,13 +12,14 @@ import java.util.concurrent.locks.*;
 @ThreadSafe
 public class GroupLock<T extends Comparable<T>> {
 
-    private final SortedSet<T> lockedKeys = new TreeSet<T>();
+    private final SortedSet<T> lockedKeys = new TreeSet<>();
 
     private final ReentrantLock myLock = new ReentrantLock();
     private final Condition someKeyWasUnlocked = myLock.newCondition();
 
+    @SafeVarargs
     @CheckReturnValue
-    public LockHandle lockAll(T... keys) {
+    public final LockHandle lockAll(T... keys) {
         return lockAll(Arrays.asList(keys));
     }
 
@@ -26,7 +27,7 @@ public class GroupLock<T extends Comparable<T>> {
     public LockHandle lockAll(Collection<T> keys) {
         myLock.lock();
         try {
-            SortedSet<T> sortedKeys = new TreeSet<T>(keys);
+            SortedSet<T> sortedKeys = new TreeSet<>(keys);
             for (T key : sortedKeys) {
                 awaitAndLock(key);
             }

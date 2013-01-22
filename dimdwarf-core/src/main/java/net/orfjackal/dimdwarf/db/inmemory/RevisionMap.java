@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 @ThreadSafe
 public class RevisionMap<K, V> {
 
-    private final SortedMap<K, RevisionList<V>> map = new ConcurrentSkipListMap<K, RevisionList<V>>();
-    private final Set<K> hasOldRevisions = new HashSet<K>();
+    private final SortedMap<K, RevisionList<V>> map = new ConcurrentSkipListMap<>();
+    private final Set<K> hasOldRevisions = new HashSet<>();
     private final Object writeLock = new Object();
 
     public boolean exists(K key, long readRevision) {
@@ -42,7 +42,7 @@ public class RevisionMap<K, V> {
         synchronized (writeLock) {
             RevisionList<V> previous = map.get(key);
             checkForConcurrentModification(writeRevision, key, previous);
-            map.put(key, new RevisionList<V>(writeRevision, value, previous));
+            map.put(key, new RevisionList<>(writeRevision, value, previous));
             if (previous != null) {
                 hasOldRevisions.add(key);
             }

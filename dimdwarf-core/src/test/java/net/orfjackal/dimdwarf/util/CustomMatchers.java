@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -39,7 +39,7 @@ public class CustomMatchers {
     }
 
     public static <T> Matcher<List<T>> firstEvent(Matcher<? super T> matcher) {
-        return new ListStartsWithElementMatcher<T>(matcher);
+        return new ListStartsWithElementMatcher<>(matcher);
     }
 
     public static Matcher<IoBuffer> startsWithBytes(IoBuffer expected) {

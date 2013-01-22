@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -17,7 +17,7 @@ public class RevisionListSpec extends Specification<Object> {
         private RevisionList<String> list;
 
         public void create() {
-            list = new RevisionList<String>(1, "one");
+            list = new RevisionList<>(1, "one");
         }
 
         public void thatRevisionCanBeRead() {
@@ -38,8 +38,8 @@ public class RevisionListSpec extends Specification<Object> {
         private RevisionList<String> list;
 
         public void create() {
-            RevisionList<String> previous = new RevisionList<String>(1, "one");
-            list = new RevisionList<String>(2, "two", previous);
+            RevisionList<String> previous = new RevisionList<>(1, "one");
+            list = new RevisionList<>(2, "two", previous);
         }
 
         public void theLatestRevisionCanBeRead() {
@@ -56,8 +56,8 @@ public class RevisionListSpec extends Specification<Object> {
         private RevisionList<String> list;
 
         public void create() {
-            RevisionList<String> previous = new RevisionList<String>(1, "one");
-            list = new RevisionList<String>(3, "three", previous);
+            RevisionList<String> previous = new RevisionList<>(1, "one");
+            list = new RevisionList<>(3, "three", previous);
         }
 
         public void theLatestRevisionCanBeRead() {
@@ -79,10 +79,10 @@ public class RevisionListSpec extends Specification<Object> {
         private RevisionList<String> list;
 
         public void create() {
-            tail = new RevisionList<String>(1, "one");
-            RevisionList<String> two = new RevisionList<String>(2, "two", tail);
-            RevisionList<String> four = new RevisionList<String>(4, "four", two);
-            list = new RevisionList<String>(5, null, four);
+            tail = new RevisionList<>(1, "one");
+            RevisionList<String> two = new RevisionList<>(2, "two", tail);
+            RevisionList<String> four = new RevisionList<>(4, "four", two);
+            list = new RevisionList<>(5, null, four);
         }
 
         public void purgingAlreadyPurgedRevisionsHasNoEffect() {

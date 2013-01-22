@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -10,7 +10,7 @@ import java.util.*;
 
 public class EventSink<T> extends AsynchronousSink<List<T>> implements SelfDescribing {
 
-    private final List<T> events = new ArrayList<T>();
+    private final List<T> events = new ArrayList<>();
 
     public EventSink(long timeout) {
         super(timeout);
