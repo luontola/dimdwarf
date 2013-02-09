@@ -7,13 +7,13 @@ package net.orfjackal.dimdwarf
 import org.junit.Test
 import fi.jumi.launcher.JumiBootstrap
 
-class JumiBootstrapSuite {
+class JumiSuite {
 
   @Test
   def runJumiTests() {
     new JumiBootstrap()
             //.enableDebugMode()
-            .setPassingTestsVisible(false)
+            //.setPassingTestsVisible(true)
             .runTestsMatching("glob:net/orfjackal/dimdwarf/**Spec.class")
   }
 }

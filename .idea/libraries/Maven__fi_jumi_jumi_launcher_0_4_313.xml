@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: fi.jumi:jumi-launcher:0.4.313">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/fi/jumi/jumi-launcher/0.4.313/jumi-launcher-0.4.313.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/fi/jumi/jumi-launcher/0.4.313/jumi-launcher-0.4.313-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/fi/jumi/jumi-launcher/0.4.313/jumi-launcher-0.4.313-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

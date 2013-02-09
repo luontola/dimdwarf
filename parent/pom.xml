@@ -93,6 +93,14 @@
         <!-- Testing -->
 
         <dependency>
+            <!-- TODO: remove me after Jumi has IDE and Maven support -->
+            <groupId>fi.jumi</groupId>
+            <artifactId>jumi-launcher</artifactId>
+            <version>0.4.313</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <!-- Must be declared before JUnit to use hamcrest-core 1.2 instead of the 1.1 which junit-dep depends on -->
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
@@ -116,13 +124,6 @@
             <groupId>org.specsy</groupId>
             <artifactId>specsy-scala_2.9.2</artifactId>
             <version>2.1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- TODO: remove me after Jumi has IDE and Maven support -->
-            <groupId>fi.jumi</groupId>
-            <artifactId>jumi-launcher</artifactId>
-            <version>0.4-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
