@@ -11,9 +11,13 @@ public class JumiSuite {
 
     @Test
     public void all_tests() throws Exception {
-        new JumiBootstrap()
+        JumiBootstrap bootstrap = new JumiBootstrap();
+        bootstrap.suite
+                .addJvmOptions("-ea")
+                .setIncludedTestsPattern("glob:net/orfjackal/dimdwarf/**{Spec,Test}.class");
+        bootstrap
                 //.enableDebugMode()
                 //.setPassingTestsVisible(true)
-                .runTestsMatching("glob:net/orfjackal/dimdwarf/**Spec.class");
+                .runSuite();
     }
 }

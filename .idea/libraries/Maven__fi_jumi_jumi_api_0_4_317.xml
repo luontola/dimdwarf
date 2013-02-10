@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: fi.jumi:jumi-api:0.4.317">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/fi/jumi/jumi-api/0.4.317/jumi-api-0.4.317.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/fi/jumi/jumi-api/0.4.317/jumi-api-0.4.317-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/fi/jumi/jumi-api/0.4.317/jumi-api-0.4.317-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

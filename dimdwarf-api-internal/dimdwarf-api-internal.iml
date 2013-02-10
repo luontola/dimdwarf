@@ -16,10 +16,10 @@
     <orderEntry type="module" module-name="dimdwarf-api" />
     <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-jdk14:1.6.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-launcher:0.4.313" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-core:0.4.313" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-launcher:0.4.317" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-core:0.4.317" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-actors:0.1.196" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-api:0.4.313" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: fi.jumi:jumi-api:0.4.317" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-library:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit-dep:4.8.2" level="project" />
