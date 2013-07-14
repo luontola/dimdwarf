@@ -1,4 +1,4 @@
-// Copyright © 2008-2010 Esko Luontola <www.orfjackal.net>
+// Copyright © 2008-2013 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://dimdwarf.sourceforge.net/LICENSE
 
@@ -13,7 +13,7 @@ import static net.orfjackal.dimdwarf.util.TestUtil.runAsynchronously;
 
 public class AsynchronouslyMatchingByteStreamsTest {
 
-    public static final long TIMEOUT_NEVER_REACHED = 100;
+    public static final long TIMEOUT_NEVER_REACHED = 5000;
     public static final long TIMEOUT_IS_REACHED = 1;
 
     @Rule
@@ -55,7 +55,7 @@ public class AsynchronouslyMatchingByteStreamsTest {
 
     @Test
     public void fails_when_different_bytes_have_arrived() {
-        ByteSink sink = new ByteSink(TIMEOUT_NEVER_REACHED);
+        ByteSink sink = new ByteSink(TIMEOUT_IS_REACHED);
 
         sink.append(IoBuffer.wrap(new byte[]{0x04, 0x05, 0x06}));
 

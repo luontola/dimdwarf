@@ -15,14 +15,14 @@ import static org.hamcrest.Matchers.is;
 
 public class AsynchronouslyMatchingOneMessageTest {
 
-    public static final long TIMEOUT_NEVER_REACHED = 100;
+    public static final long TIMEOUT_NEVER_REACHED = 5000;
     public static final long TIMEOUT_IS_REACHED = 1;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void passes_when_a_matching_event_has_already_arrived() throws InterruptedException {
+    public void passes_when_a_matching_event_has_already_arrived() {
         EventSink<String> events = new EventSink<>(TIMEOUT_NEVER_REACHED);
 
         events.append(Arrays.asList("event"));
@@ -31,7 +31,7 @@ public class AsynchronouslyMatchingOneMessageTest {
     }
 
     @Test
-    public void passes_when_a_matching_event_arrives_asynchronously() throws InterruptedException {
+    public void passes_when_a_matching_event_arrives_asynchronously() {
         final EventSink<String> events = new EventSink<>(TIMEOUT_NEVER_REACHED);
 
         runAsynchronously(new Runnable() {
@@ -44,8 +44,8 @@ public class AsynchronouslyMatchingOneMessageTest {
     }
 
     @Test
-    public void fails_when_there_is_a_non_matching_event() throws Throwable {
-        EventSink<String> events = new EventSink<>(TIMEOUT_NEVER_REACHED);
+    public void fails_when_there_is_a_non_matching_event() {
+        EventSink<String> events = new EventSink<>(TIMEOUT_IS_REACHED);
 
         events.append(Arrays.asList("non matching event"));
 
@@ -56,7 +56,7 @@ public class AsynchronouslyMatchingOneMessageTest {
     }
 
     @Test
-    public void fails_due_to_timeout_when_there_are_no_events() throws InterruptedException {
+    public void fails_due_to_timeout_when_there_are_no_events() {
         EventSink<String> events = new EventSink<>(TIMEOUT_IS_REACHED);
 
         thrown.expect(AssertionError.class);
